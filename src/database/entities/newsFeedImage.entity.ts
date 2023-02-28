@@ -10,7 +10,7 @@ import { NewsFeed } from './newsFeed.entity';
 @Entity()
 export class NewsFeedImage extends BaseEntity {
   @PrimaryGeneratedColumn()
-  newsImageId: number;
+  id: number;
 
   @Column()
   image: string;
