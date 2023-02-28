@@ -6,6 +6,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -18,7 +19,7 @@ import { User } from './user.entity';
 @Entity()
 export class Group extends BaseEntity {
   @PrimaryGeneratedColumn()
-  groupId: number;
+  id: number;
 
   @Column()
   groupName: string;
@@ -54,4 +55,7 @@ export class Group extends BaseEntity {
 
   @ManyToMany(() => User, (user) => user.groups)
   users: User[];
+
+  @ManyToOne(() => User, (user) => user.id)
+  userId: User;
 }

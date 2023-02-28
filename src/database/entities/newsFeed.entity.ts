@@ -19,7 +19,7 @@ import { User } from './user.entity';
 @Entity()
 export class NewsFeed extends BaseEntity {
   @PrimaryGeneratedColumn()
-  newsId: number;
+  id: number;
 
   @Column('text')
   content: string;

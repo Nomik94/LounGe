@@ -11,7 +11,7 @@ import { NewsFeed } from './newsFeed.entity';
 @Entity()
 export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn()
-  tagId: number;
+  id: number;
 
   @Column()
   tagName: string;

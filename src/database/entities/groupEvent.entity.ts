@@ -12,7 +12,7 @@ import { Group } from './group.entity';
 @Entity()
 export class GroupEvent extends BaseEntity {
   @PrimaryGeneratedColumn()
-  groupEventId: number;
+  id: number;
 
   @Column()
   eventName: string;

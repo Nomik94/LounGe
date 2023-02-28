@@ -18,7 +18,7 @@ import { UserEvent } from './userEvent.entity';
 @Unique(['email'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
-  userId: number;
+  id: number;
 
   @Column()
   email: string;
@@ -47,4 +47,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => NewsFeed, (newsFeed) => newsFeed.user)
   newsFeeds: NewsFeed[];
+
+  @OneToMany(() => Group, (group) => group.userId)
+  group: Group[];
 }
