@@ -56,6 +56,6 @@ export class Group extends BaseEntity {
   @ManyToMany(() => User, (user) => user.groups)
   users: User[];
 
-  @ManyToOne(() => User, (user) => user.id)
-  userId: User;
+  @ManyToOne(() => User, (user) => user.group)
+  user: User;
 }

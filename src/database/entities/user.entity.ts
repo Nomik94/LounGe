@@ -48,6 +48,6 @@ export class User extends BaseEntity {
   @OneToMany(() => NewsFeed, (newsFeed) => newsFeed.user)
   newsFeeds: NewsFeed[];
 
-  @OneToMany(() => Group, (group) => group.userId)
+  @OneToMany(() => Group, (group) => group.user)
   group: Group[];
 }
