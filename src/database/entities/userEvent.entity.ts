@@ -12,7 +12,7 @@ import { User } from './user.entity';
 @Entity()
 export class UserEvent extends BaseEntity {
   @PrimaryGeneratedColumn()
-  userEventId: number;
+  id: number;
 
   @Column()
   eventName: string;
