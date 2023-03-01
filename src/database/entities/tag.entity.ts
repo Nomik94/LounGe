@@ -2,11 +2,11 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Group } from './group.entity';
-import { NewsFeed } from './newsFeed.entity';
+import { TagGroup } from './tag-group.entity';
+import { NewsFeedTag } from './newsFeed-Tag.entity';
 
 @Entity()
 export class Tag extends BaseEntity {
@@ -16,9 +16,9 @@ export class Tag extends BaseEntity {
   @Column()
   tagName: string;
 
-  @ManyToMany(() => NewsFeed, (newsFeed) => newsFeed.tags)
-  newsFeeds: NewsFeed[];
+  @OneToMany(() => TagGroup, (tagGroup) => tagGroup.tag)
+  tagGroups: TagGroup[];
 
-  @ManyToMany(() => Group, (group) => group.tags)
-  groups: Group[];
+  @OneToMany(() => NewsFeedTag, (newsFeedTag) => newsFeedTag.tag)
+  newsFeedTags: NewsFeedTag[];
 }

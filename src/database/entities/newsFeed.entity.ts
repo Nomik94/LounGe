@@ -4,16 +4,14 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Group } from './group.entity';
+import { GroupNewsFeed } from './group-newsfeed.entity';
 import { NewsFeedImage } from './newsFeedImage.entity';
-import { Tag } from './tag.entity';
+import { NewsFeedTag } from './newsFeed-Tag.entity';
 import { User } from './user.entity';
 
 @Entity()
@@ -36,13 +34,12 @@ export class NewsFeed extends BaseEntity {
   @OneToMany(() => NewsFeedImage, (newsFeedImage) => newsFeedImage.newsFeed)
   newsImages: NewsFeedImage[];
 
-  @ManyToMany(() => Tag, (tag) => tag.newsFeeds)
-  @JoinTable()
-  tags: Tag[];
-
-  @ManyToMany(() => Group, (group) => group.newsFeeds)
-  groups: Group[];
-
   @ManyToOne(() => User, (user) => user.newsFeeds)
   user: User;
+
+  @OneToMany(() => GroupNewsFeed, (groupNewsFeed) => groupNewsFeed.newsFeed)
+  groupNewsFeeds: GroupNewsFeed[];
+
+  @OneToMany(() => NewsFeedTag, (newsFeedTag) => newsFeedTag.newsFeed)
+  newsFeedTags: NewsFeedTag[];
 }
