@@ -21,19 +21,17 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = this.userRepository.create({
-      email,
-      username,
-      password: hashedPassword,
-    });
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (user) throw new ConflictException('이미 등록된 이메일입니다.');
     try {
-      await this.userRepository.save(user);
+      await this.userRepository.save({
+        email,
+        username,
+        password: hashedPassword,
+      });
     } catch (e) {
-      if (e.code === '23505') {
-        throw new ConflictException('이미 있는 이메일입니다');
-      } else {
-        throw new InternalServerErrorException();
-      }
+      throw new InternalServerErrorException();
     }
   }
 }

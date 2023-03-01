@@ -15,7 +15,4 @@ export class AuthCredentialsDto {
   @MinLength(2)
   @MaxLength(10)
   username: string;
-
-  @IsString()
-  image: string;
 }
