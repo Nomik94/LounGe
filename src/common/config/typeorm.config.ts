@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { GroupNewsFeed } from 'src/database/entities/group-newsfeed.entity';
 import { Group } from 'src/database/entities/group.entity';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
+import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { NewsFeedImage } from 'src/database/entities/newsFeedImage.entity';
+import { TagGroup } from 'src/database/entities/tag-group.entity';
 import { Tag } from 'src/database/entities/tag.entity';
+import { UserGroup } from 'src/database/entities/user-group.entity';
 import { User } from 'src/database/entities/user.entity';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
 
@@ -33,6 +37,10 @@ export class TypeOrmConfig implements TypeOrmOptionsFactory {
         Tag,
         User,
         UserEvent,
+        UserGroup,
+        GroupNewsFeed,
+        TagGroup,
+        NewsFeedTag,
       ],
     };
   }
