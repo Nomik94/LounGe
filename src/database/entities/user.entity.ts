@@ -29,7 +29,7 @@ export class User extends BaseEntity {
   @Column()
   username: string;
 
-  @Column()
+  @Column({ default: '1' })
   image: string;
 
   @CreateDateColumn()
