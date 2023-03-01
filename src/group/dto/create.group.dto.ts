@@ -17,7 +17,4 @@ export class CreateGroupDto {
 
   @IsString()
   backgroundImage: string
-
-  @IsNumber()
-  userId : number
 }
