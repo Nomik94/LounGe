@@ -6,7 +6,7 @@ import { RegisterCredentialsDto } from './dto/register-credential.dto';
 export class RegisterController {
   constructor(private readonly registerService: RegisterService) {}
 
-  @Post('register')
+  @Post()
   register(
     @Body() registerCredentialsDto: RegisterCredentialsDto,
   ): Promise<void> {
