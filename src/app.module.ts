@@ -7,6 +7,7 @@ import { TypeOrmConfig } from './common/config/typeorm.config';
 import { GroupModule } from './group/group.module';
 import { AuthModule } from './auth/auth.module';
 import { NewsfeedModule } from './newsfeed/newsfeed.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { NewsfeedModule } from './newsfeed/newsfeed.module';
     GroupModule,
     AuthModule,
     NewsfeedModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
