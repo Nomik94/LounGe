@@ -1,6 +1,7 @@
 import { PickType } from '@nestjs/mapped-types';
 import {
   IsEmail,
+  IsNotEmpty,
   IsString,
   Matches,
   MaxLength,
@@ -8,9 +9,11 @@ import {
 } from 'class-validator';
 
 export class AuthDto {
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 
+  @IsNotEmpty()
   @IsString()
   @MinLength(4)
   @Matches(/^[a-zA-Z0-9]*$/, {
@@ -18,6 +21,7 @@ export class AuthDto {
   })
   password: string;
 
+  @IsNotEmpty()
   @IsString()
   @MinLength(2)
   @MaxLength(10)
