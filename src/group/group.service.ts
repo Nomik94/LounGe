@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InternalServerErrorException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Group } from 'src/database/entities/group.entity';
 import { TagGroup } from 'src/database/entities/tag-group.entity';
 import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 
 @Injectable()
@@ -21,19 +20,20 @@ export class GroupService {
     private readonly tagGroupRepository: Repository<TagGroup>,
   ) {}
 
-  async createGroup(data: CreateGroupDto): Promise<void> {
+  async createGroup(data: CreateGroupDto, userId : number): Promise<void> {
     const group = await this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
       groupImage: data.groupImage,
       backgroundImage: data.backgroundImage,
-      user: { id: 1 }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
+      user: { id: userId }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
     });
     await this.groupRepository.save(group);
 
     await this.userGroupRepository.insert({
       groupId: group.id,
       userId: group.user.id,
+      role: "그룹장",
     });
     for (const tag of data.tag) {
       const findTag = await this.tagRepository.findOneBy({ tagName: tag });
@@ -45,7 +45,7 @@ export class GroupService {
           groupId: group.id,
         });
       } else {
-        const a = await this.tagGroupRepository.insert({
+        await this.tagGroupRepository.insert({
           tagId: findTag.id,
           groupId: group.id,
         });
@@ -59,5 +59,28 @@ export class GroupService {
     //     await this.tagRepository.insert({ tagName: tag });
     //   } catch {}
     // }
+  }
+
+  async getAllGroup(userId) {
+    const groupList = await this.groupRepository.find({
+      select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
+      relations: ['tagGroups.tag'],
+      where : {'userGroups' : {userId : Not(userId)}}, // 가입한 그룹은 보여주지 않기 위해서 추가
+    });
+    const modifiedGroupList = groupList.map((group) => {
+      const TagGroups = [];
+      group.tagGroups.forEach((tag) => {
+        TagGroups.push(tag.tag.tagName);
+      });
+
+      return {
+        id: 1,
+        groupName: group.id,
+        groupImage: group.groupName,
+        backgroundImage: group.backgroundImage,
+        tagGroups: TagGroups,
+      };
+    });
+    return modifiedGroupList;
   }
 }
