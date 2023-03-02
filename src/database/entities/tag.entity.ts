@@ -4,11 +4,13 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { TagGroup } from './tag-group.entity';
 import { NewsFeedTag } from './newsFeed-Tag.entity';
 
 @Entity()
+@Unique(['tagName'])
 export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
