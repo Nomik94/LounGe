@@ -1,5 +1,6 @@
-import { Body, Get, Post } from '@nestjs/common';
+import { Body, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { GroupService } from './group.service';
 
@@ -8,12 +9,16 @@ export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   @Post()
-  createGroup(@Body() data: CreateGroupDto): void {
-    this.groupService.createGroup(data);
+  @UseGuards(AuthGuard('access'))
+  createGroup(@Req() req, @Body() data: CreateGroupDto): void {
+    const userId : number = req.user.id
+    this.groupService.createGroup(data, userId);
   }
 
   @Get()
-  async getAllGroup() {
-    return await this.groupService.getAllGroup()
+  @UseGuards(AuthGuard('access'))
+  async getAllGroup(@Req() req) {
+    const userId : number = req.user.id;
+    return await this.groupService.getAllGroup(userId);
   }
 }
