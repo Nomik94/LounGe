@@ -16,8 +16,8 @@ export class UserGroup {
   @PrimaryColumn()
   groupId: number;
 
-  @Column()
-  role: number;
+  @Column({default : "가입신청"})
+  role: string;
 
   @CreateDateColumn()
   createdAt: Date;
