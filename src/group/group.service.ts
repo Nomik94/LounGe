@@ -31,7 +31,10 @@ export class GroupService {
     });
     await this.groupRepository.save(group);
 
-    await this.userGroupRepository.insert({groupId : group.id, userId : 1})
+    await this.userGroupRepository.insert({
+      groupId: group.id,
+      userId: group.user.id,
+    });
     for (const tag of data.tag) {
       const findTag = await this.tagRepository.findOneBy({ tagName: tag });
       if (!findTag) {
