@@ -1,4 +1,10 @@
-import { CreateDateColumn, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { Group } from './group.entity';
 import { User } from './user.entity';
 
@@ -9,6 +15,9 @@ export class UserGroup {
 
   @PrimaryColumn()
   groupId: number;
+
+  @Column()
+  role: number;
 
   @CreateDateColumn()
   createdAt: Date;
