@@ -5,12 +5,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmConfig } from './common/config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
+import { NewsfeedModule } from './newsfeed/newsfeed.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfig }),
     AuthModule,
+    NewsfeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
