@@ -1,5 +1,5 @@
-import { Put, Query, ValidationPipe } from '@nestjs/common';
-import { Body, Controller, Post, Res, UsePipes } from '@nestjs/common';
+import { Put, Query } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto, LogInBodyDTO } from './dto/auth.dto';
@@ -8,7 +8,6 @@ import { AuthDto, LogInBodyDTO } from './dto/auth.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UsePipes(ValidationPipe)
   @Post('register')
   register(@Body() authDto: AuthDto): Promise<void> {
     return this.authService.register(authDto);
