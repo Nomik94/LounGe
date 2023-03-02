@@ -1,28 +1,64 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NewsfeedController } from './newsfeed.controller';
-import { NewsfeedRepository, NewsfeedService } from './newsfeed.service';
+import { INestApplication } from '@nestjs/common';
+import { AppModule } from '../app.module';
+import { NewsfeedService } from './newsfeed.service';
+import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
+import * as request from 'supertest';
 
-describe('NewsfeedController', () => {
-  let controller: NewsfeedController;
-  let service: NewsfeedService;
+describe('NewsfeedController (e2e)', () => {
+  let app: INestApplication;
+  let newsfeedService: NewsfeedService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [NewsfeedController],
-      providers: [NewsfeedService,NewsfeedRepository]
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
     }).compile();
 
-    controller = module.get<NewsfeedController>(NewsfeedController);
-    service = module.get<NewsfeedService>(NewsfeedService);
+    app = moduleFixture.createNestApplication();
+    await app.init();
+
+    newsfeedService = moduleFixture.get<NewsfeedService>(NewsfeedService);
   });
 
-  describe('newsfeed', () => {
-    it('newsfeed', async () => {
-      const test = {content: '테스트코드', userId: 1, tag: '여름', image: '이미지링크'};
-      const test2 = jest.spyOn(service,'postnewsfeed').mockResolvedValue(test)
-      expect(await controller.postnewsfeed('테스트코드',1,"여름","이미지링크")).toStrictEqual(test)
-      expect(test2).toBeCalledTimes(1)
-    })
-  })
+  describe('POST /api/newsfeed/newsfeed', () => {
+    it('should return 201 status code', async () => {
+      const newsfeedData: newsfeedCheckDto = {
+        content: "테스트",
+           userId: 1,
+           tag:"테스트",
+          image:"테스트"
+      };
 
+      jest.spyOn(newsfeedService, 'postnewsfeed').mockResolvedValue();
+
+      const res = await request(app.getHttpServer())
+        .post('/api/newsfeed/newsfeed')
+        .send(newsfeedData)
+        .expect(201);
+
+      expect(res.body).toEqual({});
+    });
+
+    it('should call newsfeedService.postnewsfeed method with correct data', async () => {
+      const newsfeedData: newsfeedCheckDto = {
+        content: "테스트",
+        userId: 1,
+        tag:"테스트",
+       image:"테스트"
+      };
+
+      const postnewsfeedSpy = jest.spyOn(newsfeedService, 'postnewsfeed');
+
+      await request(app.getHttpServer())
+        .post('/api/newsfeed/newsfeed')
+        .send(newsfeedData)
+        .expect(201);
+
+      expect(postnewsfeedSpy).toHaveBeenCalledWith(newsfeedData);
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
 });

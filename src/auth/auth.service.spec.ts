@@ -1,73 +1,83 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { User } from 'src/database/entities/user.entity';
-import { Repository } from 'typeorm';
-import { AuthService } from './auth.service';
+import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ConflictException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { NewsfeedService } from '../newsfeed/newsfeed.service';
+import { NewsFeed } from '../database/entities/newsFeed.entity';
+import { NewsFeedTag } from '../database/entities/newsFeed-Tag.entity';
+import { NewsFeedImage } from '../database/entities/newsFeedImage.entity';
+import { Tag } from '../database/entities/tag.entity';
+import { newsfeedCheckDto } from '../newsfeed/dto/newsfeed-check.dto';
 
-class MockUserRepository {
-  myDb = [{ email: 'a@a.com', password: '1234', username: '짱구' }];
-  findOne({ where: { email } }) {
-    const user = this.myDb.filter((el) => el.email === email);
-    if (user.length) {
-      return user[0];
-    }
-    return null;
-  }
-  save({ email, password, username }) {
-    this.myDb.push({ email, password, username });
-    return { email, password, username };
-  }
-}
-
-type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
-
-describe('AuthService', () => {
-  let userService: AuthService;
-  let userRepository: MockRepository<User>;
+describe('NewsfeedService', () => {
+  let newsfeedService: NewsfeedService;
+  let newsfeedRepository: Repository<NewsFeed>;
+  let tagRepository: Repository<Tag>;
+  let newsfeedTagRepository: Repository<NewsFeedTag>;
+  let newsfeedImageRepository: Repository<NewsFeedImage>;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       providers: [
-        AuthService,
-        { provide: getRepositoryToken(User), useClass: MockUserRepository },
+        NewsfeedService,
+        {
+          provide: getRepositoryToken(NewsFeed),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(Tag),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(NewsFeedTag),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(NewsFeedImage),
+          useClass: Repository,
+        },
       ],
     }).compile();
 
-    userService = module.get<AuthService>(AuthService);
-    userRepository = module.get<MockRepository<User>>(getRepositoryToken(User));
+    newsfeedService = moduleRef.get<NewsfeedService>(NewsfeedService);
+    newsfeedRepository = moduleRef.get<Repository<NewsFeed>>(
+      getRepositoryToken(NewsFeed),
+    );
+    tagRepository = moduleRef.get<Repository<Tag>>(getRepositoryToken(Tag));
+    newsfeedTagRepository = moduleRef.get<Repository<NewsFeedTag>>(
+      getRepositoryToken(NewsFeedTag),
+    );
+    newsfeedImageRepository = moduleRef.get<Repository<NewsFeedImage>>(
+      getRepositoryToken(NewsFeedImage),
+    );
   });
 
-  it('이미 존재하는 이메일 검증', async () => {
-    const userRepositorySpySave = jest.spyOn(userRepository, 'save');
-    const userRepositorySpyFindOne = jest.spyOn(userRepository, 'findOne');
+  describe('postnewsfeed', () => {
+    it('should create a newsfeed successfully', async () => {
+      const newsfeed = {
+        content: 'test content',
+        userId: '1',
+        tag: ['test_tag1', 'test_tag2'],
+        image: 'test_image',
+      } as newsfeedCheckDto;
 
-    const myData = {
-      email: 'a@a.com',
-      password: '1234',
-      username: '철수',
-    };
-    try {
-      await userService.register({ ...myData });
-    } catch (e) {
-      expect(e).toBeInstanceOf(ConflictException);
-    }
-    expect(userRepositorySpyFindOne).toBeCalledTimes(1);
-    expect(userRepositorySpySave).toBeCalledTimes(0);
-  });
+      const newsfeedSaveSpy = jest.spyOn(newsfeedRepository, 'save');
+      const tagFindOneBySpy = jest.spyOn(tagRepository, 'findOneBy');
+      const tagInsertSpy = jest.spyOn(tagRepository, 'insert');
+      const newsfeedImageSaveSpy = jest.spyOn(
+        newsfeedImageRepository,
+        'save',
+      );
+      const tagFindOneSpy = jest.spyOn(tagRepository, 'findOne');
+      const newsfeedTagSaveSpy = jest.spyOn(newsfeedTagRepository, 'save');
 
-  it('회원 등록 검증', async () => {
-    const userRepositorySpySave = jest.spyOn(userRepository, 'save');
-    const userRepositorySpyFindOne = jest.spyOn(userRepository, 'findOne');
+      await newsfeedService.postnewsfeed(newsfeed);
 
-    const myData = {
-      email: 'b@b.com',
-      password: '1234',
-      username: '철수',
-    };
-
-    await userService.register({ ...myData });
-    expect(userRepositorySpyFindOne).toBeCalledTimes(1);
-    expect(userRepositorySpySave).toBeCalledTimes(1);
+      expect(newsfeedSaveSpy).toBeCalledTimes(1);
+      expect(tagFindOneBySpy).toBeCalledTimes(2);
+      expect(tagInsertSpy).toBeCalledTimes(2);
+      expect(newsfeedImageSaveSpy).toBeCalledTimes(1);
+      expect(tagFindOneSpy).toBeCalledTimes(2);
+      expect(newsfeedTagSaveSpy).toBeCalledTimes(2);
+    });
   });
 });
