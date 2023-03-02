@@ -9,14 +9,14 @@ export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   @Post()
-  @UseGuards(AuthGuard('access'))
+  @UseGuards(AuthGuard('jwt'))
   createGroup(@Req() req, @Body() data: CreateGroupDto): void {
     const userId : number = req.user.id
     this.groupService.createGroup(data, userId);
   }
 
   @Get()
-  @UseGuards(AuthGuard('access'))
+  @UseGuards(AuthGuard('jwt'))
   async getAllGroup(@Req() req) {
     const userId : number = req.user.id;
     return await this.groupService.getAllGroup(userId);
