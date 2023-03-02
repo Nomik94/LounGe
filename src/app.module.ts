@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { TypeOrmConfig } from './common/config/typeorm.config';
 import { GroupModule } from './group/group.module';
 import { AuthModule } from './auth/auth.module';
+import { NewsfeedModule } from './newsfeed/newsfeed.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfig }),
     GroupModule,
     AuthModule,
+    NewsfeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

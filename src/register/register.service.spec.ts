@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from 'src/database/entities/user.entity';
 import { Repository } from 'typeorm';
-import { AuthService } from './auth.service';
+import { RegisterService } from './register.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConflictException } from '@nestjs/common';
 
@@ -22,19 +22,19 @@ class MockUserRepository {
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
-describe('AuthService', () => {
-  let userService: AuthService;
+describe('RegisterService', () => {
+  let userService: RegisterService;
   let userRepository: MockRepository<User>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AuthService,
+        RegisterService,
         { provide: getRepositoryToken(User), useClass: MockUserRepository },
       ],
     }).compile();
 
-    userService = module.get<AuthService>(AuthService);
+    userService = module.get<RegisterService>(RegisterService);
     userRepository = module.get<MockRepository<User>>(getRepositoryToken(User));
   });
 
