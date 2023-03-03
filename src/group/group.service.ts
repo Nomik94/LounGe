@@ -83,7 +83,7 @@ export class GroupService {
     }
   }
 
-  async joinGroup(userId: number, groupId: number) {
+  async sendGroupJoin(userId: number, groupId: number) {
     const joinedGroupStatus = await this.userGroupRepository.findOneBy({
       userId,
       groupId,
