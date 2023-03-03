@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import Connection from 'mysql2/typings/mysql/lib/Connection';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { NewsFeedImage } from 'src/database/entities/newsFeedImage.entity';
 import { Tag } from 'src/database/entities/tag.entity';
+import { User } from 'src/database/entities/user.entity';
 // import { EntityRepository, Repository } from 'typeorm';
 import { Repository } from 'typeorm';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
@@ -26,6 +28,9 @@ export class NewsfeedService {
 
         @InjectRepository(NewsFeedImage)
         private readonly newsfeedImageRepository: Repository<NewsFeedImage>,
+
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
     ) {}
 
     async postnewsfeed(data: newsfeedCheckDto): Promise<void> {
@@ -69,8 +74,22 @@ export class NewsfeedService {
         }
         return
         }
+
+        async readnewsfeed(userId) {
+
+            const a = await this.newsfeedRepository.find({
+                relations: ['newsFeedTags.tag','newsImages','user'],
+                // select: ['id','content','createdAt','updatedAt','user','user.username'],
+                select: ['id','content','createdAt','updatedAt'],
+                where:{'user' : {id:userId}}
+              });
+              
+            return a
+        }
 }
 
+
+   
 // @EntityRepository(NewsFeed)
 // export class NewsfeedRepository extends Repository<NewsFeed> {}
 

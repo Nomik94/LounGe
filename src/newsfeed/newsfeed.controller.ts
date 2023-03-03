@@ -1,4 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 import { NewsfeedService } from './newsfeed.service';
 
@@ -10,5 +11,11 @@ export class NewsfeedController {
     @Post('newsfeed')
     async postnewsfeed(@Body() data: newsfeedCheckDto): Promise<void>{
         return await this.newsfeedService.postnewsfeed(data)
+    }
+
+    // 뉴스피드 읽기
+    @Get('newsfeed/:id')
+    async readnewsfeed(@Param('id') userId:number) {
+        return await this.newsfeedService.readnewsfeed(userId)
     }
 }
