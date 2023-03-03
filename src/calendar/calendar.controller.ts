@@ -27,8 +27,6 @@ export class CalendarController {
       data.start,
       data.end,
       data.groupId,
-      data.createdAt,
-      data.deletedAt
     );
   }
 
@@ -44,8 +42,6 @@ export class CalendarController {
       data.start,
       data.end,
       data.groupId,
-      data.createdAt,
-      data.deletedAt,
       );
   }
 

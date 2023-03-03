@@ -15,10 +15,4 @@ export class CreateEventDto {
 
   @IsNumber()
   readonly groupId: number;
-
-  @IsDate()
-  readonly createdAt: Date;
-
-  @IsDate()
-  readonly deletedAt: Date;
 }

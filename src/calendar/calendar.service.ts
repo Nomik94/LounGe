@@ -21,11 +21,9 @@ export class CalendarService {
     eventContent: string, 
     start:Date, 
     end:Date, 
-    groupId:number, 
-    createdAt:Date, 
-    deletedAt:Date){
+    groupId:number, ){
       const eventId = this.events.length + 1;
-      this.events.push({id:eventId,eventName, eventContent, start,end,createdAt,deletedAt})
+      this.events.push({id:eventId,eventName, eventContent, start,end})
       this.eventsGroupId.set(eventId,groupId);
       return eventId;
     }
@@ -36,9 +34,7 @@ export class CalendarService {
     eventContent: string, 
     start:Date, 
     end:Date, 
-    groupId:number, 
-    createdAt:Date, 
-    deletedAt:Date){
+    groupId:number, ){
       if (this.eventsGroupId.get(groupId)!==groupId){
         throw new UnauthorizedException('이 이벤트를 개시한 그룹이 맞으신가요?? 그룹id가 맞지 않습니다.'+groupId);
       }
@@ -51,8 +47,6 @@ export class CalendarService {
       event.eventContent = eventContent;
       // event.start = start;
       // event.end = end;
-      // event.createdAt = createdAt;
-      // event.deletedAt = deletedAt;
     }
 
   deleteEvent(eventId: number, groupId: number){
