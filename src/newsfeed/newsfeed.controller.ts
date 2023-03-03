@@ -13,25 +13,15 @@ export class NewsfeedController {
     return await this.newsfeedService.postnewsfeed(data);
   }
 
-<<<<<<< HEAD
   // 뉴스피드 읽기
   @Get('newsfeed/:id')
   async readnewsfeed(@Param('id') userId: number) {
     return await this.newsfeedService.readnewsfeed(userId);
   }
-=======
-    // 뉴스피드 읽기
-    @Get('newsfeed/:id')
-    async readnewsfeed(@Param('id') userId:number) {
-        return await this.newsfeedService.readnewsfeed(userId)
-    }
 
-    // 뉴스피드 삭제
-    @Delete('newsfeed/:newsfeedid')
-    async deletenewsfeed(
-        @Param('newsfeedid')newsfeedid:number
-    ) {
-        return await this.newsfeedService.deletenewsfeed(newsfeedid)
-    }
->>>>>>> dev
+  // 뉴스피드 삭제
+  @Delete('newsfeed/:newsfeedid')
+  async deletenewsfeed(@Param('newsfeedid') newsfeedid: number) {
+    return await this.newsfeedService.deletenewsfeed(newsfeedid);
+  }
 }
