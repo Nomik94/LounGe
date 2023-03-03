@@ -8,6 +8,7 @@ import { Tag } from 'src/database/entities/tag.entity';
 import { User } from 'src/database/entities/user.entity';
 // import { EntityRepository, Repository } from 'typeorm';
 import { Repository } from 'typeorm';
+import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 
 @Injectable()
@@ -37,41 +38,46 @@ export class NewsfeedService {
         const content = data.content;
         const userId = data.userId; // 썬더 클라이언트로 보내는 임시 유저아이디
         const tag = data.tag;
-        const iamge = data.image;
+        const image = data.image;
 
         const newsfeedId = await this.newsfeedRepository.save({
             content:content,
             user: {id : userId},
         })
-
-        for(const i of tag) {
-            if (!await this.tagRepository.findOneBy({tagName:i})) {
-                await this.tagRepository.insert({
-                    tagName:i
+        if (tag){
+            for(const i of tag) {
+                if (!await this.tagRepository.findOneBy({tagName:i})) {
+                    await this.tagRepository.insert({
+                        tagName:i
+                    })
+                }
+            }
+    
+            const serchtag = [];
+            for (const i of tag) {
+                const a = await this.tagRepository.findOne({
+                    where: {tagName:i},
+                    select: ["id"]}
+                    )
+                serchtag.push(a.id);
+            }
+    
+            for (const i of serchtag) {
+                await this.newsfeedTagRepository.save({
+                    tagId:i,
+                    newsFeedId: newsfeedId.id
+                })
+            }
+        }
+        if (image) {
+            for(const i of image) {
+                await this.newsfeedImageRepository.save({
+                    image:i,
+                    newsFeed: {id: newsfeedId.id}
                 })
             }
         }
 
-        await this.newsfeedImageRepository.save({
-            image:iamge,
-            newsFeed: {id: newsfeedId.id}
-        })
-
-        const serchtag = [];
-        for (const i of tag) {
-            const a = await this.tagRepository.findOne({
-                where: {tagName:i},
-                select: ["id"]}
-                )
-            serchtag.push(a.id);
-        }
-
-        for (const i of serchtag) {
-            await this.newsfeedTagRepository.save({
-                tagId:i,
-                newsFeedId: newsfeedId.id
-            })
-        }
         return
         }
 
@@ -107,6 +113,70 @@ export class NewsfeedService {
             throw new Error(err)
         }
 
+    }
+
+    async modinewsfeed(id:number,data: modiNewsfeedCheckDto) : Promise<void>{
+        const { content,image,tag } = data
+
+        try {
+            const checknewsfeed = await this.newsfeedRepository.findOne({
+                where: {id:id}
+            })
+            if (!checknewsfeed) {
+                throw new NotFoundException("삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
+            }
+            
+
+            await this.newsfeedRepository.update(id,
+                {content:content}
+            );
+
+            if (tag) {
+                await this.newsfeedTagRepository.delete({
+                    newsFeedId:id
+                })
+
+                for(const i of tag) {
+                    if (!await this.tagRepository.findOneBy({tagName:i})) {
+                        await this.tagRepository.insert({
+                            tagName:i
+                        })
+                    }
+                }
+                const serchtag = [];
+                for (const i of tag) {
+                    const a = await this.tagRepository.findOne({
+                        where: {tagName:i},
+                        select: ["id"]}
+                        )
+                    serchtag.push(a.id);
+                }
+
+                for (const i of serchtag) {
+                    await this.newsfeedTagRepository.save({
+                        tagId:i,
+                        newsFeedId: id
+                    })
+                }
+            }
+
+            if (image) {
+                await this.newsfeedImageRepository.delete({
+                    newsFeed: {id:id}
+                })
+                for (const i of image) {
+                    await this.newsfeedImageRepository.save({
+                        image: i,
+                        newsFeed: {id:id}
+                    })
+                }
+            }
+
+            return
+        } catch (err){
+            console.log("알수 없는 에러가 발생했습니다.", err);
+            throw new Error(err)
+        }
     }
 }
 

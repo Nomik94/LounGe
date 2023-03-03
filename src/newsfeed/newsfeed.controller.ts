@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
+import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
 import { NewsfeedService } from './newsfeed.service';
 
 @Controller('api/newsfeed')
@@ -25,5 +26,14 @@ export class NewsfeedController {
         @Param('newsfeedid')newsfeedid:number
     ) {
         return await this.newsfeedService.deletenewsfeed(newsfeedid)
+    }
+
+    // 뉴스피드 수정
+    @Put('newsfeed/:newsfeedid')
+    async modinewsfeed(
+        @Param('newsfeedid') newsfeedid:number,
+        @Body() data: modiNewsfeedCheckDto
+    ): Promise<void> {
+        return await this.newsfeedService.modinewsfeed(newsfeedid,data)
     }
 }
