@@ -1,6 +1,6 @@
 import { Body, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import { Param, Put } from '@nestjs/common/decorators';
+import { Delete, Param, Put } from '@nestjs/common/decorators';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
@@ -26,8 +26,19 @@ export class GroupController {
 
   @Put('/:groupId')
   @UseGuards(AuthGuard('jwt'))
-  async modifyGruop(@Req() req, @Body() data: ModifyGroupDto, @Param('groupId') groupId : number) {
+  async modifyGruop(
+    @Req() req,
+    @Body() data: ModifyGroupDto,
+    @Param('groupId') groupId: number,
+  ) {
     const userId: number = req.user.id;
-    this.groupService.modifyGruop(data, userId, groupId)
+    await this.groupService.modifyGruop(data, userId, groupId);
+  }
+
+  @Delete('/:groupId')
+  @UseGuards(AuthGuard('jwt'))
+  async deletedGroup(@Req() req, @Param('groupId') groupId: number) {
+    const userId: number = req.user.id;
+    await this.groupService.deletedGroup(userId, groupId);
   }
 }
