@@ -28,8 +28,6 @@ export class GroupController {
   @UseGuards(AuthGuard('jwt'))
   async modifyGruop(@Req() req, @Body() data: ModifyGroupDto, @Param('groupId') groupId : number) {
     const userId: number = req.user.id;
-    console.log(typeof(groupId))
-    console.log(data)
     this.groupService.modifyGruop(data, userId, groupId)
   }
 }
