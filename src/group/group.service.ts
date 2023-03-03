@@ -36,14 +36,6 @@ export class GroupService {
       userId,
       role: '그룹장',
     });
-
-    // 아래와 같은 방법으로 입력받은 태그를 테이블에 중복 없이 넣어줄 수 있음 하지만 pk를 가진 id가 넣어주지 않을때에도 계속 증가됨
-    // 효율적인 면에서 DB를 계속 찾아봐야하는 위의 방법보다 좋다고 생각함
-    // for (const tag of data.tag) {
-    //   try {
-    //     await this.tagRepository.insert({ tagName: tag });
-    //   } catch {}
-    // }
   }
 
   async getAllGroup(userId: number) {
@@ -75,30 +67,59 @@ export class GroupService {
       user: { id: userId },
     });
     if (!findGroup) {
-      throw new ForbiddenException('권한이 존재하지 않습니다.')
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
     await this.groupRepository.update(groupId, data);
   }
 
-  async tagCheck(tags: string[], groupId: number) {
-    if(!tags.length){
-      return
-    }
-    tags.forEach(async (tag) => {
-      const findTag = await this.tagRepository.findOneBy({ tagName: tag });
-      if (!findTag) {
-        const createTag = await this.tagRepository.create({ tagName: tag });
-        await this.tagRepository.save(createTag);
-        await this.tagGroupRepository.insert({
-          tagId: createTag.id,
-          groupId,
-        });
-      } else {
-        await this.tagGroupRepository.insert({
-          tagId: findTag.id,
-          groupId,
-        });
-      }
+  async deletedGroup(userId, groupId) {
+    const deletedGroup = await this.groupRepository.softDelete({
+      id: groupId,
+      user: { id: userId },
     });
+    if (deletedGroup.affected === 0) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
+    }
+  }
+
+  async tagCheck(tags: string[], groupId: number) {
+    if (!tags.length) {
+      return;
+    }
+
+    const existTags = await this.tagRepository
+      .createQueryBuilder('tag')
+      .where('tag.tagName IN (:...tags)', { tags })
+      .getMany();
+
+    const existTagNames = existTags.map((tag) => tag.tagName);
+    const newTags = tags.filter((tag) => !existTagNames.includes(tag));
+    
+    if (newTags.length !== 0) {
+      const createdTags = await this.tagRepository
+        .createQueryBuilder()
+        .insert()
+        .into(Tag)
+        .values(newTags.map((tag) => ({ tagName: tag })))
+        .execute();
+
+      await this.tagGroupRepository
+        .createQueryBuilder()
+        .insert()
+        .into(TagGroup)
+        .values(
+          createdTags.identifiers.map((tag) => ({ tagId: tag.id, groupId })),
+        )
+        .execute();
+    }
+
+    if (existTags.length !== 0) {
+      await this.tagGroupRepository
+        .createQueryBuilder()
+        .insert()
+        .into(TagGroup)
+        .values(existTags.map((tag) => ({ tagId: tag.id, groupId })))
+        .execute();
+    }
   }
 }
