@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 import { NewsfeedService } from './newsfeed.service';
@@ -17,5 +17,13 @@ export class NewsfeedController {
     @Get('newsfeed/:id')
     async readnewsfeed(@Param('id') userId:number) {
         return await this.newsfeedService.readnewsfeed(userId)
+    }
+
+    // 뉴스피드 삭제
+    @Delete('newsfeed/:newsfeedid')
+    async deletenewsfeed(
+        @Param('newsfeedid')newsfeedid:number
+    ) {
+        return await this.newsfeedService.deletenewsfeed(newsfeedid)
     }
 }
