@@ -41,4 +41,11 @@ export class GroupController {
     const userId: number = req.user.id;
     await this.groupService.deletedGroup(userId, groupId);
   }
+
+  @Post('/join/:groupId')
+  @UseGuards(AuthGuard('jwt'))
+  async joinGroup(@Req() req, @Param('groupId') groupId: number) {
+    const userId: number = req.user.id;
+    return await this.groupService.joinGroup(userId, groupId);
+  }
 }

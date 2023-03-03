@@ -41,9 +41,10 @@ export class GroupService {
   async getAllGroup(userId: number) {
     const groupList = await this.groupRepository.find({
       select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
-      relations: ['tagGroups.tag'],
-      where: { userGroups: { userId: Not(userId) } }, // 가입한 그룹은 보여주지 않기 위해서 추가
+      relations: ['tagGroups.tag', 'userGroups'],
+      where: { userGroups: { userId: Not(userId) } },
     });
+
     const modifiedGroupList = groupList.map((group) => {
       const TagGroups = [];
       group.tagGroups.forEach((tag) => {
@@ -51,9 +52,9 @@ export class GroupService {
       });
 
       return {
-        id: 1,
-        groupName: group.id,
-        groupImage: group.groupName,
+        id: group.id,
+        groupName: group.groupName,
+        groupImage: group.groupImage,
         backgroundImage: group.backgroundImage,
         tagGroups: TagGroups,
       };
@@ -72,13 +73,27 @@ export class GroupService {
     await this.groupRepository.update(groupId, data);
   }
 
-  async deletedGroup(userId, groupId) {
+  async deletedGroup(userId: number, groupId: number) {
     const deletedGroup = await this.groupRepository.softDelete({
       id: groupId,
       user: { id: userId },
     });
     if (deletedGroup.affected === 0) {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
+    }
+  }
+
+  async joinGroup(userId: number, groupId: number) {
+    const joinedGroupStatus = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId,
+    });
+    if (!joinedGroupStatus) {
+      await this.userGroupRepository.insert({
+        userId,
+        groupId,
+        role: '가입대기',
+      });
     }
   }
 
@@ -94,7 +109,7 @@ export class GroupService {
 
     const existTagNames = existTags.map((tag) => tag.tagName);
     const newTags = tags.filter((tag) => !existTagNames.includes(tag));
-    
+
     if (newTags.length !== 0) {
       const createdTags = await this.tagRepository
         .createQueryBuilder()
