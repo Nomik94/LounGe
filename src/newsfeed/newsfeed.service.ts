@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Connection from 'mysql2/typings/mysql/lib/Connection';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
@@ -75,29 +75,38 @@ export class NewsfeedService {
         return
         }
 
-        async readnewsfeed(userId) {
+    async readnewsfeed(userId:number) {
 
-            const a = await this.newsfeedRepository.find({
-                relations: ['newsFeedTags.tag','newsImages','user'],
-                // select: ['id','content','createdAt','updatedAt','user','user.username'],
-                select: ['id','content','createdAt','updatedAt'],
-                where:{'user' : {id:userId}}
-              });
-              
-            return a
+        const a = await this.newsfeedRepository.find({
+            relations: ['newsFeedTags.tag','newsImages','user'],
+            select: ['id','content','createdAt','updatedAt'],
+            where:{'user' : {id:userId},'deletedAt': null}
+            });
+            const userName = a[0].user.username;
+            const userImage = a[0].user.image;
+            const userEmail = a[0].user.email;
+            const tagsname = a[0].newsFeedTags.map(tag => tag.tag.tagName)
+            const newsfeedimage = a[0].newsImages.map(image => image.image)
+
+        return a
+    }
+
+    async deletenewsfeed(id:number) {
+        try {
+            const checknewsfeed = await this.newsfeedRepository.findOne({
+                where: {id:id}
+            })
+            if (!checknewsfeed) {
+                throw new NotFoundException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
+            }
+
+            await this.newsfeedRepository.softDelete(id);
+
+        } catch (err){
+            console.log("알수 없는 에러가 발생했습니다.", err);
+            throw new Error(err)
         }
+
+    }
 }
 
-
-   
-// @EntityRepository(NewsFeed)
-// export class NewsfeedRepository extends Repository<NewsFeed> {}
-
-// @Injectable()
-// export class NewsfeedService {
-//     constructor(private readonly repository:NewsfeedRepository){}
-
-//     async postnewsfeed(content:string,userId:number,tag:string,image:string) {
-//         return {content,userId,tag,image}
-//     }
-// }
