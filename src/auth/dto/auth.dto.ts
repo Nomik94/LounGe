@@ -8,7 +8,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class AuthDto {
+export class AuthDTO {
   @IsNotEmpty()
   @IsEmail()
   email: string;
@@ -28,4 +28,6 @@ export class AuthDto {
   username: string;
 }
 
-export class LogInBodyDTO extends PickType(AuthDto, ['email', 'password']) {}
+export class LogInBodyDTO extends PickType(AuthDTO, ['email', 'password']) {}
+
+export class KakaoLoginDTO extends PickType(AuthDTO, ['email', 'username']) {}
