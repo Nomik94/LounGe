@@ -75,14 +75,25 @@ export class GroupService {
       user: { id: userId },
     });
     if (!findGroup) {
-      throw new ForbiddenException('권한이 존재하지 않습니다.')
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
     await this.groupRepository.update(groupId, data);
   }
 
+  async deletedGroup(userId, groupId) {
+    const deletedGroup = await this.groupRepository.softDelete({
+      id: groupId,
+      user: { id: userId },
+    });
+    if (deletedGroup.affected === 0) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
+    }
+  }
+
+  // 위의 1번 방법에서 반복되는 쿼리를 최대한 줄여보기 (bulk insert, in clause) 활용하기
   async tagCheck(tags: string[], groupId: number) {
-    if(!tags.length){
-      return
+    if (!tags.length) {
+      return;
     }
     tags.forEach(async (tag) => {
       const findTag = await this.tagRepository.findOneBy({ tagName: tag });
