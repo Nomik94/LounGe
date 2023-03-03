@@ -8,6 +8,7 @@ import { GroupModule } from './group/group.module';
 import { AuthModule } from './auth/auth.module';
 import { NewsfeedModule } from './newsfeed/newsfeed.module';
 import { EmailModule } from './email/email.module';
+import { CalendarModule } from './calendar/calendar.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { EmailModule } from './email/email.module';
     AuthModule,
     NewsfeedModule,
     EmailModule,
+    CalendarModule,
   ],
   controllers: [AppController],
   providers: [AppService],
