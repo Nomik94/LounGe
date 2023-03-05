@@ -1,10 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Group } from 'src/database/entities/group.entity';
 import { TagGroup } from 'src/database/entities/tag-group.entity';
 import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
 import { Not, Repository } from 'typeorm';
+import { AcceptGroupJoinDto } from './dto/accept.group.join.dto';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 
@@ -95,6 +96,29 @@ export class GroupService {
         role: '가입대기',
       });
     }
+  }
+
+  async acceptGroupJoin(userId: number, data) {
+    const adminCheckResult = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId: Number(data.groupId),
+      role: '그룹장',
+    });
+    if (!adminCheckResult) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
+    }
+    const joinRequest = await this.userGroupRepository.findOneBy({
+      userId: Number(data.memberId),
+      groupId: Number(data.groupId),
+    });
+
+    if(joinRequest.role !== "가입대기") {
+      throw new BadRequestException('가입대기 상태만 수락할 수 있습니다.')
+    }
+    await this.userGroupRepository.update(
+      { userId: Number(data.memberId), groupId: Number(data.groupId) },
+      { role: '회원' },
+    );
   }
 
   async tagCheck(tags: string[], groupId: number) {
