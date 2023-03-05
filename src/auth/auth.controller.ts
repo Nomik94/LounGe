@@ -1,37 +1,30 @@
-import { Put, Query } from '@nestjs/common';
-import { Body, Controller, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Get, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { AuthService } from './auth.service';
-import { AuthDto, LogInBodyDTO } from './dto/auth.dto';
+import { AuthDTO, KakaoLoginDTO, LogInBodyDTO } from './dto/auth.dto';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  register(@Body() authDto: AuthDto): Promise<void> {
-    return this.authService.register(authDto);
+  register(@GetUser() authDTO: AuthDTO): Promise<void> {
+    return this.authService.register(authDTO);
   }
 
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Body() body: LogInBodyDTO, @Res() res: Response): Promise<void> {
+  async login(@Body() body: LogInBodyDTO) {
     const { email, password } = body;
 
-    const jwt = await this.authService.login({ email, password });
-    res.setHeader('Authorization', `Bearer ${jwt.accessToken}`);
-    res.cookie('accessToken', jwt.accessToken, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 1000,
+    const { accessToken, refreshToken } = await this.authService.login({
+      email,
+      password,
     });
-    res.json({ message: 'success' });
-  }
-
-  @Post('logout')
-  logout(@Res() res: Response): void {
-    res.cookie('accessToken', '', {
-      maxAge: 0,
-    });
-    res.json({ message: 'success' });
+    return { accessToken, refreshToken };
   }
 
   @Post('emailVerify')
@@ -45,5 +38,15 @@ export class AuthController {
 
     await this.authService.verifyEmail(body.email, parseInt(verifyToken));
     return { message: '인증이 완료되었습니다.' };
+  }
+
+  @UseGuards(AuthGuard('kakao'))
+  @Get('login/kakao')
+  async kakaoLogin(@GetUser() user: KakaoLoginDTO) {
+    const { accessToken, refreshToken } = await this.authService.kakaoLogin(
+      user,
+    );
+
+    return { accessToken, refreshToken };
   }
 }

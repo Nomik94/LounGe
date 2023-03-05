@@ -11,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { AuthDto } from './dto/auth.dto';
+import { AuthDTO } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
@@ -30,8 +30,8 @@ export class AuthService {
     private readonly emailService: EmailService,
   ) {}
 
-  async register(authDto: AuthDto): Promise<void> {
-    const { email, username, password } = authDto;
+  async register(authDTO: AuthDTO): Promise<void> {
+    const { email, username, password } = authDTO;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await this.userRepository.findOne({ where: { email } });
@@ -45,30 +45,61 @@ export class AuthService {
     });
   }
 
-  async login({ email, password }): Promise<{ accessToken: string }> {
+  async login({ email, password }) {
     const user = await this.userRepository.findOne({ where: { email } });
+
     const isRegister = await bcrypt.compare(password, user.password);
+
     if (!user || !isRegister) {
       throw new UnprocessableEntityException(
         '이메일 또는 패스워드가 일치하지 않습니다.',
       );
     }
 
-    const accessToken = this.jwtService.sign(
-      {
-        email: user.email,
-        sub: user.id,
-      },
-      {
-        secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-        expiresIn: '1h',
-      },
-    );
-    return { accessToken };
+    const userEmail = user.email;
+    const userId = user.id;
+
+    const { accessToken, refreshToken } = await this.getTokens({
+      userEmail,
+      userId,
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  async getTokens({ userEmail, userId }) {
+    const payload = {
+      sub: userId,
+      email: userEmail,
+    };
+
+    const accessToken = await this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+      expiresIn: '1h',
+    });
+
+    const refreshToken = await this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: '1w',
+    });
+
+    return { accessToken, refreshToken };
   }
 
   async getByEmail(email: string): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { email } });
+    return await this.userRepository.findOne({ where: { email } });
+  }
+
+  async validateUser({ email, password }) {
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    const isRegister = await bcrypt.compare(password, user.password);
+
+    if (user && isRegister) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
   }
 
   async sendVerification(email: string): Promise<void> {
@@ -93,5 +124,33 @@ export class AuthService {
     const min = 100000;
     const max = 999999;
     return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  async kakaoLogin(user) {
+    const email = user.email;
+    const nickname = user.username;
+
+    const existUser = await this.getByEmail(email);
+    if (!existUser) {
+      const newUser = await this.userRepository.save({
+        username: nickname,
+        email: email,
+      });
+      const userEmail = newUser.email;
+      const userId = newUser.id;
+      const { accessToken, refreshToken } = await this.getTokens({
+        userEmail,
+        userId,
+      });
+      return { accessToken, refreshToken };
+    }
+    const userEmail = user.email;
+    const userId = user.id;
+    const { accessToken, refreshToken } = await this.getTokens({
+      userEmail,
+      userId,
+    });
+
+    return { accessToken, refreshToken };
   }
 }

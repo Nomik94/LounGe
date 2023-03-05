@@ -1,6 +1,6 @@
-import { IsNumber, IsString, IsArray, IsOptional } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class newsfeedCheckDto {
+export class modiNewsfeedCheckDto {
     @IsString()
     content:string;
 
@@ -13,6 +13,6 @@ export class newsfeedCheckDto {
 
     @IsOptional()
     @IsArray()
-    image:string;
+    image:Array<string> | null | string;
 
 }

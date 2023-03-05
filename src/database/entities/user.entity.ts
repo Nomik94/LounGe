@@ -22,13 +22,13 @@ export class User extends BaseEntity {
   @Column()
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
 
   @Column()
   username: string;
 
-  @Column({ default: '1' })
+  @Column({ default: '1' }) // 임시 default
   image: string;
 
   @CreateDateColumn()
