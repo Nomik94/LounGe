@@ -178,5 +178,53 @@ export class NewsfeedService {
             throw new Error(err)
         }
     }
+
+    async serchtagnewsfeed(tagId:number) {
+
+        const serchtag = await this.newsfeedTagRepository.find({
+            where: {tagId:tagId},
+            select: ['newsFeedId']
+        })
+
+        const serchnewsfeed = serchtag.map(tag => tag.newsFeedId)
+
+        const wherenewsfeedid = serchnewsfeed.map(id => ({id}))
+
+        const findnewsfeed = await this.newsfeedRepository.find({
+            relations: ['newsFeedTags.tag','newsImages','user'],
+            where: wherenewsfeedid
+        })
+
+        const result = [];
+
+        for (const id of serchnewsfeed) {
+            const feed = findnewsfeed.find(item => item.id ===id);
+            if (feed) {
+                const obj = {
+                    newsfeedid: feed.id,
+                    newsfeedcontent: feed.content,
+                    newsfeedcreateat: feed.createdAt,
+                    newsfeedupdateat: feed.updatedAt,
+                    username: feed.user.username,
+                    userimage: feed.user.image,
+                    tagname: feed.newsFeedTags.map(tag => tag.tag.tagName),
+                    newsfeedimage : feed.newsImages.map(image => image.image)
+                }
+                result.push(obj)
+            }
+        }
+        // for (const i of serchnewsfeed) {
+        //     const newsfeedid = findnewsfeed[i].id
+        //     const newsfeedcontent = findnewsfeed[i].content
+        //     const newsfeedcreateat = findnewsfeed[i].createdAt
+        //     const newsfeedupdateat = findnewsfeed[i].updatedAt
+        //     const username = findnewsfeed[i].user.username
+        //     const userImage = findnewsfeed[i].user.image
+        //     const tagname = findnewsfeed[i].newsFeedTags.map(tag => tag.tag.tagName)
+        //     const newfeedimage = findnewsfeed[i].newsImages.map(image => image.image)
+        // }
+
+        return result
+    }
 }
 
