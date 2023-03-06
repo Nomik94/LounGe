@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { connect } from 'http2';
 import Connection from 'mysql2/typings/mysql/lib/Connection';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
@@ -7,9 +8,10 @@ import { NewsFeedImage } from 'src/database/entities/newsFeedImage.entity';
 import { Tag } from 'src/database/entities/tag.entity';
 import { User } from 'src/database/entities/user.entity';
 // import { EntityRepository, Repository } from 'typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
+import { serchtagnewsfeedCheckDto } from './dto/serchtagnewsfeed.dto';
 
 @Injectable()
 export class NewsfeedService {
@@ -200,25 +202,34 @@ export class NewsfeedService {
         }
     }
 
-    async serchtagnewsfeed(tagId:number) {
+    async serchtagnewsfeed(data:serchtagnewsfeedCheckDto){
+        const tag = data.tag
 
-        const serchtag = await this.newsfeedTagRepository.find({
-            where: {tagId:tagId},
-            select: ['newsFeedId']
+        const serchtag = await this.tagRepository.find({
+            where: { tagName: Like(`%${tag}%`) },
+            select: ['id']
         })
 
-        const serchnewsfeed = serchtag.map(tag => tag.newsFeedId)
+        const serchnewsfeed = serchtag.map(tag => tag.id)
 
-        const wherenewsfeedid = serchnewsfeed.map(id => ({id}))
+        const wherenewsfeedid = serchnewsfeed.map(tagId => ({tagId}))
+
+        const newsfeedTag = await this.newsfeedTagRepository.find({
+            where: wherenewsfeedid,
+            select: ['newsFeedId']
+        })
+        
+        const newsfeedserchid = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
+
+        const numberingid = newsfeedserchid.map(id => ({id}))
 
         const findnewsfeed = await this.newsfeedRepository.find({
             relations: ['newsFeedTags.tag','newsImages','user'],
-            where: wherenewsfeedid
+            where: numberingid
         })
-
+        
         const result = [];
-
-        for (const id of serchnewsfeed) {
+        for (const id of newsfeedserchid) {
             const feed = findnewsfeed.find(item => item.id ===id);
             if (feed) {
                 const obj = {
@@ -234,16 +245,6 @@ export class NewsfeedService {
                 result.push(obj)
             }
         }
-        // for (const i of serchnewsfeed) {
-        //     const newsfeedid = findnewsfeed[i].id
-        //     const newsfeedcontent = findnewsfeed[i].content
-        //     const newsfeedcreateat = findnewsfeed[i].createdAt
-        //     const newsfeedupdateat = findnewsfeed[i].updatedAt
-        //     const username = findnewsfeed[i].user.username
-        //     const userImage = findnewsfeed[i].user.image
-        //     const tagname = findnewsfeed[i].newsFeedTags.map(tag => tag.tag.tagName)
-        //     const newfeedimage = findnewsfeed[i].newsImages.map(image => image.image)
-        // }
 
         return result
     }
