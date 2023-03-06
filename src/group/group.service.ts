@@ -107,12 +107,12 @@ export class GroupService {
     if (!adminCheckResult) {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
-    const joinRequest = await this.userGroupRepository.findOneBy({
+    const joinGroupMember = await this.userGroupRepository.findOneBy({
       userId: Number(data.memberId),
       groupId: Number(data.groupId),
     });
 
-    if(joinRequest.role !== "가입대기") {
+    if(joinGroupMember.role !== "가입대기") {
       throw new BadRequestException('가입대기 상태만 수락할 수 있습니다.')
     }
     await this.userGroupRepository.update(
