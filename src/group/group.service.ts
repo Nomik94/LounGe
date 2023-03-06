@@ -49,21 +49,8 @@ export class GroupService {
       where: { userGroups: { userId: Not(userId) } },
     });
 
-    const modifiedGroupList = groupList.map((group) => {
-      const TagGroups = [];
-      group.tagGroups.forEach((tag) => {
-        TagGroups.push(tag.tag.tagName);
-      });
-
-      return {
-        id: group.id,
-        groupName: group.groupName,
-        groupImage: group.groupImage,
-        backgroundImage: group.backgroundImage,
-        tagGroups: TagGroups,
-      };
-    });
-    return modifiedGroupList;
+    const resultGroupList = this.tagMappingGroups(groupList);
+    return resultGroupList;
   }
 
   async modifyGruop(data: ModifyGroupDto, userId: number, groupId: number) {
@@ -130,6 +117,9 @@ export class GroupService {
       select: ['id'],
     });
 
+    if (findTag.length === 0) {
+      throw new BadRequestException('존재하지 않는 태그입니다.');
+    }
     const tagIds = await findTag.map((tag) => ({ tagId: tag.id }));
 
     const findGroupIds = await this.tagGroupRepository.find({
@@ -144,7 +134,27 @@ export class GroupService {
       where: groupIds,
     });
 
-    return findGroups;
+    const resultGroupList = this.tagMappingGroups(findGroups);
+
+    return resultGroupList;
+  }
+
+  async tagMappingGroups(groupList) {
+    const modifiedGroupList = groupList.map((group) => {
+      const TagGroups = [];
+      group.tagGroups.forEach((tag) => {
+        TagGroups.push(tag.tag.tagName);
+      });
+
+      return {
+        id: group.id,
+        groupName: group.groupName,
+        groupImage: group.groupImage,
+        backgroundImage: group.backgroundImage,
+        tagGroups: TagGroups,
+      };
+    });
+    return modifiedGroupList;
   }
 
   async tagCheck(tags: string[], groupId: number) {
