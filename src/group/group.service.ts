@@ -139,6 +139,26 @@ export class GroupService {
     return resultGroupList;
   }
 
+  async withdrawalGroup(userId, groupId) {
+    const findUser = await this.userGroupRepository.findOne({
+      where: { userId, groupId },
+    });
+    if (!findUser) {
+      throw new BadRequestException(
+        '존재하지 않는 그룹이거나 가입되어 있지 않습니다.',
+      );
+    }
+
+    if (findUser.role === '그룹장') {
+      throw new BadRequestException('그룹장을 양도해주세요 ㅠㅠ');
+    }
+
+    await this.userGroupRepository.delete({
+      userId,
+      groupId,
+    });
+  }
+
   async tagMappingGroups(groupList) {
     const modifiedGroupList = groupList.map((group) => {
       const TagGroups = [];

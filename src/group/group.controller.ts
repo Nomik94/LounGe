@@ -63,4 +63,11 @@ export class GroupController {
   async findGroupsByTag(@GetUser() user, @Body('tag') tag: FindGroupTagDto) {
     return await this.groupService.findGroupsByTag(tag);
   }
+
+  @Delete('/withdraw/:groupId')
+  // @UseGuards(JwtAuthGuard)
+  async withdrawalGroup(@GetUser() user, @Param('groupId') groupId: number) {
+    const userId: number = user.id;
+    await this.groupService.withdrawalGroup(userId, groupId);
+  }
 }
