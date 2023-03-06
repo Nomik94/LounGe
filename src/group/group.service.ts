@@ -8,7 +8,7 @@ import { Group } from 'src/database/entities/group.entity';
 import { TagGroup } from 'src/database/entities/tag-group.entity';
 import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
-import { Not, Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 
@@ -125,22 +125,24 @@ export class GroupService {
   }
 
   async findGroupsByTag(tag) {
-    const findTag = await this.tagRepository
-      .createQueryBuilder()
-      .where('tag.tagName LIKE :tag', { tag: `%${tag}%` })
-      .getMany();
-    const tagIds = await findTag.map((tag) => tag.id);
+    const findTag = await this.tagRepository.find({
+      where: { tagName: Like(`%${tag}%`) },
+      select: ['id'],
+    });
 
-    const findGroupIds = await this.tagGroupRepository
-      .createQueryBuilder()
-      .where('tagId IN (:...tagIds)', { tagIds })
-      .getMany();
+    const tagIds = await findTag.map((tag) => ({ tagId: tag.id }));
 
-    const groupIds = findGroupIds.map((tagGroup) => tagGroup.groupId)
-    const findGroups = await this.groupRepository
-      .createQueryBuilder()
-      .where('group.id IN (:...groupIds)', { groupIds })
-      .getMany();
+    const findGroupIds = await this.tagGroupRepository.find({
+      where: tagIds,
+    });
+
+    const groupIds = findGroupIds.map((tagGroup) => ({ id: tagGroup.groupId }));
+
+    const findGroups = await this.groupRepository.find({
+      select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
+      relations: ['tagGroups.tag'],
+      where: groupIds,
+    });
 
     return findGroups;
   }
