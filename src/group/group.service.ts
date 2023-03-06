@@ -1,10 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Group } from 'src/database/entities/group.entity';
 import { TagGroup } from 'src/database/entities/tag-group.entity';
 import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
 import { Not, Repository } from 'typeorm';
+import { AcceptGroupJoinDto } from './dto/accept.group.join.dto';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 
@@ -41,9 +42,10 @@ export class GroupService {
   async getAllGroup(userId: number) {
     const groupList = await this.groupRepository.find({
       select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
-      relations: ['tagGroups.tag'],
-      where: { userGroups: { userId: Not(userId) } }, // 가입한 그룹은 보여주지 않기 위해서 추가
+      relations: ['tagGroups.tag', 'userGroups'],
+      where: { userGroups: { userId: Not(userId) } },
     });
+
     const modifiedGroupList = groupList.map((group) => {
       const TagGroups = [];
       group.tagGroups.forEach((tag) => {
@@ -51,9 +53,9 @@ export class GroupService {
       });
 
       return {
-        id: 1,
-        groupName: group.id,
-        groupImage: group.groupName,
+        id: group.id,
+        groupName: group.groupName,
+        groupImage: group.groupImage,
         backgroundImage: group.backgroundImage,
         tagGroups: TagGroups,
       };
@@ -72,7 +74,7 @@ export class GroupService {
     await this.groupRepository.update(groupId, data);
   }
 
-  async deletedGroup(userId, groupId) {
+  async deletedGroup(userId: number, groupId: number) {
     const deletedGroup = await this.groupRepository.softDelete({
       id: groupId,
       user: { id: userId },
@@ -80,6 +82,43 @@ export class GroupService {
     if (deletedGroup.affected === 0) {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
+  }
+
+  async sendGroupJoin(userId: number, groupId: number) {
+    const joinedGroupStatus = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId,
+    });
+    if (!joinedGroupStatus) {
+      await this.userGroupRepository.insert({
+        userId,
+        groupId,
+        role: '가입대기',
+      });
+    }
+  }
+
+  async acceptGroupJoin(userId: number, data) {
+    const adminCheckResult = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId: Number(data.groupId),
+      role: '그룹장',
+    });
+    if (!adminCheckResult) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
+    }
+    const joinGroupMember = await this.userGroupRepository.findOneBy({
+      userId: Number(data.memberId),
+      groupId: Number(data.groupId),
+    });
+
+    if(joinGroupMember.role !== "가입대기") {
+      throw new BadRequestException('가입대기 상태만 수락할 수 있습니다.')
+    }
+    await this.userGroupRepository.update(
+      { userId: Number(data.memberId), groupId: Number(data.groupId) },
+      { role: '회원' },
+    );
   }
 
   async tagCheck(tags: string[], groupId: number) {
@@ -94,7 +133,7 @@ export class GroupService {
 
     const existTagNames = existTags.map((tag) => tag.tagName);
     const newTags = tags.filter((tag) => !existTagNames.includes(tag));
-    
+
     if (newTags.length !== 0) {
       const createdTags = await this.tagRepository
         .createQueryBuilder()
