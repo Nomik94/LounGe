@@ -210,9 +210,10 @@ export class NewsfeedService {
             select: ['id']
         })
 
-        const serchnewsfeed = serchtag.map(tag => tag.id)
+        // const serchnewsfeed = serchtag.map(tag => tag.id)
+        // const wherenewsfeedid = serchnewsfeed.map(tagId => ({tagId}))
 
-        const wherenewsfeedid = serchnewsfeed.map(tagId => ({tagId}))
+        const wherenewsfeedid = serchtag.map((tag) => ({ tagId : tag.id }))
 
         const newsfeedTag = await this.newsfeedTagRepository.find({
             where: wherenewsfeedid,
@@ -227,7 +228,7 @@ export class NewsfeedService {
             relations: ['newsFeedTags.tag','newsImages','user'],
             where: numberingid
         })
-        
+              
         const result = [];
         for (const id of newsfeedserchid) {
             const feed = findnewsfeed.find(item => item.id ===id);
