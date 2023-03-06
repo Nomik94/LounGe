@@ -7,11 +7,11 @@ export class CreateEventDto {
   @IsString()
   readonly eventContent: string;
 
-  @IsDate()
-  readonly start: Date;
+  // @IsDate()
+  // readonly start: Date;
 
-  @IsDate()
-  readonly end: Date;
+  // @IsDate()
+  // readonly end: Date;
 
   @IsNumber()
   readonly groupId: number;

@@ -24,8 +24,8 @@ export class CalendarController {
     return this.calendarService.createEvent(
       data.eventName,
       data.eventContent,
-      data.start,
-      data.end,
+      // data.start,
+      // data.end,
       data.groupId,
     );
   }
@@ -39,8 +39,8 @@ export class CalendarController {
       eventId,
       data.eventName,
       data.eventContent,
-      data.start,
-      data.end,
+      // data.start,
+      // data.end,
       data.groupId,
       );
   }
