@@ -15,7 +15,6 @@ import { AuthDTO } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
-import { EmailService } from 'src/email/email.service';
 import _ from 'lodash';
 
 @Injectable()
@@ -27,7 +26,6 @@ export class AuthService {
     private readonly configService: ConfigService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
-    private readonly emailService: EmailService,
   ) {}
 
   async register(authDTO: AuthDTO): Promise<void> {
@@ -118,30 +116,6 @@ export class AuthService {
       return result;
     }
     return null;
-  }
-
-  async sendVerification(email: string): Promise<void> {
-    const verifyToken = this.randomNumber();
-    await this.cacheManager.set(email, verifyToken, { ttl: 300 });
-    await this.emailService.sendVerifyToken(email, verifyToken);
-  }
-
-  async verifyEmail({ email, verifyToken }): Promise<void> {
-    const cacheVerifyToken = await this.cacheManager.get(email);
-
-    if (_.isNil(cacheVerifyToken)) {
-      throw new NotFoundException('해당 메일로 전송된 인증번호가 없습니다.');
-    } else if (cacheVerifyToken !== verifyToken) {
-      throw new UnauthorizedException('인증번호가 일치하지 않습니다.');
-    } else {
-      await this.cacheManager.del(email); // 인증이 완료되면 del을 통해 삭제
-    }
-  }
-
-  private randomNumber(): number {
-    const min = 100000;
-    const max = 999999;
-    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
   async kakaoLogin(user) {

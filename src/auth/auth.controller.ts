@@ -1,4 +1,4 @@
-import { Get, Put, Query, UseGuards } from '@nestjs/common';
+import { Get, UseGuards } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
@@ -15,8 +15,8 @@ export class AuthController {
     return this.authService.register(authDTO);
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   async login(@Body() body: LogInBodyDTO) {
     const { email, password } = body;
 
@@ -26,22 +26,8 @@ export class AuthController {
     });
   }
 
-  @Post('emailVerify')
-  async sendVerifyEmail(@Body() body): Promise<void> {
-    return await this.authService.sendVerification(body.email);
-  }
-
-  @Put('emailVerify')
-  async verifyEmail(@Body() body, @Query() query) {
-    const verifyToken = parseInt(query.verifyToken);
-    const email = body.email;
-
-    await this.authService.verifyEmail({ email, verifyToken });
-    return { message: '인증이 완료되었습니다.' };
-  }
-
-  @UseGuards(AuthGuard('kakao'))
   @Get('login/kakao')
+  @UseGuards(AuthGuard('kakao'))
   async kakaoLogin(@GetUser() user: KakaoLoginDTO) {
     return await this.authService.kakaoLogin(user);
   }
