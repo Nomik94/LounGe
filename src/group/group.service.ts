@@ -129,12 +129,19 @@ export class GroupService {
       .createQueryBuilder()
       .where('tag.tagName LIKE :tag', { tag: `%${tag}%` })
       .getMany();
+    const tagIds = await findTag.map((tag) => tag.id);
 
-    const groupIds = await findTag.map((tag) => tag.id);
+    const findGroupIds = await this.tagGroupRepository
+      .createQueryBuilder()
+      .where('tagId IN (:...tagIds)', { tagIds })
+      .getMany();
+
+    const groupIds = findGroupIds.map((tagGroup) => tagGroup.groupId)
     const findGroups = await this.groupRepository
       .createQueryBuilder()
       .where('group.id IN (:...groupIds)', { groupIds })
       .getMany();
+
     return findGroups;
   }
 
