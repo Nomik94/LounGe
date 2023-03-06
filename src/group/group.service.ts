@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Group } from 'src/database/entities/group.entity';
 import { TagGroup } from 'src/database/entities/tag-group.entity';
 import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
 import { Not, Repository } from 'typeorm';
+import { AcceptGroupJoinDto } from './dto/accept.group.join.dto';
 import { CreateGroupDto } from './dto/create.group.dto';
+import { ModifyGroupDto } from './dto/modify.group.dto';
 
 @Injectable()
 export class GroupService {
@@ -20,7 +22,7 @@ export class GroupService {
     private readonly tagGroupRepository: Repository<TagGroup>,
   ) {}
 
-  async createGroup(data: CreateGroupDto, userId : number): Promise<void> {
+  async createGroup(data: CreateGroupDto, userId: number): Promise<void> {
     const group = await this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
@@ -29,44 +31,21 @@ export class GroupService {
       user: { id: userId }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
     });
     await this.groupRepository.save(group);
-
+    await this.tagCheck(data.tag, group.id);
     await this.userGroupRepository.insert({
       groupId: group.id,
-      userId: group.user.id,
-      role: "그룹장",
+      userId,
+      role: '그룹장',
     });
-    for (const tag of data.tag) {
-      const findTag = await this.tagRepository.findOneBy({ tagName: tag });
-      if (!findTag) {
-        const createTag = await this.tagRepository.create({ tagName: tag });
-        await this.tagRepository.save(createTag);
-        await this.tagGroupRepository.insert({
-          tagId: createTag.id,
-          groupId: group.id,
-        });
-      } else {
-        await this.tagGroupRepository.insert({
-          tagId: findTag.id,
-          groupId: group.id,
-        });
-      }
-    }
-
-    // 아래와 같은 방법으로 입력받은 태그를 테이블에 중복 없이 넣어줄 수 있음 하지만 pk를 가진 id가 넣어주지 않을때에도 계속 증가됨
-    // 효율적인 면에서 DB를 계속 찾아봐야하는 위의 방법보다 좋다고 생각함
-    // for (const tag of data.tag) {
-    //   try {
-    //     await this.tagRepository.insert({ tagName: tag });
-    //   } catch {}
-    // }
   }
 
-  async getAllGroup(userId) {
+  async getAllGroup(userId: number) {
     const groupList = await this.groupRepository.find({
       select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
-      relations: ['tagGroups.tag'],
-      where : {'userGroups' : {userId : Not(userId)}}, // 가입한 그룹은 보여주지 않기 위해서 추가
+      relations: ['tagGroups.tag', 'userGroups'],
+      where: { userGroups: { userId: Not(userId) } },
     });
+
     const modifiedGroupList = groupList.map((group) => {
       const TagGroups = [];
       group.tagGroups.forEach((tag) => {
@@ -74,13 +53,112 @@ export class GroupService {
       });
 
       return {
-        id: 1,
-        groupName: group.id,
-        groupImage: group.groupName,
+        id: group.id,
+        groupName: group.groupName,
+        groupImage: group.groupImage,
         backgroundImage: group.backgroundImage,
         tagGroups: TagGroups,
       };
     });
     return modifiedGroupList;
+  }
+
+  async modifyGruop(data: ModifyGroupDto, userId: number, groupId: number) {
+    const findGroup = await this.groupRepository.findOneBy({
+      id: groupId,
+      user: { id: userId },
+    });
+    if (!findGroup) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
+    }
+    await this.groupRepository.update(groupId, data);
+  }
+
+  async deletedGroup(userId: number, groupId: number) {
+    const deletedGroup = await this.groupRepository.softDelete({
+      id: groupId,
+      user: { id: userId },
+    });
+    if (deletedGroup.affected === 0) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
+    }
+  }
+
+  async sendGroupJoin(userId: number, groupId: number) {
+    const joinedGroupStatus = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId,
+    });
+    if (!joinedGroupStatus) {
+      await this.userGroupRepository.insert({
+        userId,
+        groupId,
+        role: '가입대기',
+      });
+    }
+  }
+
+  async acceptGroupJoin(userId: number, data) {
+    const adminCheckResult = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId: Number(data.groupId),
+      role: '그룹장',
+    });
+    if (!adminCheckResult) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
+    }
+    const joinGroupMember = await this.userGroupRepository.findOneBy({
+      userId: Number(data.memberId),
+      groupId: Number(data.groupId),
+    });
+
+    if(joinGroupMember.role !== "가입대기") {
+      throw new BadRequestException('가입대기 상태만 수락할 수 있습니다.')
+    }
+    await this.userGroupRepository.update(
+      { userId: Number(data.memberId), groupId: Number(data.groupId) },
+      { role: '회원' },
+    );
+  }
+
+  async tagCheck(tags: string[], groupId: number) {
+    if (!tags.length) {
+      return;
+    }
+
+    const existTags = await this.tagRepository
+      .createQueryBuilder('tag')
+      .where('tag.tagName IN (:...tags)', { tags })
+      .getMany();
+
+    const existTagNames = existTags.map((tag) => tag.tagName);
+    const newTags = tags.filter((tag) => !existTagNames.includes(tag));
+
+    if (newTags.length !== 0) {
+      const createdTags = await this.tagRepository
+        .createQueryBuilder()
+        .insert()
+        .into(Tag)
+        .values(newTags.map((tag) => ({ tagName: tag })))
+        .execute();
+
+      await this.tagGroupRepository
+        .createQueryBuilder()
+        .insert()
+        .into(TagGroup)
+        .values(
+          createdTags.identifiers.map((tag) => ({ tagId: tag.id, groupId })),
+        )
+        .execute();
+    }
+
+    if (existTags.length !== 0) {
+      await this.tagGroupRepository
+        .createQueryBuilder()
+        .insert()
+        .into(TagGroup)
+        .values(existTags.map((tag) => ({ tagId: tag.id, groupId })))
+        .execute();
+    }
   }
 }
