@@ -20,11 +20,10 @@ export class AuthController {
   async login(@Body() body: LogInBodyDTO) {
     const { email, password } = body;
 
-    const { accessToken, refreshToken } = await this.authService.login({
+    return await this.authService.login({
       email,
       password,
     });
-    return { accessToken, refreshToken };
   }
 
   @Post('emailVerify')
@@ -34,19 +33,27 @@ export class AuthController {
 
   @Put('emailVerify')
   async verifyEmail(@Body() body, @Query() query) {
-    const { verifyToken } = query;
+    const verifyToken = parseInt(query.verifyToken);
+    const email = body.email;
 
-    await this.authService.verifyEmail(body.email, parseInt(verifyToken));
+    await this.authService.verifyEmail({ email, verifyToken });
     return { message: '인증이 완료되었습니다.' };
   }
 
   @UseGuards(AuthGuard('kakao'))
   @Get('login/kakao')
   async kakaoLogin(@GetUser() user: KakaoLoginDTO) {
-    const { accessToken, refreshToken } = await this.authService.kakaoLogin(
-      user,
-    );
+    return await this.authService.kakaoLogin(user);
+  }
 
-    return { accessToken, refreshToken };
+  @Post('restoreAccessToken')
+  async restoreAccessToken(@Body() body) {
+    const accessToken = body.accessToken;
+    const refreshToken = body.refreshToken;
+
+    return await this.authService.restoreAccessToken({
+      accessToken,
+      refreshToken,
+    });
   }
 }
