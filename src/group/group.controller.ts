@@ -65,7 +65,7 @@ export class GroupController {
   }
 
   @Delete('/withdraw/:groupId')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async withdrawalGroup(@GetUser() user, @Param('groupId') groupId: number) {
     const userId: number = user.id;
     await this.groupService.withdrawalGroup(userId, groupId);
