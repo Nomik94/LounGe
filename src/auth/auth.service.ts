@@ -5,7 +5,6 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/user.entity';
@@ -43,65 +42,6 @@ export class AuthService {
     });
   }
 
-  async login({ email, password }) {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    const isRegister = await bcrypt.compare(password, user.password);
-
-    if (!user || !isRegister) {
-      throw new UnprocessableEntityException(
-        '이메일 또는 패스워드가 일치하지 않습니다.',
-      );
-    }
-
-    const userEmail = user.email;
-    const userId = user.id;
-
-    return await this.getTokens({
-      userEmail,
-      userId,
-    });
-  }
-
-  async getAccessToken({ userEmail, userId }) {
-    const payload = {
-      sub: userId,
-      email: userEmail,
-    };
-
-    const accessToken = await this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-      expiresIn: '1h',
-    });
-
-    return accessToken;
-  }
-
-  async getRefreshToken({ userEmail, userId }) {
-    const payload = {
-      sub: userId,
-      email: userEmail,
-    };
-    const refreshTokenExpiresIn = this.configService.get('REFRESH_EXPIRES_IN');
-
-    const refreshToken = await this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: refreshTokenExpiresIn,
-    });
-    await this.cacheManager.set(refreshToken, payload.email, {
-      ttl: refreshTokenExpiresIn,
-    });
-
-    return refreshToken;
-  }
-
-  async getTokens({ userEmail, userId }) {
-    const accessToken = await this.getAccessToken({ userEmail, userId });
-    const refreshToken = await this.getRefreshToken({ userEmail, userId });
-
-    return { accessToken, refreshToken };
-  }
-
   async getByEmail(email: string): Promise<User | undefined> {
     return await this.userRepository.findOne({ where: { email } });
   }
@@ -118,7 +58,44 @@ export class AuthService {
     return null;
   }
 
-  async kakaoLogin(user) {
+  async restoreAccessToken({ accessToken, refreshToken }) {
+    await this.jwtService.verifyAsync(accessToken, {
+      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+    });
+    const userEmail: string = await this.cacheManager.get(refreshToken);
+
+    if (_.isNil(userEmail)) {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.getByEmail(userEmail);
+    const userId = user.id;
+    if (_.isNil(user)) {
+      throw new NotFoundException();
+    }
+
+    const restoreAccessToken = await this.getAccessToken({ userEmail, userId });
+
+    return { accessToken: restoreAccessToken };
+  }
+
+  async login({ user }): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const userEmail = user.email;
+    const userId = user.id;
+
+    return await this.getTokens({
+      userEmail,
+      userId,
+    });
+  }
+
+  async kakaoLogin(user): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
     const email = user.email;
     const nickname = user.username;
 
@@ -143,24 +120,45 @@ export class AuthService {
     });
   }
 
-  async restoreAccessToken({ accessToken, refreshToken }) {
-    await this.jwtService.verifyAsync(accessToken, {
+  async getTokens({ userEmail, userId }): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const accessToken = await this.getAccessToken({ userEmail, userId });
+    const refreshToken = await this.getRefreshToken({ userEmail, userId });
+
+    return { accessToken, refreshToken };
+  }
+
+  async getAccessToken({ userEmail, userId }): Promise<string> {
+    const payload = {
+      sub: userId,
+      email: userEmail,
+    };
+
+    const accessToken = await this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+      expiresIn: '1h',
     });
-    const userEmail: string = await this.cacheManager.get(refreshToken);
 
-    if (_.isNil(userEmail)) {
-      throw new UnauthorizedException();
-    }
+    return accessToken;
+  }
 
-    const user = await this.getByEmail(userEmail);
-    const userId = user.id;
-    if (_.isNil(user)) {
-      throw new NotFoundException();
-    }
+  async getRefreshToken({ userEmail, userId }): Promise<string> {
+    const payload = {
+      sub: userId,
+      email: userEmail,
+    };
+    const refreshTokenExpiresIn = this.configService.get('REFRESH_EXPIRES_IN');
 
-    const restoreAccessToken = await this.getAccessToken({ userEmail, userId });
+    const refreshToken = await this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: refreshTokenExpiresIn,
+    });
+    await this.cacheManager.set(refreshToken, payload.email, {
+      ttl: refreshTokenExpiresIn,
+    });
 
-    return { accessToken: restoreAccessToken };
+    return refreshToken;
   }
 }
