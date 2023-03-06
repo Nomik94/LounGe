@@ -59,15 +59,13 @@ export class AuthService {
     const userEmail = user.email;
     const userId = user.id;
 
-    const { accessToken, refreshToken } = await this.getTokens({
+    return await this.getTokens({
       userEmail,
       userId,
     });
-
-    return { accessToken, refreshToken };
   }
 
-  async getTokens({ userEmail, userId }) {
+  async getAccessToken({ userEmail, userId }) {
     const payload = {
       sub: userId,
       email: userEmail,
@@ -78,10 +76,30 @@ export class AuthService {
       expiresIn: '1h',
     });
 
+    return accessToken;
+  }
+
+  async getRefreshToken({ userEmail, userId }) {
+    const payload = {
+      sub: userId,
+      email: userEmail,
+    };
+    const refreshTokenExpiresIn = this.configService.get('REFRESH_EXPIRES_IN');
+
     const refreshToken = await this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: '1w',
+      expiresIn: refreshTokenExpiresIn,
     });
+    await this.cacheManager.set(refreshToken, payload.email, {
+      ttl: refreshTokenExpiresIn,
+    });
+
+    return refreshToken;
+  }
+
+  async getTokens({ userEmail, userId }) {
+    const accessToken = await this.getAccessToken({ userEmail, userId });
+    const refreshToken = await this.getRefreshToken({ userEmail, userId });
 
     return { accessToken, refreshToken };
   }
@@ -104,11 +122,11 @@ export class AuthService {
 
   async sendVerification(email: string): Promise<void> {
     const verifyToken = this.randomNumber();
-    await this.cacheManager.set(email, verifyToken);
+    await this.cacheManager.set(email, verifyToken, { ttl: 300 });
     await this.emailService.sendVerifyToken(email, verifyToken);
   }
 
-  async verifyEmail(email: string, verifyToken: number): Promise<void> {
+  async verifyEmail({ email, verifyToken }): Promise<void> {
     const cacheVerifyToken = await this.cacheManager.get(email);
 
     if (_.isNil(cacheVerifyToken)) {
@@ -138,19 +156,37 @@ export class AuthService {
       });
       const userEmail = newUser.email;
       const userId = newUser.id;
-      const { accessToken, refreshToken } = await this.getTokens({
+      return await this.getTokens({
         userEmail,
         userId,
       });
-      return { accessToken, refreshToken };
     }
     const userEmail = user.email;
     const userId = user.id;
-    const { accessToken, refreshToken } = await this.getTokens({
+    return await this.getTokens({
       userEmail,
       userId,
     });
+  }
 
-    return { accessToken, refreshToken };
+  async restoreAccessToken({ accessToken, refreshToken }) {
+    await this.jwtService.verifyAsync(accessToken, {
+      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+    });
+    const userEmail: string = await this.cacheManager.get(refreshToken);
+
+    if (_.isNil(userEmail)) {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.getByEmail(userEmail);
+    const userId = user.id;
+    if (_.isNil(user)) {
+      throw new NotFoundException();
+    }
+
+    const restoreAccessToken = await this.getAccessToken({ userEmail, userId });
+
+    return { accessToken: restoreAccessToken };
   }
 }
