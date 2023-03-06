@@ -203,51 +203,58 @@ export class NewsfeedService {
     }
 
     async serchtagnewsfeed(data:serchtagnewsfeedCheckDto){
-        const tag = data.tag
 
-        const serchtag = await this.tagRepository.find({
-            where: { tagName: Like(`%${tag}%`) },
-            select: ['id']
-        })
+        try {
+            const tag = data.tag
 
-        // const serchnewsfeed = serchtag.map(tag => tag.id)
-        // const wherenewsfeedid = serchnewsfeed.map(tagId => ({tagId}))
-
-        const wherenewsfeedid = serchtag.map((tag) => ({ tagId : tag.id }))
-
-        const newsfeedTag = await this.newsfeedTagRepository.find({
-            where: wherenewsfeedid,
-            select: ['newsFeedId']
-        })
-        
-        const newsfeedserchid = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
-
-        const numberingid = newsfeedserchid.map(id => ({id}))
-
-        const findnewsfeed = await this.newsfeedRepository.find({
-            relations: ['newsFeedTags.tag','newsImages','user'],
-            where: numberingid
-        })
-              
-        const result = [];
-        for (const id of newsfeedserchid) {
-            const feed = findnewsfeed.find(item => item.id ===id);
-            if (feed) {
-                const obj = {
-                    newsfeedid: feed.id,
-                    newsfeedcontent: feed.content,
-                    newsfeedcreateat: feed.createdAt,
-                    newsfeedupdateat: feed.updatedAt,
-                    username: feed.user.username,
-                    userimage: feed.user.image,
-                    tagname: feed.newsFeedTags.map(tag => tag.tag.tagName),
-                    newsfeedimage : feed.newsImages.map(image => image.image)
+            const serchtag = await this.tagRepository.find({
+                where: { tagName: Like(`%${tag}%`) },
+                select: ['id']
+            })
+    
+            // const serchnewsfeed = serchtag.map(tag => tag.id)
+            // const wherenewsfeedid = serchnewsfeed.map(tagId => ({tagId}))
+    
+            const wherenewsfeedid = serchtag.map((tag) => ({ tagId : tag.id }))
+    
+            const newsfeedTag = await this.newsfeedTagRepository.find({
+                where: wherenewsfeedid,
+                select: ['newsFeedId']
+            })
+            
+            const newsfeedserchid = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
+    
+            const numberingid = newsfeedserchid.map(id => ({id}))
+    
+            const findnewsfeed = await this.newsfeedRepository.find({
+                relations: ['newsFeedTags.tag','newsImages','user'],
+                where: numberingid
+            })
+                  
+            const result = [];
+            for (const id of newsfeedserchid) {
+                const feed = findnewsfeed.find(item => item.id ===id);
+                if (feed) {
+                    const obj = {
+                        newsfeedid: feed.id,
+                        newsfeedcontent: feed.content,
+                        newsfeedcreateat: feed.createdAt,
+                        newsfeedupdateat: feed.updatedAt,
+                        username: feed.user.username,
+                        userimage: feed.user.image,
+                        tagname: feed.newsFeedTags.map(tag => tag.tag.tagName),
+                        newsfeedimage : feed.newsImages.map(image => image.image)
+                    }
+                    result.push(obj)
                 }
-                result.push(obj)
             }
+    
+            return result
+        } catch(err) {
+            console.log("알수 없는 에러가 발생했습니다.", err);
+            throw new Error(err)
         }
-
-        return result
+        
     }
 }
 
