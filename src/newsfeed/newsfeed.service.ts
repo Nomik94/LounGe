@@ -83,18 +83,39 @@ export class NewsfeedService {
 
     async readnewsfeed(userId:number) {
 
-        const a = await this.newsfeedRepository.find({
+        const newsfeeds = await this.newsfeedRepository.find({
             relations: ['newsFeedTags.tag','newsImages','user'],
             select: ['id','content','createdAt','updatedAt'],
             where:{'user' : {id:userId},'deletedAt': null}
             });
-            const userName = a[0].user.username;
-            const userImage = a[0].user.image;
-            const userEmail = a[0].user.email;
-            const tagsname = a[0].newsFeedTags.map(tag => tag.tag.tagName)
-            const newsfeedimage = a[0].newsImages.map(image => image.image)
 
-        return a
+            const result = newsfeeds.map(feed => {
+                const userName = feed.user.username;
+                const userImage = feed.user.image;
+                const userEmail = feed.user.email;
+                const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
+                const newsfeedImage = feed.newsImages.map(image => image.image);
+
+                return {
+                    id: feed.id,
+                    content: feed.content,
+                    createAt: feed.createdAt,
+                    updateAt: feed.updatedAt,
+                    userName: userName,
+                    userEmail: userEmail,
+                    userImage: userImage,
+                    tagsName: tagsName,
+                    newsfeedImage: newsfeedImage
+                }
+            })
+
+            // const userName = a[0].user.username;
+            // const userImage = a[0].user.image;
+            // const userEmail = a[0].user.email;
+            // const tagsname = a[0].newsFeedTags.map(tag => tag.tag.tagName)
+            // const newsfeedimage = a[0].newsImages.map(image => image.image)
+            
+        return result
     }
 
     async deletenewsfeed(id:number) {
