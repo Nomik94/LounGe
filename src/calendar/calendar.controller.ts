@@ -1,55 +1,104 @@
 import { Body,Controller,Delete,Get,Param,Post,Put } from '@nestjs/common';
 import { CalendarService } from './calendar.service';
-import { CreateEventDto } from './dto/create-event.dto';
-import { DeleteEventDto } from './dto/delete-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { CreateGroupEventDto } from './dto/create-groupEvent.dto';
+import { DeleteGroupEventDto } from './dto/delete-groupEvent.dto';
+import { UpdateGroupEventDto } from './dto/update-groupEvent.dto';
+import { CreateUserEventDto } from './dto/create-userEvent.dto';
+import { DeleteUserEventDto } from './dto/delete-userEvent.dto';
+import { UpdateUserEventDto } from './dto/update-userEvent.dto';
 
 
 @Controller('calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
-
-  @Get('/events')
-  getEvent() {
-    return this.calendarService.getEvent();
+// userEvents 
+  @Get('/uevents')
+  getUserEvent() {
+    return this.calendarService.getUserEvent();
   }
 
-  @Get('/events/:id')
-  getEventById(@Param('id') eventId: number) {
-    return this.calendarService.getEventById(eventId);
+  @Get('/uevents/:id')
+  getUserEventById(@Param('id') eventId: number) {
+    return this.calendarService.getUserEventById(eventId);
   }
 
-  @Post('/events')
-  createEvent(@Body() data: CreateEventDto) {
-    return this.calendarService.createEvent(
+  @Post('/uevents')
+  createUserEvent(@Body() data: CreateUserEventDto) {
+    return this.calendarService.createUserEvent(
       data.eventName,
       data.eventContent,
-      // data.start,
-      // data.end,
+      data.start,
+      data.end,
+      data.userId,
+    );
+  }
+
+  @Put('/uevents/:id')
+  updateUserEvent(
+    @Param('id') eventId: number,
+    @Body() data: UpdateUserEventDto,
+  ) {
+    return this.calendarService.updateUserEvent(
+      eventId,
+      data.eventName,
+      data.eventContent,
+      data.start,
+      data.end,
+      data.userId,
+      );
+  }
+
+  @Delete('/uevents/:id')
+  deleteUserEvent(
+    @Param('id') eventId: number,
+    @Body() data: DeleteUserEventDto,
+  ) {
+    return this.calendarService.deleteUserEvent(eventId,data.userId);
+  }
+
+
+// groupEvents
+  @Get('/gevents')
+  getGroupEvent() {
+    return this.calendarService.getGroupEvent();
+  }
+
+  @Get('/gevents/:id')
+  getGroupEventById(@Param('id') eventId: number) {
+    return this.calendarService.getGroupEventById(eventId);
+  }
+
+  @Post('/gevents')
+  createGroupEvent(@Body() data: CreateGroupEventDto) {
+    return this.calendarService.createGroupEvent(
+      data.eventName,
+      data.eventContent,
+      data.start,
+      data.end,
       data.groupId,
     );
   }
 
-  @Put('/events/:id')
-  updateEvent(
+  @Put('/gevents/:id')
+  updateGroupEvent(
     @Param('id') eventId: number,
-    @Body() data: UpdateEventDto,
+    @Body() data: UpdateGroupEventDto,
   ) {
-    return this.calendarService.updateEvent(
+    return this.calendarService.updateGroupEvent(
       eventId,
       data.eventName,
       data.eventContent,
-      // data.start,
-      // data.end,
+      data.start,
+      data.end,
       data.groupId,
       );
   }
 
-  @Delete('/events/:id')
-  deleteEvent(
+  @Delete('/gevents/:id')
+  deleteGroupEvent(
     @Param('id') eventId: number,
-    @Body() data: DeleteEventDto,
+    @Body() data: DeleteGroupEventDto,
   ) {
-    return this.calendarService.deleteEvent(eventId,data.groupId);
+    return this.calendarService.deleteGroupEvent(eventId,data.groupId);
   }
 }

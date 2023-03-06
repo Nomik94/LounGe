@@ -3,64 +3,126 @@ import { Injectable, NotFoundException, UnauthorizedException, } from '@nestjs/c
 
 @Injectable()
 export class CalendarService {
-
-  private events = [];
-  private eventsGroupId = new Map();
+  // userEvents
+  private userEvents = [];
+  private eventsUserId = new Map();
   
 
-  getEvent() {
-    return this.events;
+  getUserEvent() {
+    return this.userEvents;
   }
 
-  getEventById(eventId:number){
-    return this.events.find((events)=>{return events.id===eventId;})
+  getUserEventById(eventId:number){
+    return this.userEvents.find((events)=>{return events.id===eventId;})
   }
 
-  createEvent(
+  createUserEvent(
     eventName: string, 
     eventContent: string, 
-    // start:Date, 
-    // end:Date, 
-    groupId:number, ){
-      const eventId = this.events.length + 1;
-      this.events.push({id:eventId,eventName,
+    start:string, 
+    end:string, 
+    userId:number, ){
+      const eventId = this.userEvents.length + 1;
+      this.userEvents.push({id:eventId,eventName,
         eventContent, 
-        // start,
-        // end
+        start,
+        end
       })
-      this.eventsGroupId.set(eventId,groupId);
+      this.eventsUserId.set(eventId,userId);
       return eventId;
     }
 
-  updateEvent(
+  updateUserEvent(
     eventId: number,
     eventName: string, 
     eventContent: string, 
-    // start:Date, 
-    // end:Date, 
-    groupId:number,
+    start:string, 
+    end:string, 
+    userId:number,
     ){
-      if (this.eventsGroupId.get(eventId)!==groupId){
-        throw new UnauthorizedException('이 이벤트를 개시한 그룹이 맞으신가요?? 그룹id가 맞지 않습니다.'+groupId);
+      if (this.eventsUserId.get(eventId)!==userId){
+        throw new UnauthorizedException('이 이벤트를 개시한 유저가 맞으신가요?? 유저id가 맞지 않습니다.'+userId);
       }
-      const event = this.getEventById(eventId);
-      console.log(this.getEventById(eventId))
+      const event = this.getUserEventById(eventId);
+      console.log(this.getUserEventById(eventId))
       if (_.isNil(event)){
         throw new NotFoundException('event를 찾을 수 없습니다. id:'+eventId);
       }
 
       event.eventName = eventName;
       event.eventContent = eventContent;
-      // event.start = start;
-      // event.end = end;
+      event.start = start;
+      event.end = end;
     }
 
-  deleteEvent(eventId: number, groupId: number){
-    if (this.eventsGroupId.get(groupId)!==groupId){
+  deleteUserEvent(eventId: number, userId: number){
+    if (this.eventsUserId.get(eventId)!==userId){
+    throw new UnauthorizedException('이 이벤트를 게시한 유저가 맞으신가요?? 유저id가 맞지 않습니다.'+userId);
+  }
+
+  this.userEvents = this.userEvents.filter((events)=>{return events.id !== eventId});
+
+  }
+
+  
+  // groupEvents
+  private groupEvents = [];
+  private eventsGroupId = new Map();
+  
+
+  getGroupEvent() {
+    return this.groupEvents;
+  }
+
+  getGroupEventById(eventId:number){
+    return this.groupEvents.find((events)=>{return events.id===eventId;})
+  }
+
+  createGroupEvent(
+    eventName: string, 
+    eventContent: string, 
+    start:string, 
+    end:string, 
+    groupId:number, ){
+      const eventId = this.groupEvents.length + 1;
+      this.groupEvents.push({id:eventId,eventName,
+        eventContent, 
+        start,
+        end
+      })
+      this.eventsGroupId.set(eventId,groupId);
+      return eventId;
+    }
+
+  updateGroupEvent(
+    eventId: number,
+    eventName: string, 
+    eventContent: string, 
+    start:string, 
+    end:string, 
+    groupId:number,
+    ){
+      if (this.eventsGroupId.get(eventId)!==groupId){
+        throw new UnauthorizedException('이 이벤트를 개시한 그룹이 맞으신가요?? 그룹id가 맞지 않습니다.'+groupId);
+      }
+      const event = this.getGroupEventById(eventId);
+      console.log(this.getGroupEventById(eventId))
+      if (_.isNil(event)){
+        throw new NotFoundException('event를 찾을 수 없습니다. id:'+eventId);
+      }
+
+      event.eventName = eventName;
+      event.eventContent = eventContent;
+      event.start = start;
+      event.end = end;
+    }
+
+  deleteGroupEvent(eventId: number, groupId: number){
+    if (this.eventsGroupId.get(eventId)!==groupId){
     throw new UnauthorizedException('이 이벤트를 개시한 그룹이 맞으신가요?? 그룹id가 맞지 않습니다.'+groupId);
   }
 
-  this.events = this.events.filter((events)=>{return events.id !== eventId});
+  this.groupEvents = this.groupEvents.filter((events)=>{return events.id !== eventId});
 
   }
 }
