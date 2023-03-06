@@ -58,7 +58,9 @@ export class AuthService {
     return null;
   }
 
-  async restoreAccessToken({ accessToken, refreshToken }) {
+  async restoreAccessToken({ accessToken, refreshToken }): Promise<{
+    accessToken: string;
+  }> {
     await this.jwtService.verifyAsync(accessToken, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
     });
