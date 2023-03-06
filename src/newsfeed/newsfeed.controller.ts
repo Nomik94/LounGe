@@ -3,6 +3,7 @@ import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
 import { NewsfeedService } from './newsfeed.service';
+import { serchtagnewsfeedCheckDto } from './dto/serchtagnewsfeed.dto';
 
 @Controller('api/newsfeed')
 export class NewsfeedController {
@@ -38,10 +39,10 @@ export class NewsfeedController {
   }
 
   // 태그로 뉴스피드 검색
-  @Get('newsfeed/tag/:tagId')
+  @Get('/tag/newsfeed')
   async serchtagnewsfeed(
-    @Param('tagId') tagId:number
-  ) {
-    return await this.newsfeedService.serchtagnewsfeed(tagId)
+    @Body() data:serchtagnewsfeedCheckDto
+  ){
+    return await this.newsfeedService.serchtagnewsfeed(data)
   }
 }
