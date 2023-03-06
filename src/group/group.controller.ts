@@ -52,8 +52,14 @@ export class GroupController {
 
   @Put('/members/:groupId/:memberId')
   @UseGuards(AuthGuard('jwt'))
-  async acceptGroupJoin(@GetUser() user, @Param() data) {
+  async acceptGroupJoin(@GetUser() user, @Param() ids) {
     const userId: number = user.id;
-    await this.groupService.acceptGroupJoin(userId, data);
+    await this.groupService.acceptGroupJoin(userId, ids);
+  }
+
+  @Get('/search/tag')
+  @UseGuards(AuthGuard('jwt'))
+  async findGroupsByTag(@GetUser() user, @Body('tag') tag: string) {
+    return await this.groupService.findGroupsByTag(tag);
   }
 }
