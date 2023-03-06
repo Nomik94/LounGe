@@ -4,6 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { AuthService } from './auth.service';
 import { AuthDTO, KakaoLoginDTO, LogInBodyDTO } from './dto/auth.dto';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('api/auth')
@@ -17,12 +18,9 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@Body() body: LogInBodyDTO) {
-    const { email, password } = body;
-
+  async login(@GetUser() user: LogInBodyDTO) {
     return await this.authService.login({
-      email,
-      password,
+      user,
     });
   }
 
@@ -33,6 +31,7 @@ export class AuthController {
   }
 
   @Post('restoreAccessToken')
+  @UseGuards(JwtRefreshGuard)
   async restoreAccessToken(@Body() body) {
     const accessToken = body.accessToken;
     const refreshToken = body.refreshToken;
