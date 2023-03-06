@@ -1,10 +1,10 @@
 import { Body, Get, Post, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { Delete, Param, Put } from '@nestjs/common/decorators';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { CreateGroupDto } from './dto/create.group.dto';
+import { FindGroupTagDto } from './dto/find.group.tag.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { GroupService } from './group.service';
 
@@ -60,7 +60,7 @@ export class GroupController {
 
   @Get('/search/tag')
   @UseGuards(JwtAuthGuard)
-  async findGroupsByTag(@GetUser() user, @Body('tag') tag: string) {
+  async findGroupsByTag(@GetUser() user, @Body('tag') tag: FindGroupTagDto) {
     return await this.groupService.findGroupsByTag(tag);
   }
 }
