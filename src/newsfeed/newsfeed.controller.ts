@@ -36,4 +36,12 @@ export class NewsfeedController {
   ): Promise<void> {
       return await this.newsfeedService.modinewsfeed(newsfeedid,data)
   }
+
+  // 태그로 뉴스피드 검색
+  @Get('newsfeed/tag/:tagId')
+  async serchtagnewsfeed(
+    @Param('tagId') tagId:number
+  ) {
+    return await this.newsfeedService.serchtagnewsfeed(tagId)
+  }
 }
