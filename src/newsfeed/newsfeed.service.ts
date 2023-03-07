@@ -9,7 +9,7 @@ import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
 import { User } from 'src/database/entities/user.entity';
 // import { EntityRepository, Repository } from 'typeorm';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Not, Repository } from 'typeorm';
 import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 import { serchtagnewsfeedCheckDto } from './dto/serchtagnewsfeed.dto';
@@ -295,34 +295,43 @@ export class NewsfeedService {
         
     }
 
-    // async readnewsfeedgroup(groupId:number) {
+    async readnewsfeedgroup(groupId:number) {
 
-    // const newsfeeds = await this.newsfeedRepository.find({
-    //     relations: ['newsFeedTags.tag','newsImages','user'],
-    //     select: ['id','content','createdAt','updatedAt'],
-    //     where:{'user' : {id:userId},'deletedAt': null}
-    //     });
+        const newsfeed = await this.groupNewsfeedRepository.find({
+            where: {'groupId' :groupId},
+            select: ['newsFeedId']
+        })
 
-    //     const result = newsfeeds.map(feed => {
-    //         const userName = feed.user.username;
-    //         const userImage = feed.user.image;
-    //         const userEmail = feed.user.email;
-    //         const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
-    //         const newsfeedImage = feed.newsImages.map(image => image.image);
+        const newsfeedIds = newsfeed.map(Newsfeed => Newsfeed.newsFeedId)
+        console.log(newsfeedIds);
+        
+        const newsfeeds = await this.newsfeedRepository.find({
+            relations: ['newsFeedTags.tag', 'newsImages', 'user'],
+            select: ['id', 'content', 'createdAt', 'updatedAt'],
+            where: { id: In(newsfeedIds), deletedAt: null }
+          });
+          
 
-    //         return {
-    //             id: feed.id,
-    //             content: feed.content,
-    //             createAt: feed.createdAt,
-    //             updateAt: feed.updatedAt,
-    //             userName: userName,
-    //             userEmail: userEmail,
-    //             userImage: userImage,
-    //             tagsName: tagsName,
-    //             newsfeedImage: newsfeedImage
-    //         }
-    //     })
+        const result = newsfeeds.map(feed => {
+            const userName = feed.user.username;
+            const userImage = feed.user.image;
+            const userEmail = feed.user.email;
+            const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
+            const newsfeedImage = feed.newsImages.map(image => image.image);
 
-    // return result
-    // }
+            return {
+                id: feed.id,
+                content: feed.content,
+                createAt: feed.createdAt,
+                updateAt: feed.updatedAt,
+                userName: userName,
+                userEmail: userEmail,
+                userImage: userImage,
+                tagsName: tagsName,
+                newsfeedImage: newsfeedImage
+            }
+        })
+
+    return result
+    }
 }

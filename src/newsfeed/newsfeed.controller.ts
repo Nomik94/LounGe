@@ -67,11 +67,13 @@ export class NewsfeedController {
     return await this.newsfeedService.serchtagnewsfeed(data)
   }
 
-  // // 뉴스피드 그룹별 읽기
-  // @Get('group/:id')
-  // async readnewsfeedgroup(@Param('id') groupId:number) {
-  //   return await this.deletenewsfeed.readnewsfeedgroup(groupId)
-  // }
+  // 뉴스피드 그룹별 읽기
+  @Get('group/:id')
+  async readnewsfeedgroup(
+    @Param('id') groupId: number
+    ) {
+    return await this.newsfeedService.readnewsfeedgroup(groupId)
+  }
 }
 function UploadFiles() {
   throw new Error('Function not implemented.');
