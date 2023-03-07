@@ -39,6 +39,7 @@
     "hbs": "^4.2.0",
     "lodash": "^4.17.21",
     "mysql2": "^3.1.2",
+    "nestjs-form-data": "^1.8.7",
     "nodemailer": "^6.9.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",

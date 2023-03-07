@@ -9,13 +9,7 @@ export class CreateGroupDto {
   @IsString()
   description: string;
 
-  @IsString()
-  groupImage: string;
-
-  @IsString()
-  backgroundImage: string;
-
   @IsOptional()
-  @IsArray()
-  tag: string[];
+  @IsString()
+  tag: string | null;
 }

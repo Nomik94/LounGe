@@ -25,16 +25,18 @@ export class GroupService {
     private readonly tagGroupRepository: Repository<TagGroup>,
   ) {}
 
-  async createGroup(data: CreateGroupDto, userId: number): Promise<void> {
+  async createGroup(file, data: CreateGroupDto, userId: number): Promise<void> {
+
+    const tagArray = data.tag.split(',')
     const group = await this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
-      groupImage: data.groupImage,
-      backgroundImage: data.backgroundImage,
+      groupImage: file.groupImage[0].filename,
+      backgroundImage: file.backgroundImage[0].filename,
       user: { id: userId }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
     });
     await this.groupRepository.save(group);
-    await this.tagCheck(data.tag, group.id);
+    await this.tagCheck(tagArray, group.id);
     await this.userGroupRepository.insert({
       groupId: group.id,
       userId,
