@@ -1,12 +1,15 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GroupNewsFeed } from 'src/database/entities/group-newsfeed.entity';
+import { Group } from 'src/database/entities/group.entity';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { NewsFeedImage } from 'src/database/entities/newsFeedImage.entity';
 import { Tag } from 'src/database/entities/tag.entity';
+import { UserGroup } from 'src/database/entities/user-group.entity';
 import { User } from 'src/database/entities/user.entity';
 // import { EntityRepository, Repository } from 'typeorm';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Not, Repository } from 'typeorm';
 import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 import { serchtagnewsfeedCheckDto } from './dto/serchtagnewsfeed.dto';
@@ -32,12 +35,31 @@ export class NewsfeedService {
 
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+
+        @InjectRepository(GroupNewsFeed)
+        private readonly groupNewsfeedRepository: Repository<GroupNewsFeed>,
+
+        @InjectRepository(UserGroup)
+        private readonly userGroupRepository: Repository<UserGroup>,
+
+        @InjectRepository(Group)
+        private readonly groupRepository: Repository<Group>,
     ) {}
 
-    async postnewsfeed(file,data: newsfeedCheckDto,userId:number): Promise<void> {
-        
+    async postnewsfeed(file,data: newsfeedCheckDto,userId:number,groupId:number): Promise<void> {
+
         const content = data.content;
         const tag = data.tag;
+        const checkJoinGroup = await this.userGroupRepository.find({
+            where: {userId: userId, groupId:groupId}
+        })
+        
+        if(checkJoinGroup.length === 0){
+            throw new ForbiddenException('가입된 그룹이 아니거나 그룹이 존재하지 않습니다.');
+        }
+        if(checkJoinGroup[0].role !== "그룹장" && checkJoinGroup[0].role !== "회원") {
+            throw new ForbiddenException('그룹 가입 신청 중입니다.');
+        }
 
         const newsfeedId = await this.newsfeedRepository.save({
             content:content,
@@ -77,6 +99,11 @@ export class NewsfeedService {
             }))
             await Promise.all(promises)
         }
+
+        await this.groupNewsfeedRepository.insert({
+            newsFeedId: newsfeedId.id,
+            groupId: groupId
+        })
         
         
         return
@@ -122,15 +149,23 @@ export class NewsfeedService {
         if(!checknewsfeed) {
             throw new ForbiddenException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
         }
+
+        const checkuserId = checknewsfeed.user["id"]
+        if(userId !== checkuserId) {
+            throw new ForbiddenException('권한이 존재하지 않습니다.');
+        }
+
         try {
-            const checkuserId = checknewsfeed.user["id"]
-
-            if(userId !== checkuserId) {
-                throw new ForbiddenException('권한이 존재하지 않습니다.');
-            }
-
             await this.newsfeedRepository.softDelete(id);
-  
+            await this.groupNewsfeedRepository.delete({
+                newsFeedId:id
+            })
+            await this.newsfeedTagRepository.delete({
+                newsFeedId:id
+            })
+            await this.newsfeedImageRepository.delete({
+                newsFeed: {id:id}
+            })
         } catch (err){
             console.log("알수 없는 에러가 발생했습니다.", err);
             throw new Error(err)
@@ -258,5 +293,45 @@ export class NewsfeedService {
             throw new Error(err)
         }
         
+    }
+
+    async readnewsfeedgroup(groupId:number) {
+
+        const newsfeed = await this.groupNewsfeedRepository.find({
+            where: {'groupId' :groupId},
+            select: ['newsFeedId']
+        })
+
+        const newsfeedIds = newsfeed.map(Newsfeed => Newsfeed.newsFeedId)
+        console.log(newsfeedIds);
+        
+        const newsfeeds = await this.newsfeedRepository.find({
+            relations: ['newsFeedTags.tag', 'newsImages', 'user'],
+            select: ['id', 'content', 'createdAt', 'updatedAt'],
+            where: { id: In(newsfeedIds), deletedAt: null }
+          });
+          
+
+        const result = newsfeeds.map(feed => {
+            const userName = feed.user.username;
+            const userImage = feed.user.image;
+            const userEmail = feed.user.email;
+            const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
+            const newsfeedImage = feed.newsImages.map(image => image.image);
+
+            return {
+                id: feed.id,
+                content: feed.content,
+                createAt: feed.createdAt,
+                updateAt: feed.updatedAt,
+                userName: userName,
+                userEmail: userEmail,
+                userImage: userImage,
+                tagsName: tagsName,
+                newsfeedImage: newsfeedImage
+            }
+        })
+
+    return result
     }
 }

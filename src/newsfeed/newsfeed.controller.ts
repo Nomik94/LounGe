@@ -7,23 +7,25 @@ import { serchtagnewsfeedCheckDto } from './dto/serchtagnewsfeed.dto';
 import { FileFieldsInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
+import { group } from 'console';
 
 @Controller('api/newsfeed')
 export class NewsfeedController {
   constructor(private readonly newsfeedService: NewsfeedService) {}
 
   // 뉴스피드 작성
-  @Post('newsfeed')
+  @Post('newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
 
   async postnewsfeed(
+    @Param('groupId')groupId:number ,
     @GetUser() user,
     @UploadedFiles() file: Array<Express.Multer.File>,
     @Body() data: newsfeedCheckDto
     ): Promise<void> {
       const userId = user.id
-    await this.newsfeedService.postnewsfeed(file,data,userId);
+    await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
   }
 
   // 뉴스피드 읽기
@@ -63,6 +65,14 @@ export class NewsfeedController {
     @Body() data:serchtagnewsfeedCheckDto
   ){
     return await this.newsfeedService.serchtagnewsfeed(data)
+  }
+
+  // 뉴스피드 그룹별 읽기
+  @Get('group/:id')
+  async readnewsfeedgroup(
+    @Param('id') groupId: number
+    ) {
+    return await this.newsfeedService.readnewsfeedgroup(groupId)
   }
 }
 function UploadFiles() {
