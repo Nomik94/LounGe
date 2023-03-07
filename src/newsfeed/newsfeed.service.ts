@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
@@ -121,21 +121,27 @@ export class NewsfeedService {
     }
 
     async deletenewsfeed(id:number) {
+        const userId = 1 // 썬더 클라이언트로 보내는 임시 유저 아이디
+        const checknewsfeed = await this.newsfeedRepository.findOne({
+            relations: ['user'],
+            where: {id:id}
+        })
+        if(!checknewsfeed) {
+            throw new ForbiddenException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
+        }
         try {
-            const checknewsfeed = await this.newsfeedRepository.findOne({
-                where: {id:id}
-            })
-            if (!checknewsfeed) {
-                throw new NotFoundException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
+            const checkuserId = checknewsfeed.user["id"]
+
+            if(userId !== checkuserId) {
+                throw new ForbiddenException('권한이 존재하지 않습니다.');
             }
 
             await this.newsfeedRepository.softDelete(id);
-
+  
         } catch (err){
             console.log("알수 없는 에러가 발생했습니다.", err);
             throw new Error(err)
         }
-
     }
 
     async modinewsfeed(id:number,data: modiNewsfeedCheckDto) : Promise<void>{
