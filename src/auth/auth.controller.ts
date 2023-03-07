@@ -18,7 +18,10 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@GetUser() user: LogInBodyDTO) {
+  async login(@GetUser() user: LogInBodyDTO): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
     return await this.authService.login({
       user,
     });
@@ -26,13 +29,18 @@ export class AuthController {
 
   @Get('login/kakao')
   @UseGuards(AuthGuard('kakao'))
-  async kakaoLogin(@GetUser() user: KakaoLoginDTO) {
+  async kakaoLogin(@GetUser() user: KakaoLoginDTO): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
     return await this.authService.kakaoLogin(user);
   }
 
   @Post('restoreAccessToken')
   @UseGuards(JwtRefreshGuard)
-  async restoreAccessToken(@Body() body) {
+  async restoreAccessToken(@Body() body): Promise<{
+    accessToken: string;
+  }> {
     const accessToken = body.accessToken;
     const refreshToken = body.refreshToken;
 

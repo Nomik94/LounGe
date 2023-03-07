@@ -1,6 +1,17 @@
 import { Body, Get, Post, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import { Delete, Param, Put } from '@nestjs/common/decorators';
+import {
+  Delete,
+  Param,
+  Put,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common/decorators';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { CreateGroupDto } from './dto/create.group.dto';
@@ -14,9 +25,19 @@ export class GroupController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  createGroup(@GetUser() user, @Body() data: CreateGroupDto): void {
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'groupImage', maxCount: 1 },
+      { name: 'backgroundImage', maxCount: 1 },
+    ]),
+  )
+  createGroup(
+    @GetUser() user,
+    @UploadedFiles() file,
+    @Body() data: CreateGroupDto,
+  ): void {
     const userId: number = user.id;
-    this.groupService.createGroup(data, userId);
+    this.groupService.createGroup(file, data, userId);
   }
 
   @Get()
@@ -62,5 +83,12 @@ export class GroupController {
   @UseGuards(JwtAuthGuard)
   async findGroupsByTag(@GetUser() user, @Body('tag') tag: FindGroupTagDto) {
     return await this.groupService.findGroupsByTag(tag);
+  }
+
+  @Delete('/withdraw/:groupId')
+  @UseGuards(JwtAuthGuard)
+  async withdrawalGroup(@GetUser() user, @Param('groupId') groupId: number) {
+    const userId: number = user.id;
+    await this.groupService.withdrawalGroup(userId, groupId);
   }
 }
