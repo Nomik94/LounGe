@@ -26,7 +26,6 @@ export class GroupService {
   ) {}
 
   async createGroup(file, data: CreateGroupDto, userId: number): Promise<void> {
-    const tagArray = data.tag.split(',');
     const group = await this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
@@ -35,7 +34,10 @@ export class GroupService {
       user: { id: userId }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
     });
     await this.groupRepository.save(group);
-    await this.tagCheck(tagArray, group.id);
+    const tagArray = data.tag?.split(',');
+    if (tagArray.length > 0) {
+      await this.tagCheck(tagArray, group.id);
+    }
     await this.userGroupRepository.insert({
       groupId: group.id,
       userId,
@@ -45,7 +47,13 @@ export class GroupService {
 
   async getAllGroup(userId: number) {
     const groupList = await this.groupRepository.find({
-      select: ['id', 'groupName', 'groupImage', 'backgroundImage','description'],
+      select: [
+        'id',
+        'groupName',
+        'groupImage',
+        'backgroundImage',
+        'description',
+      ],
       relations: ['tagGroups.tag', 'userGroups'],
       where: { userGroups: { userId: Not(userId) } },
     });
@@ -130,7 +138,13 @@ export class GroupService {
     const groupIds = findGroupIds.map((tagGroup) => ({ id: tagGroup.groupId }));
 
     const findGroups = await this.groupRepository.find({
-      select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
+      select: [
+        'id',
+        'groupName',
+        'groupImage',
+        'backgroundImage',
+        'description',
+      ],
       relations: ['tagGroups.tag'],
       where: groupIds,
     });
@@ -172,6 +186,7 @@ export class GroupService {
         groupName: group.groupName,
         groupImage: group.groupImage,
         backgroundImage: group.backgroundImage,
+        description: group.description,
         tagGroups: TagGroups,
       };
     });
