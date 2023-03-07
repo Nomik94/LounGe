@@ -4,15 +4,15 @@ export class modiNewsfeedCheckDto {
     @IsString()
     content:string;
 
-    @IsNumber()
-    userId:number;
+    // @IsNumber()
+    // userId:number;
 
     @IsOptional()
     @IsArray()
     tag: Array<string> | null | string;
 
-    @IsOptional()
-    @IsArray()
-    image:Array<string> | null | string;
+    // @IsOptional()
+    // @IsArray()
+    // image:Array<string> | null | string;
 
 }

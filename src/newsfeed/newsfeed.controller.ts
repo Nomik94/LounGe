@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseInterceptors, } from '@nestjs/common';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
 import { NewsfeedService } from './newsfeed.service';
 import { serchtagnewsfeedCheckDto } from './dto/serchtagnewsfeed.dto';
+import { FileFieldsInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('api/newsfeed')
 export class NewsfeedController {
@@ -11,8 +12,13 @@ export class NewsfeedController {
 
   // 뉴스피드 작성
   @Post('newsfeed')
-  async postnewsfeed(@Body() data: newsfeedCheckDto): Promise<void> {
-    return await this.newsfeedService.postnewsfeed(data);
+  @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
+
+  async postnewsfeed(
+    @UploadedFiles() file: Array<Express.Multer.File>,
+    @Body() data: newsfeedCheckDto
+    ): Promise<void> {
+    await this.newsfeedService.postnewsfeed(file,data);
   }
 
   // 뉴스피드 읽기
@@ -31,11 +37,13 @@ export class NewsfeedController {
 
   // 뉴스피드 수정
   @Put('newsfeed/:newsfeedid')
+  @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
   async modinewsfeed(
+    @UploadedFiles() file: Array<Express.Multer.File>,
       @Param('newsfeedid') newsfeedid:number,
       @Body() data: modiNewsfeedCheckDto
   ): Promise<void> {
-      return await this.newsfeedService.modinewsfeed(newsfeedid,data)
+      return await this.newsfeedService.modinewsfeed(file,newsfeedid,data)
   }
 
   // 태그로 뉴스피드 검색
@@ -46,3 +54,7 @@ export class NewsfeedController {
     return await this.newsfeedService.serchtagnewsfeed(data)
   }
 }
+function UploadFiles() {
+  throw new Error('Function not implemented.');
+}
+

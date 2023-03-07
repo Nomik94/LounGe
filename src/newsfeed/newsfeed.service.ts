@@ -1,7 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { connect } from 'http2';
-import Connection from 'mysql2/typings/mysql/lib/Connection';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { NewsFeedImage } from 'src/database/entities/newsFeedImage.entity';
@@ -36,11 +34,11 @@ export class NewsfeedService {
         private readonly userRepository: Repository<User>,
     ) {}
 
-    async postnewsfeed(data: newsfeedCheckDto): Promise<void> {
+    async postnewsfeed(file,data: newsfeedCheckDto): Promise<void> {
+        
         const content = data.content;
-        const userId = data.userId; // 썬더 클라이언트로 보내는 임시 유저아이디
+        const userId = 1; // 썬더 클라이언트로 보내는 임시 유저아이디
         const tag = data.tag;
-        const image = data.image;
 
         const newsfeedId = await this.newsfeedRepository.save({
             content:content,
@@ -71,15 +69,17 @@ export class NewsfeedService {
                 })
             }
         }
-        if (image) {
-            for(const i of image) {
-                await this.newsfeedImageRepository.save({
-                    image:i,
-                    newsFeed: {id: newsfeedId.id}
-                })
-            }
-        }
 
+        if (file.length !== 0) {
+            const filenames = file.map(file => file.filename)
+            const promises = filenames.map(filename => this.newsfeedImageRepository.save({
+                image: filename,
+                newsFeed: {id:newsfeedId.id}
+            }))
+            await Promise.all(promises)
+        }
+        
+        
         return
         }
 
@@ -111,44 +111,52 @@ export class NewsfeedService {
                 }
             })
 
-            // const userName = a[0].user.username;
-            // const userImage = a[0].user.image;
-            // const userEmail = a[0].user.email;
-            // const tagsname = a[0].newsFeedTags.map(tag => tag.tag.tagName)
-            // const newsfeedimage = a[0].newsImages.map(image => image.image)
-            
         return result
     }
 
     async deletenewsfeed(id:number) {
+        const userId = 1 // 썬더 클라이언트로 보내는 임시 유저 아이디
+        const checknewsfeed = await this.newsfeedRepository.findOne({
+            relations: ['user'],
+            where: {id:id}
+        })
+        if(!checknewsfeed) {
+            throw new ForbiddenException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
+        }
         try {
-            const checknewsfeed = await this.newsfeedRepository.findOne({
-                where: {id:id}
-            })
-            if (!checknewsfeed) {
-                throw new NotFoundException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
+            const checkuserId = checknewsfeed.user["id"]
+
+            if(userId !== checkuserId) {
+                throw new ForbiddenException('권한이 존재하지 않습니다.');
             }
 
             await this.newsfeedRepository.softDelete(id);
-
+  
         } catch (err){
             console.log("알수 없는 에러가 발생했습니다.", err);
             throw new Error(err)
         }
-
     }
 
-    async modinewsfeed(id:number,data: modiNewsfeedCheckDto) : Promise<void>{
-        const { content,image,tag } = data
+    async modinewsfeed(file,id:number,data: modiNewsfeedCheckDto) : Promise<void>{
+        const { content,tag } = data
+        const userId = 1 // 썬더 클라이언트로 보내는 임시 유저 아이디
+        
+        const checknewsfeed = await this.newsfeedRepository.findOne({
+            relations: ['user'],
+            where: {id:id}
+        })
+        
+        if(!checknewsfeed) {
+            throw new ForbiddenException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
+        }
+        const checkuserId = checknewsfeed.user["id"]
 
+        if(userId !== checkuserId) {
+            throw new ForbiddenException('권한이 존재하지 않습니다.');
+        }
+        
         try {
-            const checknewsfeed = await this.newsfeedRepository.findOne({
-                where: {id:id}
-            })
-            if (!checknewsfeed) {
-                throw new NotFoundException("삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
-            }
-            
 
             await this.newsfeedRepository.update(id,
                 {content:content}
@@ -183,16 +191,16 @@ export class NewsfeedService {
                 }
             }
 
-            if (image) {
+            if (file.length !== 0) {
                 await this.newsfeedImageRepository.delete({
                     newsFeed: {id:id}
                 })
-                for (const i of image) {
-                    await this.newsfeedImageRepository.save({
-                        image: i,
-                        newsFeed: {id:id}
-                    })
-                }
+                const filenames = file.map(file => file.filename)
+                const promises = filenames.map(filename => this.newsfeedImageRepository.save({
+                    image: filename,
+                    newsFeed: {id:id}
+                }))
+                await Promise.all(promises)
             }
 
             return
@@ -211,9 +219,6 @@ export class NewsfeedService {
                 where: { tagName: Like(`%${tag}%`) },
                 select: ['id']
             })
-    
-            // const serchnewsfeed = serchtag.map(tag => tag.id)
-            // const wherenewsfeedid = serchnewsfeed.map(tagId => ({tagId}))
     
             const wherenewsfeedid = serchtag.map((tag) => ({ tagId : tag.id }))
     
@@ -257,4 +262,3 @@ export class NewsfeedService {
         
     }
 }
-
