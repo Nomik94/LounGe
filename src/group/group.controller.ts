@@ -7,11 +7,7 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common/decorators';
-import {
-  FileFieldsInterceptor,
-  FileInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { CreateGroupDto } from './dto/create.group.dto';

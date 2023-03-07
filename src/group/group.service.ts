@@ -26,8 +26,7 @@ export class GroupService {
   ) {}
 
   async createGroup(file, data: CreateGroupDto, userId: number): Promise<void> {
-
-    const tagArray = data.tag.split(',')
+    const tagArray = data.tag.split(',');
     const group = await this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
