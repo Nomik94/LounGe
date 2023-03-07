@@ -7,6 +7,7 @@ import { serchtagnewsfeedCheckDto } from './dto/serchtagnewsfeed.dto';
 import { FileFieldsInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
+import { group } from 'console';
 
 @Controller('api/newsfeed')
 export class NewsfeedController {
@@ -64,6 +65,12 @@ export class NewsfeedController {
   ){
     return await this.newsfeedService.serchtagnewsfeed(data)
   }
+
+  // // 뉴스피드 그룹별 읽기
+  // @Get('group/:id')
+  // async readnewsfeedgroup(@Param('id') groupId:number) {
+  //   return await this.deletenewsfeed.readnewsfeedgroup(groupId)
+  // }
 }
 function UploadFiles() {
   throw new Error('Function not implemented.');

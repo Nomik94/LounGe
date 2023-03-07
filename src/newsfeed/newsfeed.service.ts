@@ -259,4 +259,35 @@ export class NewsfeedService {
         }
         
     }
+
+    // async readnewsfeedgroup(groupId:number) {
+
+    // const newsfeeds = await this.newsfeedRepository.find({
+    //     relations: ['newsFeedTags.tag','newsImages','user'],
+    //     select: ['id','content','createdAt','updatedAt'],
+    //     where:{'user' : {id:userId},'deletedAt': null}
+    //     });
+
+    //     const result = newsfeeds.map(feed => {
+    //         const userName = feed.user.username;
+    //         const userImage = feed.user.image;
+    //         const userEmail = feed.user.email;
+    //         const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
+    //         const newsfeedImage = feed.newsImages.map(image => image.image);
+
+    //         return {
+    //             id: feed.id,
+    //             content: feed.content,
+    //             createAt: feed.createdAt,
+    //             updateAt: feed.updatedAt,
+    //             userName: userName,
+    //             userEmail: userEmail,
+    //             userImage: userImage,
+    //             tagsName: tagsName,
+    //             newsfeedImage: newsfeedImage
+    //         }
+    //     })
+
+    // return result
+    // }
 }
