@@ -34,10 +34,9 @@ export class NewsfeedService {
         private readonly userRepository: Repository<User>,
     ) {}
 
-    async postnewsfeed(file,data: newsfeedCheckDto): Promise<void> {
+    async postnewsfeed(file,data: newsfeedCheckDto,userId:number): Promise<void> {
         
         const content = data.content;
-        const userId = 1; // 썬더 클라이언트로 보내는 임시 유저아이디
         const tag = data.tag;
 
         const newsfeedId = await this.newsfeedRepository.save({
@@ -114,8 +113,8 @@ export class NewsfeedService {
         return result
     }
 
-    async deletenewsfeed(id:number) {
-        const userId = 1 // 썬더 클라이언트로 보내는 임시 유저 아이디
+    async deletenewsfeed(userId:number,id:number) {
+
         const checknewsfeed = await this.newsfeedRepository.findOne({
             relations: ['user'],
             where: {id:id}
@@ -138,15 +137,14 @@ export class NewsfeedService {
         }
     }
 
-    async modinewsfeed(file,id:number,data: modiNewsfeedCheckDto) : Promise<void>{
+    async modinewsfeed(file,id:number,data: modiNewsfeedCheckDto,userId:number) : Promise<void>{
         const { content,tag } = data
-        const userId = 1 // 썬더 클라이언트로 보내는 임시 유저 아이디
-        
+
         const checknewsfeed = await this.newsfeedRepository.findOne({
             relations: ['user'],
             where: {id:id}
         })
-        
+
         if(!checknewsfeed) {
             throw new ForbiddenException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
         }

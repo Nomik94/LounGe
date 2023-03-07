@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseInterceptors, } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors, } from '@nestjs/common';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
 import { NewsfeedService } from './newsfeed.service';
 import { serchtagnewsfeedCheckDto } from './dto/serchtagnewsfeed.dto';
 import { FileFieldsInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { GetUser } from 'src/common/decorator/get-user.decorator';
 
 @Controller('api/newsfeed')
 export class NewsfeedController {
@@ -12,13 +14,16 @@ export class NewsfeedController {
 
   // 뉴스피드 작성
   @Post('newsfeed')
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
 
   async postnewsfeed(
+    @GetUser() user,
     @UploadedFiles() file: Array<Express.Multer.File>,
     @Body() data: newsfeedCheckDto
     ): Promise<void> {
-    await this.newsfeedService.postnewsfeed(file,data);
+      const userId = user.id
+    await this.newsfeedService.postnewsfeed(file,data,userId);
   }
 
   // 뉴스피드 읽기
@@ -29,21 +34,27 @@ export class NewsfeedController {
 
   // 뉴스피드 삭제
   @Delete('newsfeed/:newsfeedid')
+  @UseGuards(JwtAuthGuard)
   async deletenewsfeed(
+      @GetUser() user,
       @Param('newsfeedid')newsfeedid:number
   ) {
-      return await this.newsfeedService.deletenewsfeed(newsfeedid)
+      const userId = user.id
+      return await this.newsfeedService.deletenewsfeed(userId,newsfeedid)
   }
 
   // 뉴스피드 수정
   @Put('newsfeed/:newsfeedid')
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
   async modinewsfeed(
-    @UploadedFiles() file: Array<Express.Multer.File>,
+      @GetUser() user,
+      @UploadedFiles() file: Array<Express.Multer.File>,
       @Param('newsfeedid') newsfeedid:number,
       @Body() data: modiNewsfeedCheckDto
   ): Promise<void> {
-      return await this.newsfeedService.modinewsfeed(file,newsfeedid,data)
+      const userId = user.id
+      await this.newsfeedService.modinewsfeed(file,newsfeedid,data,userId)
   }
 
   // 태그로 뉴스피드 검색
