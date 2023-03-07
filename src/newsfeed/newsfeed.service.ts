@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { connect } from 'http2';
-import Connection from 'mysql2/typings/mysql/lib/Connection';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { NewsFeedImage } from 'src/database/entities/newsFeedImage.entity';
@@ -36,11 +34,11 @@ export class NewsfeedService {
         private readonly userRepository: Repository<User>,
     ) {}
 
-    async postnewsfeed(data: newsfeedCheckDto): Promise<void> {
+    async postnewsfeed(file,data: newsfeedCheckDto): Promise<void> {
+        
         const content = data.content;
-        const userId = data.userId; // 썬더 클라이언트로 보내는 임시 유저아이디
+        const userId = 1; // 썬더 클라이언트로 보내는 임시 유저아이디
         const tag = data.tag;
-        const image = data.image;
 
         const newsfeedId = await this.newsfeedRepository.save({
             content:content,
@@ -71,15 +69,17 @@ export class NewsfeedService {
                 })
             }
         }
-        if (image) {
-            for(const i of image) {
-                await this.newsfeedImageRepository.save({
-                    image:i,
-                    newsFeed: {id: newsfeedId.id}
-                })
-            }
-        }
 
+        if (file.length !== 0) {
+            const filenames = file.map(file => file.filename)
+            const promises = filenames.map(filename => this.newsfeedImageRepository.save({
+                image: filename,
+                newsFeed: {id:2}
+            }))
+            await Promise.all(promises)
+        }
+        
+        
         return
         }
 
@@ -257,4 +257,3 @@ export class NewsfeedService {
         
     }
 }
-
