@@ -24,13 +24,13 @@
       <!-- SECTION FILTERS BAR ACTIONS -->
       <div class="section-filters-bar-actions">
         <!-- FORM -->
-        <form class="form">
+        <div class="form">
           <!-- FORM INPUT -->
           <div class="form-input small with-button">
-            <label for="groups-search">Search Groups</label>
-            <input type="text" id="groups-search" name="groups_search">
+            <label for="groups-search">Search Tag By Groups</label>
+            <input type="text" id="groups-search" name="tag">
             <!-- BUTTON -->
-            <button class="button primary">
+            <button class="button primary" onclick="searchGroups()">
               <!-- ICON MAGNIFYING GLASS -->
               <svg class="icon-magnifying-glass">
                 <use xlink:href="#svg-magnifying-glass"></use>
@@ -40,7 +40,7 @@
             <!-- /BUTTON -->
           </div>
           <!-- /FORM INPUT -->
-        </form>
+        </div>
         <!-- /FORM -->
         
       </div>
