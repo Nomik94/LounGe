@@ -1,4 +1,10 @@
-import { Get, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Get,
+  Render,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -34,6 +40,7 @@ export class AuthController {
 
   @Get('login/kakao')
   @UseGuards(AuthGuard('kakao'))
+  @Render('kakao')
   async kakaoLogin(@GetUser() user: KakaoLoginDTO): Promise<{
     accessToken: string;
     refreshToken: string;

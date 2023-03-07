@@ -145,14 +145,7 @@
         <!-- SOCIAL LINKS -->
         <div class="social-links">
           <!-- SOCIAL LINK -->
-          <a type="button"><img src="/img/banner/kakaotalk_logo_icon_147272.png"></a>
-          {{!-- <a class="social-link facebook" href="#">
-            <!-- ICON FACEBOOK -->
-            <svg class="icon-facebook">
-              <use xlink:href="#svg-kakao"></use>
-            </svg>
-            <!-- /ICON FACEBOOK -->
-          </a> --}}
+          <a type="button" onclick="kakaoLogin()"><img src="/img/banner/kakaotalk_logo_icon_147272.png"></a>
           <!-- /SOCIAL LINK -->
         </div>
         <!-- /SOCIAL LINKS -->
@@ -169,9 +162,10 @@
         <h2 class="form-box-title">회원가입</h2>
         <!-- /FORM BOX TITLE -->
     
+      
         <!-- FORM -->
-        <form class="form">
-          <!-- FORM ROW -->
+        <form class="form" >
+                    <!-- FORM ROW -->
           <div class="form-row">
             <!-- FORM ITEM -->
             <div class="form-item">
@@ -179,15 +173,13 @@
               <div class="form-input">
                 <label for="register-email">이메일</label>
                 <input type="text" id="register-email" name="register_email">
-              <button class="button small primary">인증번호 발송</button>
+              <button class="button small primary" onclick="emailVerify()">인증번호 발송</button>
               </div>
               <!-- /FORM INPUT -->
             </div>
             <!-- /FORM ITEM -->
           </div>
           <!-- /FORM ROW -->
-        <!-- FORM -->
-        <form class="form">
           <!-- FORM ROW -->
           <div class="form-row">
             <!-- FORM ITEM -->
@@ -196,7 +188,7 @@
               <div class="form-input">
                 <label for="certification_number">인증번호</label>
                 <input type="text" id="certification_number" name="certification_number">
-              <button class="button small primary">인증번호 확인</button>
+              <button class="button small primary" onclick="emailCheck()">인증번호 확인</button>
               </div>
               <!-- /FORM INPUT -->
             </div>
@@ -266,7 +258,7 @@
             <!-- FORM ITEM -->
             <div class="form-item">
               <!-- BUTTON -->
-              <button class="button medium primary">회원가입</button>
+              <button class="button medium primary" onclick="register()">회원가입</button>
               <!-- /BUTTON -->
             </div>
             <!-- /FORM ITEM -->
