@@ -1,9 +1,12 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GroupNewsFeed } from 'src/database/entities/group-newsfeed.entity';
+import { Group } from 'src/database/entities/group.entity';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { NewsFeedImage } from 'src/database/entities/newsFeedImage.entity';
 import { Tag } from 'src/database/entities/tag.entity';
+import { UserGroup } from 'src/database/entities/user-group.entity';
 import { User } from 'src/database/entities/user.entity';
 // import { EntityRepository, Repository } from 'typeorm';
 import { Like, Repository } from 'typeorm';
@@ -32,12 +35,31 @@ export class NewsfeedService {
 
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+
+        @InjectRepository(GroupNewsFeed)
+        private readonly groupNewsfeedRepository: Repository<GroupNewsFeed>,
+
+        @InjectRepository(UserGroup)
+        private readonly userGroupRepository: Repository<UserGroup>,
+
+        @InjectRepository(Group)
+        private readonly groupRepository: Repository<Group>,
     ) {}
 
-    async postnewsfeed(file,data: newsfeedCheckDto,userId:number): Promise<void> {
-        
+    async postnewsfeed(file,data: newsfeedCheckDto,userId:number,groupId:number): Promise<void> {
+
         const content = data.content;
         const tag = data.tag;
+        const checkJoinGroup = await this.userGroupRepository.find({
+            where: {userId: userId, groupId:groupId}
+        })
+        
+        if(checkJoinGroup.length === 0){
+            throw new ForbiddenException('가입된 그룹이 아니거나 그룹이 존재하지 않습니다.');
+        }
+        if(checkJoinGroup[0].role !== "그룹장" && checkJoinGroup[0].role !== "회원") {
+            throw new ForbiddenException('그룹 가입 신청 중입니다.');
+        }
 
         const newsfeedId = await this.newsfeedRepository.save({
             content:content,
@@ -77,6 +99,11 @@ export class NewsfeedService {
             }))
             await Promise.all(promises)
         }
+
+        await this.groupNewsfeedRepository.insert({
+            newsFeedId: newsfeedId.id,
+            groupId: groupId
+        })
         
         
         return

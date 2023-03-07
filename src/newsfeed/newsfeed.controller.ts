@@ -14,17 +14,18 @@ export class NewsfeedController {
   constructor(private readonly newsfeedService: NewsfeedService) {}
 
   // 뉴스피드 작성
-  @Post('newsfeed')
+  @Post('newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
 
   async postnewsfeed(
+    @Param('groupId')groupId:number ,
     @GetUser() user,
     @UploadedFiles() file: Array<Express.Multer.File>,
     @Body() data: newsfeedCheckDto
     ): Promise<void> {
       const userId = user.id
-    await this.newsfeedService.postnewsfeed(file,data,userId);
+    await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
   }
 
   // 뉴스피드 읽기
