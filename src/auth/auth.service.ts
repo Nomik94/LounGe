@@ -27,18 +27,20 @@ export class AuthService {
     private readonly cacheManager: Cache,
   ) {}
 
-  async register(authDTO: AuthDTO): Promise<void> {
+  async register(authDTO: AuthDTO, file): Promise<void> {
     const { email, username, password } = authDTO;
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(file);
 
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (user) throw new ConflictException('이미 등록된 이메일입니다.');
 
-    await this.userRepository.save({
+    await this.userRepository.insert({
       email,
       username,
       password: hashedPassword,
+      image: file.filename,
     });
   }
 
@@ -56,29 +58,6 @@ export class AuthService {
       return result;
     }
     return null;
-  }
-
-  async restoreAccessToken({ accessToken, refreshToken }): Promise<{
-    accessToken: string;
-  }> {
-    await this.jwtService.verifyAsync(accessToken, {
-      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-    });
-    const userEmail: string = await this.cacheManager.get(refreshToken);
-
-    if (_.isNil(userEmail)) {
-      throw new UnauthorizedException();
-    }
-
-    const user = await this.getByEmail(userEmail);
-    const userId = user.id;
-    if (_.isNil(user)) {
-      throw new NotFoundException();
-    }
-
-    const restoreAccessToken = await this.getAccessToken({ userEmail, userId });
-
-    return { accessToken: restoreAccessToken };
   }
 
   async login({ user }): Promise<{
@@ -162,5 +141,28 @@ export class AuthService {
     });
 
     return refreshToken;
+  }
+
+  async restoreAccessToken({ accessToken, refreshToken }): Promise<{
+    accessToken: string;
+  }> {
+    await this.jwtService.verifyAsync(accessToken, {
+      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+    });
+    const userEmail: string = await this.cacheManager.get(refreshToken);
+
+    if (_.isNil(userEmail)) {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.getByEmail(userEmail);
+    const userId = user.id;
+    if (_.isNil(user)) {
+      throw new NotFoundException();
+    }
+
+    const restoreAccessToken = await this.getAccessToken({ userEmail, userId });
+
+    return { accessToken: restoreAccessToken };
   }
 }
