@@ -7,13 +7,32 @@ async function getGroupList() {
     url: '/api/groups',
     method: 'get',
     headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE4MDE5NCwiZXhwIjoxNjc4MTgzNzk0fQ.kvP-KbTug_u7mfhkHWA0EXBuYWeO0z9J0ZlXL-j0GOs`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE4Nzk1OCwiZXhwIjoxNjc4MTkxNTU4fQ.5zkxZTkd5gAIvjiIMGsNaZ1iS4Yqjf8GIBChPh-cgRk`,
     },
   })
     .then(function (res) {
-      groupList(res.data)
+      groupList(res.data);
     })
-    .catch();
+    .catch(async function (error) {
+      if (error.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+        });
+        window.location.replace('auth');
+      }
+      Swal.fire({
+        icon: 'false',
+        text: `${error.response.data.message}`,
+      });
+    });
 }
 
 function joinGroup(groupId, groupName) {
@@ -32,7 +51,7 @@ function joinGroup(groupId, groupName) {
         url: `/api/groups/join/${groupId}`,
         method: 'post',
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE4MDE5NCwiZXhwIjoxNjc4MTgzNzk0fQ.kvP-KbTug_u7mfhkHWA0EXBuYWeO0z9J0ZlXL-j0GOs`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE4Nzk1OCwiZXhwIjoxNjc4MTkxNTU4fQ.5zkxZTkd5gAIvjiIMGsNaZ1iS4Yqjf8GIBChPh-cgRk`,
         },
       })
         .then(function (res) {
@@ -41,7 +60,26 @@ function joinGroup(groupId, groupName) {
             text: `${groupName}에 가입 신청이 완료되었습니다.`,
           });
         })
-        .catch();
+        .catch(async function (error) {
+          if (error.response.data.statusCode === 401) {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'center-center',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
+            await Toast.fire({
+              icon: 'error',
+              title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+            });
+            window.location.replace('auth');
+          }
+          Swal.fire({
+            icon: 'false',
+            text: `${error.response.data.message}`,
+          });
+        });
     }
   });
 }
@@ -50,25 +88,39 @@ function searchGroups() {
   const tag = document.getElementById('groups-search').value;
   document.getElementById('groups-search').value = '';
 
-  if(!tag.length){
+  if (!tag.length) {
     Swal.fire({
       icon: 'false',
       text: `태그를 입력해주세요.`,
     });
-    return 
+    return;
   }
   axios({
     url: `/api/groups/search/${tag}`,
     method: 'get',
     headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE4MDE5NCwiZXhwIjoxNjc4MTgzNzk0fQ.kvP-KbTug_u7mfhkHWA0EXBuYWeO0z9J0ZlXL-j0GOs`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE4Nzk1OCwiZXhwIjoxNjc4MTkxNTU4fQ.5zkxZTkd5gAIvjiIMGsNaZ1iS4Yqjf8GIBChPh-cgRk`,
     },
   })
     .then(function (res) {
-      document.getElementById('groupList').innerHTML = ""
-      groupList(res.data)
+      document.getElementById('groupList').innerHTML = '';
+      groupList(res.data);
     })
-    .catch(function (error) {
+    .catch(async function (error) {
+      if (error.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+        });
+        window.location.replace('auth');
+      }
       Swal.fire({
         icon: 'false',
         text: `${error.response.data.message}`,
@@ -76,7 +128,7 @@ function searchGroups() {
     });
 }
 
-async function groupList(list){
+async function groupList(list) {
   list.forEach((data) => {
     let temp_html = `      <!-- USER PREVIEW -->
     <div class="user-preview">
@@ -117,15 +169,17 @@ async function groupList(list){
           <!-- USER SHORT DESCRIPTION TEXT -->
           <p class="user-short-description-text">${data.description}</p>
           <!-- /USER SHORT DESCRIPTION TEXT -->
-
-          <!-- USER SHORT DESCRIPTION TEXT -->
-          <p class="user-short-description-text">Tag : ${data.tagGroups}</p>
-          <!-- /USER SHORT DESCRIPTION TEXT -->
+          
         </div>
         <!-- /USER SHORT DESCRIPTION -->
   
         <!-- USER STATS -->
         <div class="user-stats">
+        <!-- TAG LIST -->
+          <div class="tag-list">
+            ${data.tagGroups.map(tag => `<a class="tag-item secondary" href="newsfeed.html">${tag}</a>`).join('')}
+          </div>
+        <!-- /TAG LIST -->
           <!-- USER STAT -->
           <div class="user-stat">
             <!-- USER STAT TITLE -->
