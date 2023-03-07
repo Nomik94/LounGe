@@ -60,7 +60,7 @@ function getGroupList() {
             <!-- /USER SHORT DESCRIPTION TITLE -->
       
             <!-- USER SHORT DESCRIPTION TEXT -->
-            <p class="user-short-description-text">그룹설명ㅎㅎ</p>
+            <p class="user-short-description-text">${data.groupImage}</p>
             <!-- /USER SHORT DESCRIPTION TEXT -->
           </div>
           <!-- /USER SHORT DESCRIPTION -->
