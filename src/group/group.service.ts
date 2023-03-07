@@ -26,6 +26,15 @@ export class GroupService {
   ) {}
 
   async createGroup(file, data: CreateGroupDto, userId: number): Promise<void> {
+    const tagArray = await data.tag.split(',');
+    if (tagArray.find((tag) => tag.length >= 11)) {
+      throw new BadRequestException(
+        '태그의 길이는 11글자를 넘어갈 수 없습니다.',
+      );
+    }
+    if (tagArray.length >= 4) {
+      throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
+    }
     const group = await this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
@@ -34,8 +43,7 @@ export class GroupService {
       user: { id: userId }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
     });
     await this.groupRepository.save(group);
-    const tagArray = data.tag?.split(',');
-    if (tagArray.length > 0) {
+    if (tagArray.length > 0 && tagArray[0] !== '') {
       await this.tagCheck(tagArray, group.id);
     }
     await this.userGroupRepository.insert({

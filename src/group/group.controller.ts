@@ -26,13 +26,13 @@ export class GroupController {
       { name: 'backgroundImage', maxCount: 1 },
     ]),
   )
-  createGroup(
+  async createGroup(
     @GetUser() user,
     @UploadedFiles() file,
     @Body() data: CreateGroupDto,
-  ): void {
+  ): Promise<void> {
     const userId: number = user.id;
-    this.groupService.createGroup(file, data, userId);
+    await this.groupService.createGroup(file, data, userId);
   }
 
   @Get()
@@ -77,7 +77,7 @@ export class GroupController {
   @Get('/search/:tag')
   @UseGuards(JwtAuthGuard)
   async findGroupsByTag(@GetUser() user, @Param('tag') tag: string) {
-    console.log(tag)
+    console.log(tag);
     return await this.groupService.findGroupsByTag(tag);
   }
 

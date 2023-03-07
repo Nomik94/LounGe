@@ -7,7 +7,7 @@ async function getGroupList() {
     url: '/api/groups',
     method: 'get',
     headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE4Nzk1OCwiZXhwIjoxNjc4MTkxNTU4fQ.5zkxZTkd5gAIvjiIMGsNaZ1iS4Yqjf8GIBChPh-cgRk`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE5MTMwOSwiZXhwIjoxNjc4MTk0OTA5fQ.2OjFLRulBR9WIgHH1ulxv792LbH66v4QtjNd-TrsHIQ`,
     },
   })
     .then(function (res) {
@@ -51,7 +51,7 @@ function joinGroup(groupId, groupName) {
         url: `/api/groups/join/${groupId}`,
         method: 'post',
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE4Nzk1OCwiZXhwIjoxNjc4MTkxNTU4fQ.5zkxZTkd5gAIvjiIMGsNaZ1iS4Yqjf8GIBChPh-cgRk`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE5MTMwOSwiZXhwIjoxNjc4MTk0OTA5fQ.2OjFLRulBR9WIgHH1ulxv792LbH66v4QtjNd-TrsHIQ`,
         },
       })
         .then(function (res) {
@@ -84,8 +84,10 @@ function joinGroup(groupId, groupName) {
   });
 }
 
-function searchGroups() {
-  const tag = document.getElementById('groups-search').value;
+function searchGroups(tag) {
+  if (!tag) {
+    tag = document.getElementById('groups-search').value;
+  }
   document.getElementById('groups-search').value = '';
 
   if (!tag.length) {
@@ -99,7 +101,7 @@ function searchGroups() {
     url: `/api/groups/search/${tag}`,
     method: 'get',
     headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE4Nzk1OCwiZXhwIjoxNjc4MTkxNTU4fQ.5zkxZTkd5gAIvjiIMGsNaZ1iS4Yqjf8GIBChPh-cgRk`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE5MTMwOSwiZXhwIjoxNjc4MTk0OTA5fQ.2OjFLRulBR9WIgHH1ulxv792LbH66v4QtjNd-TrsHIQ`,
     },
   })
     .then(function (res) {
@@ -134,7 +136,9 @@ async function groupList(list) {
     <div class="user-preview">
       <!-- USER PREVIEW COVER -->
       <figure class="user-preview-cover liquid">
-      <img src="/backgroundImage/${data.backgroundImage}" alt="backgroundImage-${data.id}">
+      <img src="/backgroundImage/${
+        data.backgroundImage
+      }" alt="backgroundImage-${data.id}">
       </figure>
       <!-- /USER PREVIEW COVER -->
   
@@ -155,7 +159,9 @@ async function groupList(list) {
             <!-- USER AVATAR CONTENT -->
             <div class="user-avatar-content">
               <!-- HEXAGON -->
-              <div class="hexagon-image-100-110" data-src="/groupImage/${data.groupImage}"></div>
+              <div class="hexagon-image-100-110" data-src="/groupImage/${
+                data.groupImage
+              }"></div>
               <!-- /HEXAGON -->
             </div>
             <!-- /USER AVATAR CONTENT -->
@@ -163,7 +169,9 @@ async function groupList(list) {
           <!-- /USER SHORT DESCRIPTION AVATAR -->
     
           <!-- USER SHORT DESCRIPTION TITLE -->
-          <p class="user-short-description-title"><a href="group-timeline.html">${data.groupName}</a></p>
+          <p class="user-short-description-title"><a href="group-timeline.html">${
+            data.groupName
+          }</a></p>
           <!-- /USER SHORT DESCRIPTION TITLE -->
     
           <!-- USER SHORT DESCRIPTION TEXT -->
@@ -177,7 +185,12 @@ async function groupList(list) {
         <div class="user-stats">
         <!-- TAG LIST -->
           <div class="tag-list">
-            ${data.tagGroups.map(tag => `<a class="tag-item secondary" href="newsfeed.html">${tag}</a>`).join('')}
+            ${data.tagGroups
+              .map(
+                (tag) =>
+                  `<a class="tag-item secondary"  onclick="searchGroups('${tag}')">${tag}</a>`,
+              )
+              .join('')}
           </div>
         <!-- /TAG LIST -->
           <!-- USER STAT -->
@@ -198,7 +211,9 @@ async function groupList(list) {
         <!-- USER PREVIEW ACTIONS -->
         <div class="user-preview-actions">
           <!-- BUTTON -->
-          <p class="button secondary full" onclick="joinGroup(${data.id},'${data.groupName}')">
+          <p class="button secondary full" onclick="joinGroup(${data.id},'${
+      data.groupName
+    }')">
             <!-- BUTTON ICON -->
             <svg class="button-icon icon-join-group">
               <use xlink:href="#svg-join-group"></use>
