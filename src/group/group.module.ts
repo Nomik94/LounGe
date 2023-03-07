@@ -8,7 +8,7 @@ import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
 import { GroupController } from './group.controller';
 import { GroupService } from './group.service';
-import { groupImageFactory } from './utills/group.img.multer';
+import { groupImageFactory } from './utils/group.img.multer';
 
 @Module({
   imports: [

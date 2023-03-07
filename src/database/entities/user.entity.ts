@@ -28,7 +28,7 @@ export class User extends BaseEntity {
   @Column()
   username: string;
 
-  @Column({ default: 'userImage_logo' }) // 임시 default
+  @Column()
   image: string;
 
   @CreateDateColumn()

@@ -28,20 +28,25 @@ export class AuthService {
   ) {}
 
   async register(authDTO: AuthDTO, file): Promise<void> {
+    let filename = 'userImage_logo.png';
+    if (file) {
+      filename = file.filename;
+    }
     const { email, username, password } = authDTO;
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(file);
 
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (user) throw new ConflictException('이미 등록된 이메일입니다.');
 
-    await this.userRepository.insert({
+    const createUser = await this.userRepository.create({
       email,
       username,
       password: hashedPassword,
-      image: file.filename,
+      image: filename,
     });
+
+    await this.userRepository.insert(createUser);
   }
 
   async getByEmail(email: string): Promise<User | undefined> {
