@@ -45,7 +45,7 @@ export class GroupService {
 
   async getAllGroup(userId: number) {
     const groupList = await this.groupRepository.find({
-      select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
+      select: ['id', 'groupName', 'groupImage', 'backgroundImage','description'],
       relations: ['tagGroups.tag', 'userGroups'],
       where: { userGroups: { userId: Not(userId) } },
     });
