@@ -149,15 +149,23 @@ export class NewsfeedService {
         if(!checknewsfeed) {
             throw new ForbiddenException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
         }
+
+        const checkuserId = checknewsfeed.user["id"]
+        if(userId !== checkuserId) {
+            throw new ForbiddenException('권한이 존재하지 않습니다.');
+        }
+
         try {
-            const checkuserId = checknewsfeed.user["id"]
-
-            if(userId !== checkuserId) {
-                throw new ForbiddenException('권한이 존재하지 않습니다.');
-            }
-
             await this.newsfeedRepository.softDelete(id);
-  
+            await this.groupNewsfeedRepository.delete({
+                newsFeedId:id
+            })
+            await this.newsfeedTagRepository.delete({
+                newsFeedId:id
+            })
+            await this.newsfeedImageRepository.delete({
+                newsFeed: {id:id}
+            })
         } catch (err){
             console.log("알수 없는 에러가 발생했습니다.", err);
             throw new Error(err)
