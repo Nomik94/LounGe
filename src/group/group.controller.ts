@@ -11,7 +11,6 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { CreateGroupDto } from './dto/create.group.dto';
-import { FindGroupTagDto } from './dto/find.group.tag.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { GroupService } from './group.service';
 
@@ -75,9 +74,10 @@ export class GroupController {
     await this.groupService.acceptGroupJoin(userId, ids);
   }
 
-  @Get('/search/tag')
+  @Get('/search/:tag')
   @UseGuards(JwtAuthGuard)
-  async findGroupsByTag(@GetUser() user, @Body('tag') tag: FindGroupTagDto) {
+  async findGroupsByTag(@GetUser() user, @Param('tag') tag: string) {
+    console.log(tag)
     return await this.groupService.findGroupsByTag(tag);
   }
 

@@ -55,7 +55,7 @@ export class GroupService {
         'description',
       ],
       relations: ['tagGroups.tag', 'userGroups'],
-      where: { userGroups: { userId: Not(userId) } },
+      // where: { userGroups: { userId: Not(userId) } },
     });
 
     const resultGroupList = this.tagMappingGroups(groupList);
