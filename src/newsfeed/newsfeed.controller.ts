@@ -12,13 +12,10 @@ export class NewsfeedController {
 
   // 뉴스피드 작성
   @Post('newsfeed')
-  // @UseInterceptors(FilesInterceptor('newsfeedImage'))
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
-  // 첫번쨰 인자에서 필드이름을 newsfeedImage로 지정
-  // @UseInterceptors(FileFieldsInterceptor([{ name: 'newsfeedImage', maxCount: 5 }]))
+
   async postnewsfeed(
     @UploadedFiles() file: Array<Express.Multer.File>,
-    // @UploadedFiles() file: Array<Express.Multer.File>,
     @Body() data: newsfeedCheckDto
     ): Promise<void> {
     await this.newsfeedService.postnewsfeed(file,data);
@@ -40,11 +37,13 @@ export class NewsfeedController {
 
   // 뉴스피드 수정
   @Put('newsfeed/:newsfeedid')
+  @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
   async modinewsfeed(
+    @UploadedFiles() file: Array<Express.Multer.File>,
       @Param('newsfeedid') newsfeedid:number,
       @Body() data: modiNewsfeedCheckDto
   ): Promise<void> {
-      return await this.newsfeedService.modinewsfeed(newsfeedid,data)
+      return await this.newsfeedService.modinewsfeed(file,newsfeedid,data)
   }
 
   // 태그로 뉴스피드 검색

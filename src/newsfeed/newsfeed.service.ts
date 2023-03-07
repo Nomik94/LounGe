@@ -74,7 +74,7 @@ export class NewsfeedService {
             const filenames = file.map(file => file.filename)
             const promises = filenames.map(filename => this.newsfeedImageRepository.save({
                 image: filename,
-                newsFeed: {id:2}
+                newsFeed: {id:newsfeedId.id}
             }))
             await Promise.all(promises)
         }
@@ -111,12 +111,6 @@ export class NewsfeedService {
                 }
             })
 
-            // const userName = a[0].user.username;
-            // const userImage = a[0].user.image;
-            // const userEmail = a[0].user.email;
-            // const tagsname = a[0].newsFeedTags.map(tag => tag.tag.tagName)
-            // const newsfeedimage = a[0].newsImages.map(image => image.image)
-            
         return result
     }
 
@@ -144,17 +138,25 @@ export class NewsfeedService {
         }
     }
 
-    async modinewsfeed(id:number,data: modiNewsfeedCheckDto) : Promise<void>{
-        const { content,image,tag } = data
+    async modinewsfeed(file,id:number,data: modiNewsfeedCheckDto) : Promise<void>{
+        const { content,tag } = data
+        const userId = 1 // 썬더 클라이언트로 보내는 임시 유저 아이디
+        
+        const checknewsfeed = await this.newsfeedRepository.findOne({
+            relations: ['user'],
+            where: {id:id}
+        })
+        
+        if(!checknewsfeed) {
+            throw new ForbiddenException("이미 삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
+        }
+        const checkuserId = checknewsfeed.user["id"]
 
+        if(userId !== checkuserId) {
+            throw new ForbiddenException('권한이 존재하지 않습니다.');
+        }
+        
         try {
-            const checknewsfeed = await this.newsfeedRepository.findOne({
-                where: {id:id}
-            })
-            if (!checknewsfeed) {
-                throw new NotFoundException("삭제되었거나 존재하지 않는 뉴스피드입니다. id:" + id)
-            }
-            
 
             await this.newsfeedRepository.update(id,
                 {content:content}
@@ -189,16 +191,16 @@ export class NewsfeedService {
                 }
             }
 
-            if (image) {
+            if (file.length !== 0) {
                 await this.newsfeedImageRepository.delete({
                     newsFeed: {id:id}
                 })
-                for (const i of image) {
-                    await this.newsfeedImageRepository.save({
-                        image: i,
-                        newsFeed: {id:id}
-                    })
-                }
+                const filenames = file.map(file => file.filename)
+                const promises = filenames.map(filename => this.newsfeedImageRepository.save({
+                    image: filename,
+                    newsFeed: {id:id}
+                }))
+                await Promise.all(promises)
             }
 
             return
@@ -217,9 +219,6 @@ export class NewsfeedService {
                 where: { tagName: Like(`%${tag}%`) },
                 select: ['id']
             })
-    
-            // const serchnewsfeed = serchtag.map(tag => tag.id)
-            // const wherenewsfeedid = serchnewsfeed.map(tagId => ({tagId}))
     
             const wherenewsfeedid = serchtag.map((tag) => ({ tagId : tag.id }))
     
