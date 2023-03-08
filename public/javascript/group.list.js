@@ -3,11 +3,14 @@ $(document).ready(function () {
 });
 
 async function getGroupList() {
+  console.log(document.cookie.split('=')[1])
+
+  
   axios({
     url: '/api/groups',
     method: 'get',
     headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE5MTMwOSwiZXhwIjoxNjc4MTk0OTA5fQ.2OjFLRulBR9WIgHH1ulxv792LbH66v4QtjNd-TrsHIQ`,
+      Authorization: `${document.cookie.split('=')[1]}`,
     },
   })
     .then(function (res) {
@@ -51,7 +54,7 @@ function joinGroup(groupId, groupName) {
         url: `/api/groups/join/${groupId}`,
         method: 'post',
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE5MTMwOSwiZXhwIjoxNjc4MTk0OTA5fQ.2OjFLRulBR9WIgHH1ulxv792LbH66v4QtjNd-TrsHIQ`,
+          Authorization: `${document.cookie.split('=')[1]}`,
         },
       })
         .then(function (res) {
@@ -101,7 +104,7 @@ function searchGroups(tag) {
     url: `/api/groups/search/${tag}`,
     method: 'get',
     headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoic3NzZXMxQG5hdmVyLmNvbSIsImlhdCI6MTY3ODE5MTMwOSwiZXhwIjoxNjc4MTk0OTA5fQ.2OjFLRulBR9WIgHH1ulxv792LbH66v4QtjNd-TrsHIQ`,
+      Authorization: `${document.cookie.split('=')[1]}`,
     },
   })
     .then(function (res) {
@@ -141,7 +144,7 @@ async function groupList(list) {
       }" alt="backgroundImage-${data.id}">
       </figure>
       <!-- /USER PREVIEW COVER -->
-  
+
       <!-- USER PREVIEW INFO -->
       <div class="user-preview-info">
         <!-- USER SHORT DESCRIPTION -->
@@ -182,7 +185,18 @@ async function groupList(list) {
         <!-- /USER SHORT DESCRIPTION -->
   
         <!-- USER STATS -->
-        <div class="user-stats">
+        <div class="user-stats" style="height: 100px;">
+        <!-- USER STAT -->
+          <div class="user-stat">
+            <!-- USER STAT TITLE -->
+            <p class="user-stat-title">23k</p>
+            <!-- /USER STAT TITLE -->
+    
+            <!-- USER STAT TEXT -->
+            <p class="user-stat-text">members</p>
+            <!-- /USER STAT TEXT -->
+          </div>
+        <!-- /USER STAT -->
         <!-- TAG LIST -->
           <div class="tag-list">
             ${data.tagGroups
@@ -193,18 +207,6 @@ async function groupList(list) {
               .join('')}
           </div>
         <!-- /TAG LIST -->
-          <!-- USER STAT -->
-          <div class="user-stat">
-            <!-- USER STAT TITLE -->
-            <p class="user-stat-title">23k</p>
-            <!-- /USER STAT TITLE -->
-    
-            <!-- USER STAT TEXT -->
-            <p class="user-stat-text">members</p>
-            <!-- /USER STAT TEXT -->
-          </div>
-          <!-- /USER STAT -->
-    
         </div>
         <!-- /USER STATS -->
   
