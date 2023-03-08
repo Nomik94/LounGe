@@ -335,3 +335,4 @@ export class NewsfeedService {
     return result
     }
 }
+

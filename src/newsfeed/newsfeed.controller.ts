@@ -13,6 +13,7 @@ import { group } from 'console';
 export class NewsfeedController {
   constructor(private readonly newsfeedService: NewsfeedService) {}
 
+
   // 뉴스피드 작성
   @Post('newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
@@ -25,8 +26,10 @@ export class NewsfeedController {
     @Body() data: newsfeedCheckDto
     ): Promise<void> {
       const userId = user.id
+
     await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
   }
+
 
   // 뉴스피드 읽기
   @Get('newsfeed/:id')
@@ -78,4 +81,3 @@ export class NewsfeedController {
 function UploadFiles() {
   throw new Error('Function not implemented.');
 }
-
