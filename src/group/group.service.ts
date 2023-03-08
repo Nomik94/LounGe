@@ -106,20 +106,13 @@ export class GroupService {
   }
 
   async acceptGroupJoin(userId: number, ids) {
-    const adminCheckResult = await this.userGroupRepository.findOneBy({
-      userId,
-      groupId: Number(ids.groupId),
-      role: '그룹장',
-    });
-    if (!adminCheckResult) {
-      throw new ForbiddenException('권한이 존재하지 않습니다.');
-    }
+    await this.groupLeaderCheck(userId, Number(ids.groupId));
     const joinGroupMember = await this.userGroupRepository.findOneBy({
       userId: Number(ids.memberId),
       groupId: Number(ids.groupId),
     });
 
-    if (joinGroupMember.role !== '가입대기') {
+    if (!joinGroupMember || joinGroupMember.role !== '가입대기') {
       throw new BadRequestException('가입대기 상태만 수락할 수 있습니다.');
     }
     await this.userGroupRepository.update(
@@ -173,13 +166,44 @@ export class GroupService {
     }
 
     if (findUser.role === '그룹장') {
-      throw new BadRequestException('그룹장을 양도해주세요 ㅠㅠ');
+      throw new BadRequestException('그룹장을 양도해주세요.');
     }
 
     await this.userGroupRepository.delete({
       userId,
       groupId,
     });
+  }
+
+  async createdGroupList(userId) {
+    return await this.groupRepository.find({
+      where: { userGroups: { userId, role: '그룹장' } },
+    });
+  }
+
+  async joinedGroupList(userId) {
+    return await this.groupRepository.find({
+      select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
+      where: { userGroups: { userId, role: Not('가입대기') } },
+    });
+  }
+
+  async groupApplicantList(userId, groupId) {
+    await this.groupLeaderCheck(userId, groupId);
+    const resultList = await this.userGroupRepository.find({
+      where: { groupId, role: '가입대기' },
+      select: ['userId', 'groupId'],
+      relations: ['group', 'user'],
+    });
+
+    const mappingList = await resultList.map((data) => ({
+      userId: data.userId,
+      groupId: data.groupId,
+      groupName: data.group.groupName,
+      userName: data.user.username,
+      userImage: data.user.image,
+    }));
+    return mappingList;
   }
 
   async tagMappingGroups(groupList) {
@@ -239,6 +263,17 @@ export class GroupService {
         .into(TagGroup)
         .values(existTags.map((tag) => ({ tagId: tag.id, groupId })))
         .execute();
+    }
+  }
+
+  async groupLeaderCheck(userId: number, groupId: number) {
+    const LeaderCheckResult = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId,
+      role: '그룹장',
+    });
+    if (!LeaderCheckResult) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
   }
 }
