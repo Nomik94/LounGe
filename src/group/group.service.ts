@@ -188,6 +188,13 @@ export class GroupService {
     });
   }
 
+  async joinedGroupList(userId) {
+    return await this.groupRepository.find({
+      select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
+      where: { userGroups: { userId, role: Not('가입대기') } },
+    });
+  }
+
   async tagMappingGroups(groupList) {
     const modifiedGroupList = groupList.map((group) => {
       const TagGroups = [];
