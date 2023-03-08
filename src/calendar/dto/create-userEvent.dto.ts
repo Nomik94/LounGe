@@ -1,18 +1,18 @@
 import { IsNumber, IsString, IsDate } from 'class-validator';
 
-export class CreateEventDto {
+export class CreateUserEventDto {
   @IsString()
   readonly eventName: string;
 
   @IsString()
   readonly eventContent: string;
 
-  @IsDate()
-  readonly start: Date;
+  @IsString()
+  readonly start: string;
 
-  @IsDate()
-  readonly end: Date;
+  @IsString()
+  readonly end: string;
 
   @IsNumber()
-  readonly groupId: number;
+  readonly userId: number;
 }
