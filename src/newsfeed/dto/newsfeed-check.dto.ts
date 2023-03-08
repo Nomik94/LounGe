@@ -4,16 +4,16 @@ export class newsfeedCheckDto {
     @IsString()
     content:string;
 
-    @IsNumber()
-    userId:number;
+    // @IsNumber()
+    // userId:number;
 
     @IsOptional()
     @IsArray()
-    @Length(1, 10, { each: true })
+    @Length(1, 5, { each: true })
     tag: Array<string> | null | string;
 
-    @IsOptional()
-    @IsArray()
-    image:string;
+    // @IsOptional()
+    // @IsArray()
+    // image:string;
 
 }

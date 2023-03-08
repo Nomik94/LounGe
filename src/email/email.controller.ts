@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Put, Query } from '@nestjs/common';
 import { EmailService } from './email.service';
 
-@Controller('emailVerify')
+@Controller('api/emailVerify')
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
@@ -10,14 +10,13 @@ export class EmailController {
     return await this.emailService.sendVerification(body.email);
   }
 
-  @Put()
-  async verifyEmail(
-    @Body() body,
-    @Query() query,
-  ): Promise<{
+  @Post('check')
+  async verifyEmail(@Body() body): Promise<{
     message: string;
   }> {
-    const verifyToken = parseInt(query.verifyToken);
+    console.log(body);
+
+    const verifyToken = parseInt(body.checkNumber);
     const email = body.email;
 
     await this.emailService.verifyEmail({ email, verifyToken });

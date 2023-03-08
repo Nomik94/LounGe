@@ -1,6 +1,13 @@
-import { Get, UseGuards } from '@nestjs/common';
+import {
+  Get,
+  Render,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { AuthService } from './auth.service';
 import { AuthDTO, KakaoLoginDTO, LogInBodyDTO } from './dto/auth.dto';
@@ -12,8 +19,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  register(@GetUser() authDTO: AuthDTO): Promise<void> {
-    return this.authService.register(authDTO);
+  @UseInterceptors(FileInterceptor('userImage'))
+  register(
+    @Body() authDTO: AuthDTO,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<void> {
+    return this.authService.register(authDTO, file);
   }
 
   @Post('login')
@@ -29,6 +40,7 @@ export class AuthController {
 
   @Get('login/kakao')
   @UseGuards(AuthGuard('kakao'))
+  @Render('kakao')
   async kakaoLogin(@GetUser() user: KakaoLoginDTO): Promise<{
     accessToken: string;
     refreshToken: string;
