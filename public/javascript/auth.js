@@ -1,3 +1,10 @@
+// $(document).ready(function () {
+//   const cookie = document.cookie.split('=')[0];
+//   if (cookie === 'accessToken') {
+//     window.location.href = 'http://localhost:3000/newsfeed';
+//   }
+// });
+
 function login() {
   const email = $('#login-username').val();
   const password = $('#login-password').val();
@@ -12,9 +19,10 @@ function login() {
     .then((res) => {
       document.cookie = `accessToken=Bearer ${res.data.accessToken}`;
       document.cookie = `refreshToken=Bearer ${res.data.refreshToken}`;
-      window.location.href = 'http://localhost:3000';
+      window.location.href = 'http://localhost:3000/newsfeed';
     })
     .catch(async (error) => {
+      console.log(error);
       alert(error.response.data.message);
     });
 }
@@ -32,7 +40,7 @@ function kakaoLogin() {
     window.removeEventListener('message', loginCallback);
   }
   window.addEventListener('message', loginCallback);
-  window.location.href = 'http://localhost:3000';
+  window.location.href = 'http://localhost:3000/newsfeed';
 }
 
 function emailVerify() {
@@ -47,9 +55,14 @@ function emailVerify() {
     })
     .then((res) => {
       console.log(res);
+      alert('인증번호가 발송되었습니다.');
     })
     .catch(async (error) => {
-      alert(error.response.data.message);
+      if (error.response.data.statusCode === 500) {
+        alert('이메일 형식이 아닙니다.');
+      } else {
+        alert(error.response.data.message);
+      }
     });
 }
 
@@ -65,7 +78,7 @@ function emailCheck() {
       checkNumber: checkNumber,
     })
     .then((res) => {
-      console.log(res);
+      document.querySelector('.checkNumber').id = 'check';
       alert('인증이 완료되었습니다.');
     })
     .catch(async (error) => {
@@ -78,23 +91,32 @@ function register() {
   const username = $('#register-username').val();
   const password = $('#register-password').val();
   const passwordRepeat = $('#register-password-repeat').val();
+  const check = document.getElementById('check');
+  const image = $('#userImage')[0].files[0];
+  const formData = new FormData();
+  formData.append('userImage', image);
+  formData.append('email', email);
+  formData.append('password', password);
+  formData.append('username', username);
 
-  if (!email || !username || !password || !passwordRepeat) {
+  if (!check) {
+    alert('이메일 인증을 해주세요.');
+  } else if (!email || !username || !password || !passwordRepeat) {
     alert('모든 정보를 입력해주세요.');
   } else if (password !== passwordRepeat) {
     alert('비밀번호를 확인해주세요.');
+  } else {
+    axios({
+      method: 'post',
+      url: 'api/auth/register',
+      data: formData,
+    })
+      .then((res) => {
+        alert('회원가입이 완료되었습니다.');
+        window.location.reload();
+      })
+      .catch(async (error) => {
+        alert(error.response.data.message);
+      });
   }
-  axios
-    .post('api/auth/register', {
-      email: email,
-      username: username,
-      password: password,
-    })
-    .then((res) => {
-      alert('회원가입이 완료되었습니다.');
-      window.location.href = 'http://localhost:3000/groups';
-    })
-    .catch(async (error) => {
-      alert(error.response.data.message);
-    });
 }

@@ -1,14 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
-import { Render, UseGuards } from '@nestjs/common/decorators';
+import { Render } from '@nestjs/common/decorators';
 import { AppService } from './app.service';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { GetUser } from './common/decorator/get-user.decorator';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('')
+  @Get('/newsfeed')
   @Render('newsfeed')
   newsfeed() {}
 
@@ -20,7 +18,7 @@ export class AppController {
   @Render('events')
   event() {}
 
-  @Get('/auth')
+  @Get('')
   @Render('auth')
   auth() {}
 

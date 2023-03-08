@@ -55,6 +55,9 @@ export class AuthService {
 
   async validateUser({ email, password }) {
     const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException('이메일 또는 비밀번호가 틀렸습니다.');
+    }
 
     const isRegister = await bcrypt.compare(password, user.password);
 
