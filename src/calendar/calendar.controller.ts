@@ -1,4 +1,13 @@
-import { Body,Controller,Delete,Get,Param,Post,Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { CalendarService } from './calendar.service';
 import { CreateGroupEventDto } from './dto/create-groupEvent.dto';
 import { DeleteGroupEventDto } from './dto/delete-groupEvent.dto';
@@ -6,21 +15,34 @@ import { UpdateGroupEventDto } from './dto/update-groupEvent.dto';
 import { CreateUserEventDto } from './dto/create-userEvent.dto';
 import { DeleteUserEventDto } from './dto/delete-userEvent.dto';
 import { UpdateUserEventDto } from './dto/update-userEvent.dto';
-
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { GetUser } from 'src/common/decorator/get-user.decorator';
 
 @Controller('calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
-// userEvents 
+  // userEvents
   @Get('/uevents')
-  getUserEvent() {
-    return this.calendarService.getUserEvent();
+  // @UseGuards(JwtAuthGuard)
+  async getUserEvent(@GetUser() user) {
+    const userId: number = user.id;
+    return await this.calendarService.getUserEvent()
   }
 
+  //이벤트 상세보기
   @Get('/uevents/:id')
-  getUserEventById(@Param('id') eventId: number) {
-    return this.calendarService.getUserEventById(eventId);
+  // @UseGuards(JwtAuthGuard)
+  async getUserEventById(@Param('id') eventId: number) {
+    return await this.calendarService.getUserEventById(eventId);
   }
+
+  // 유저이벤트 전체 리스트불러오기
+  // @Get('/uevents/list')
+  // // @UseGuards(JwtAuthGuard)
+  // getAllUserEvent(@GetUser() user) {
+  //   const userId:number = user.id;
+  //   return this.calendarService.getAllUserEvent(userId);
+  // }
 
   @Post('/uevents')
   createUserEvent(@Body() data: CreateUserEventDto) {
@@ -45,7 +67,7 @@ export class CalendarController {
       data.start,
       data.end,
       data.userId,
-      );
+    );
   }
 
   @Delete('/uevents/:id')
@@ -53,11 +75,11 @@ export class CalendarController {
     @Param('id') eventId: number,
     @Body() data: DeleteUserEventDto,
   ) {
-    return this.calendarService.deleteUserEvent(eventId,data.userId);
+    return this.calendarService.deleteUserEvent(eventId, data.userId);
   }
 
 
-// groupEvents
+  // groupEvents
   @Get('/gevents')
   getGroupEvent() {
     return this.calendarService.getGroupEvent();
@@ -91,7 +113,7 @@ export class CalendarController {
       data.start,
       data.end,
       data.groupId,
-      );
+    );
   }
 
   @Delete('/gevents/:id')
@@ -99,6 +121,6 @@ export class CalendarController {
     @Param('id') eventId: number,
     @Body() data: DeleteGroupEventDto,
   ) {
-    return this.calendarService.deleteGroupEvent(eventId,data.groupId);
+    return this.calendarService.deleteGroupEvent(eventId, data.groupId);
   }
 }

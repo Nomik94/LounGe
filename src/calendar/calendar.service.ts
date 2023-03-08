@@ -1,20 +1,41 @@
 import _ from 'lodash';
 import { Injectable, NotFoundException, UnauthorizedException, } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEvent } from 'src/database/entities/userEvent.entity';
+import { Repository } from 'typeorm';
+import { GroupEvent } from 'src/database/entities/groupEvent.entity';
 
 @Injectable()
 export class CalendarService {
-  // userEvents
-  private userEvents = [];
-  private eventsUserId = new Map();
-  
+  constructor(
+    @InjectRepository(UserEvent)
+    private readonly userEventRepository: Repository<UserEvent>,
+    @InjectRepository(GroupEvent)
+    private readonly groupEventRepository: Repository<GroupEvent>,
+  ){}
 
-  getUserEvent() {
-    return this.userEvents;
+  // userEvents 
+  async getUserEvent(){
+    return await this.userEventRepository.find({
+      where: {deletedAt:null},
+      select: ["eventName","createdAt"],
+    });
   }
 
-  getUserEventById(eventId:number){
-    return this.userEvents.find((events)=>{return events.id===eventId;})
+  async getUserEventById(eventId:number){
+    return this.userEventRepository.findOne({
+      where: {id:eventId, deletedAt:null },
+      select:["eventName","eventContent","createdAt"],
+    })
   }
+
+  // getAllUserEvent(userId:number)/*:Promise<UserEvent>*/{
+  //   return this.userEventRepository.find({
+  //     where: {
+  //       id: userId,
+  //     }
+  //   })
+  // }
 
   createUserEvent(
     eventName: string, 
@@ -22,17 +43,16 @@ export class CalendarService {
     start:string, 
     end:string, 
     userId:number, ){
-      const eventId = this.userEvents.length + 1;
-      this.userEvents.push({id:eventId,eventName,
+      this.userEventRepository.insert({
+        eventName,
         eventContent, 
         start,
-        end
+        end,
+        user:{id:userId}
       })
-      this.eventsUserId.set(eventId,userId);
-      return eventId;
-    }
+    };
 
-  updateUserEvent(
+  async updateUserEvent(
     eventId: number,
     eventName: string, 
     eventContent: string, 
@@ -40,29 +60,38 @@ export class CalendarService {
     end:string, 
     userId:number,
     ){
-      if (this.eventsUserId.get(eventId)!==userId){
-        throw new UnauthorizedException('이 이벤트를 개시한 유저가 맞으신가요?? 유저id가 맞지 않습니다.'+userId);
+      const userEvent = await this.userEventRepository.findOne({
+        where: {id:eventId},
+        select: ["user","id","eventName","eventContent","start","end"],
+        relations:["user"],
+      })
+      console.log(userEvent)
+      if (_.isNil(userEvent)){
+        throw new NotFoundException(`event를 찾을 수 없습니다. id:${userId}`);
       }
-      const event = this.getUserEventById(eventId);
-      console.log(this.getUserEventById(eventId))
-      if (_.isNil(event)){
-        throw new NotFoundException('event를 찾을 수 없습니다. id:'+eventId);
+      if (userEvent.user.id!==userId){
+        throw new UnauthorizedException(`이 이벤트를 게시한 유저가 맞으신가요?? 유저id가 맞지 않습니다: ${userId}`);
       }
-
-      event.eventName = eventName;
-      event.eventContent = eventContent;
-      event.start = start;
-      event.end = end;
+      this.userEventRepository.update(userEvent.id, {eventName,eventContent,start,end})
     }
 
-  deleteUserEvent(eventId: number, userId: number){
-    if (this.eventsUserId.get(eventId)!==userId){
-    throw new UnauthorizedException('이 이벤트를 게시한 유저가 맞으신가요?? 유저id가 맞지 않습니다.'+userId);
-  }
-
-  this.userEvents = this.userEvents.filter((events)=>{return events.id !== eventId});
-
-  }
+    async deleteUserEvent(eventId: number, userId: number){
+      await this.checkUser(eventId,userId);
+      this.userEventRepository.softDelete(eventId)
+    }
+    private async checkUser(eventId: number, userId: number){
+      const userEvent = await this.userEventRepository.findOne({
+        where:{id:eventId},
+        select:["user"],
+        relations:["user"],
+      });
+      if(_.isNil(userEvent)){
+        throw new NotFoundException(`userEvent를 찾을 수 없습니다. id: ${eventId}`)
+      } 
+      if(userEvent.user.id !== userId){
+        throw new UnauthorizedException(`이 이벤트를 게시한 유저가 아닙니다. id: ${userId}`)
+      }
+    }
 
   
   // groupEvents
