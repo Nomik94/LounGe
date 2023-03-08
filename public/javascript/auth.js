@@ -12,6 +12,7 @@ function login() {
     .then((res) => {
       document.cookie = `accessToken=Bearer ${res.data.accessToken}`;
       document.cookie = `refreshToken=Bearer ${res.data.refreshToken}`;
+      window.location.href = 'http://localhost:3000/newsfeed';
     })
     .catch(async (error) => {
       alert(error.response.data.message);
@@ -31,6 +32,7 @@ function kakaoLogin() {
     window.removeEventListener('message', loginCallback);
   }
   window.addEventListener('message', loginCallback);
+  window.location.href = 'http://localhost:3000/newsfeed';
 }
 
 function emailVerify() {
