@@ -26,11 +26,10 @@ function createGroup() {
     data : formData
   })
     .then(function (res) {
-      console.log(res)
-      // Swal.fire({
-      //   icon: 'success',
-      //   text: `${groupName}에 가입 신청이 완료되었습니다.`,
-      // });
+      Swal.fire({
+        icon: 'success',
+        text: `${groupName}에 가입 신청이 완료되었습니다.`,
+      });
     })
     .catch(async function (error) {
       if (error.response.data.statusCode === 401) {
