@@ -45,82 +45,68 @@ export class NewsfeedService {
         @InjectRepository(Group)
         private readonly groupRepository: Repository<Group>,
     ) {}
-        // 본 코드
-    // async postnewsfeed(file,data: newsfeedCheckDto,userId:number,groupId:number): Promise<void> {
 
-    //     const content = data.content;
-    //     const tag = data.tag;
-    //     const checkJoinGroup = await this.userGroupRepository.find({
-    //         where: {userId: userId, groupId:groupId}
-    //     })
-        
-    //     if(checkJoinGroup.length === 0){
-    //         throw new ForbiddenException('가입된 그룹이 아니거나 그룹이 존재하지 않습니다.');
-    //     }
-    //     if(checkJoinGroup[0].role !== "그룹장" && checkJoinGroup[0].role !== "회원") {
-    //         throw new ForbiddenException('그룹 가입 신청 중입니다.');
-    //     }
+    async postnewsfeed(file,data: newsfeedCheckDto,userId:number,groupId:number): Promise<void> {
 
-    //     const newsfeedId = await this.newsfeedRepository.save({
-    //         content:content,
-    //         user: {id : userId},
-    //     })
-    //     if (tag){
-    //         for(const i of tag) {
-    //             if (!await this.tagRepository.findOneBy({tagName:i})) {
-    //                 await this.tagRepository.insert({
-    //                     tagName:i
-    //                 })
-    //             }
-    //         }
-    
-    //         const serchtag = [];
-    //         for (const i of tag) {
-    //             const a = await this.tagRepository.findOne({
-    //                 where: {tagName:i},
-    //                 select: ["id"]}
-    //                 )
-    //             serchtag.push(a.id);
-    //         }
-    
-    //         for (const i of serchtag) {
-    //             await this.newsfeedTagRepository.save({
-    //                 tagId:i,
-    //                 newsFeedId: newsfeedId.id
-    //             })
-    //         }
-    //     }
-
-    //     if (file.length !== 0) {
-    //         const filenames = file.map(file => file.filename)
-    //         const promises = filenames.map(filename => this.newsfeedImageRepository.save({
-    //             image: filename,
-    //             newsFeed: {id:newsfeedId.id}
-    //         }))
-    //         await Promise.all(promises)
-    //     }
-
-    //     await this.groupNewsfeedRepository.insert({
-    //         newsFeedId: newsfeedId.id,
-    //         groupId: groupId
-    //     })
-        
-        
-    //     return
-    //     }
-
-    // 테스트 코드
-    async postnewsfeed(data: newsfeedCheckDto,groupId:number){
-        console.log("서비스단계데이터:",data);
-        console.log("서비스단계그룹아이디:",groupId);
-        
-        
-        const test = await this.newsfeedRepository.find({
-            relations: ['user'],
-            where: {id:1}
+        const content = data.content;
+        const tag = data.tag;
+        const checkJoinGroup = await this.userGroupRepository.find({
+            where: {userId: userId, groupId:groupId}
         })
         
-        return test
+        if(checkJoinGroup.length === 0){
+            throw new ForbiddenException('가입된 그룹이 아니거나 그룹이 존재하지 않습니다.');
+        }
+        if(checkJoinGroup[0].role !== "그룹장" && checkJoinGroup[0].role !== "회원") {
+            throw new ForbiddenException('그룹 가입 신청 중입니다.');
+        }
+
+        const newsfeedId = await this.newsfeedRepository.save({
+            content:content,
+            user: {id : userId},
+        })
+        if (tag){
+            for(const i of tag) {
+                if (!await this.tagRepository.findOneBy({tagName:i})) {
+                    await this.tagRepository.insert({
+                        tagName:i
+                    })
+                }
+            }
+    
+            const serchtag = [];
+            for (const i of tag) {
+                const a = await this.tagRepository.findOne({
+                    where: {tagName:i},
+                    select: ["id"]}
+                    )
+                serchtag.push(a.id);
+            }
+    
+            for (const i of serchtag) {
+                await this.newsfeedTagRepository.save({
+                    tagId:i,
+                    newsFeedId: newsfeedId.id
+                })
+            }
+        }
+
+        if (file.length !== 0) {
+            const filenames = file.map(file => file.filename)
+            const promises = filenames.map(filename => this.newsfeedImageRepository.save({
+                image: filename,
+                newsFeed: {id:newsfeedId.id}
+            }))
+            await Promise.all(promises)
+        }
+
+        await this.groupNewsfeedRepository.insert({
+            newsFeedId: newsfeedId.id,
+            groupId: groupId
+        })
+        
+        
+        return
         }
 
     async readnewsfeed(userId:number) {
