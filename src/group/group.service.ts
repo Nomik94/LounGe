@@ -173,12 +173,18 @@ export class GroupService {
     }
 
     if (findUser.role === '그룹장') {
-      throw new BadRequestException('그룹장을 양도해주세요 ㅠㅠ');
+      throw new BadRequestException('그룹장을 양도해주세요.');
     }
 
     await this.userGroupRepository.delete({
       userId,
       groupId,
+    });
+  }
+
+  async createdGroupList(userId) {
+    return await this.groupRepository.find({
+      where: { userGroups: { userId, role: '그룹장' } },
     });
   }
 

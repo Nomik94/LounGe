@@ -87,4 +87,11 @@ export class GroupController {
     const userId: number = user.id;
     await this.groupService.withdrawalGroup(userId, groupId);
   }
+
+  @Get('/created/list')
+  @UseGuards(JwtAuthGuard)
+  async createdGroupList(@GetUser() user) {
+    const userId: number = user.id;
+    return await this.groupService.createdGroupList(userId);
+  }
 }
