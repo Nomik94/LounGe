@@ -98,8 +98,10 @@ export class AuthService {
         userId,
       });
     }
-    const userEmail = user.email;
-    const userId = user.id;
+
+    const userEmail = existUser.email;
+    const userId = existUser.id;
+
     return await this.getTokens({
       userEmail,
       userId,
