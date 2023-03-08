@@ -106,20 +106,13 @@ export class GroupService {
   }
 
   async acceptGroupJoin(userId: number, ids) {
-    const adminCheckResult = await this.userGroupRepository.findOneBy({
-      userId,
-      groupId: Number(ids.groupId),
-      role: '그룹장',
-    });
-    if (!adminCheckResult) {
-      throw new ForbiddenException('권한이 존재하지 않습니다.');
-    }
+    await this.groupLeaderCheck(userId, ids);
     const joinGroupMember = await this.userGroupRepository.findOneBy({
       userId: Number(ids.memberId),
       groupId: Number(ids.groupId),
     });
 
-    if (joinGroupMember.role !== '가입대기') {
+    if (!joinGroupMember || joinGroupMember.role !== '가입대기') {
       throw new BadRequestException('가입대기 상태만 수락할 수 있습니다.');
     }
     await this.userGroupRepository.update(
@@ -252,6 +245,17 @@ export class GroupService {
         .into(TagGroup)
         .values(existTags.map((tag) => ({ tagId: tag.id, groupId })))
         .execute();
+    }
+  }
+
+  async groupLeaderCheck(userId, ids) {
+    const LeaderCheckResult = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId: Number(ids.groupId),
+      role: '그룹장',
+    });
+    if (!LeaderCheckResult) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
   }
 }
