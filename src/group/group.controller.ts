@@ -101,4 +101,11 @@ export class GroupController {
     const userId: number = user.id;
     return await this.groupService.joinedGroupList(userId);
   }
+
+  @Get('/applicant/list/:groupId')
+  @UseGuards(JwtAuthGuard)
+  async groupApplicantList(@GetUser() user, @Param('groupId') groupId: number) {
+    const userId: number = user.id;
+    return await this.groupService.groupApplicantList(userId, groupId);
+  }
 }

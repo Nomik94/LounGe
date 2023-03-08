@@ -106,7 +106,7 @@ export class GroupService {
   }
 
   async acceptGroupJoin(userId: number, ids) {
-    await this.groupLeaderCheck(userId, ids);
+    await this.groupLeaderCheck(userId, Number(ids.groupId));
     const joinGroupMember = await this.userGroupRepository.findOneBy({
       userId: Number(ids.memberId),
       groupId: Number(ids.groupId),
@@ -188,6 +188,24 @@ export class GroupService {
     });
   }
 
+  async groupApplicantList(userId, groupId) {
+    await this.groupLeaderCheck(userId, groupId);
+    const resultList = await this.userGroupRepository.find({
+      where: { groupId, role: '가입대기' },
+      select: ['userId', 'groupId'],
+      relations: ['group', 'user'],
+    });
+
+    const mappingList = await resultList.map((data) => ({
+      userId: data.userId,
+      groupId: data.groupId,
+      groupName: data.group.groupName,
+      userName: data.user.username,
+      userImage: data.user.image,
+    }));
+    return mappingList;
+  }
+
   async tagMappingGroups(groupList) {
     const modifiedGroupList = groupList.map((group) => {
       const TagGroups = [];
@@ -248,10 +266,10 @@ export class GroupService {
     }
   }
 
-  async groupLeaderCheck(userId, ids) {
+  async groupLeaderCheck(userId: number, groupId: number) {
     const LeaderCheckResult = await this.userGroupRepository.findOneBy({
       userId,
-      groupId: Number(ids.groupId),
+      groupId,
       role: '그룹장',
     });
     if (!LeaderCheckResult) {
