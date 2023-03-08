@@ -13,6 +13,7 @@ import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { GroupService } from './group.service';
+import { GroupTransfer } from './interface/group.transfer.interface';
 
 @Controller('/api/groups')
 export class GroupController {
@@ -113,5 +114,12 @@ export class GroupController {
   @UseGuards(JwtAuthGuard)
   async groupMembers(@Param('groupId') groupId: number) {
     return await this.groupService.groupMembers(groupId);
+  }
+
+  @Put('/leaders/transfer/:groupId/:memberId')
+  @UseGuards(JwtAuthGuard)
+  async groupTransfer(@GetUser() user, @Param() ids: GroupTransfer) {
+    const userId: number = user.id;
+    return await this.groupService.groupTransfer(userId, ids);
   }
 }
