@@ -9,7 +9,7 @@ export class newsfeedCheckDto {
 
     @IsOptional()
     @IsArray()
-    @Length(1, 10, { each: true })
+    @Length(1, 5, { each: true })
     tag: Array<string> | null | string;
 
     // @IsOptional()
