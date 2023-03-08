@@ -44,9 +44,21 @@ async function getTags() {
 
 async function postnewsfeed() {
 
+  // const content = document.getElementById("quick-post-text").value
+  // const Tags = await getTags()
+  // const images = await getImages()
   const content = document.getElementById("quick-post-text").value
-  const Tags = await getTags()
-  const images = await getImages()
+  const tag = ["첫번째",'두번째']
+  axios({
+    method: 'post',
+    url: '/api/newsfeed/newsfeed/1',
+    data: {
+      content: content,
+      tag: tag
+    },
+  }).then((res) => {
+    console.log(res.data);
+  });
 
   
 }

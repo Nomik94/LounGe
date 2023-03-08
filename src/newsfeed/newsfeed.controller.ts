@@ -13,24 +13,33 @@ import { group } from 'console';
 export class NewsfeedController {
   constructor(private readonly newsfeedService: NewsfeedService) {}
 
-  // 뉴스피드 작성
-  @Post('newsfeed/:groupId')
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
+    // // 뉴스피드 작성
+  // @Post('newsfeed/:groupId')
+  // @UseGuards(JwtAuthGuard)
+  // @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
 
+  // async postnewsfeed(
+  //   @Param('groupId')groupId:number ,
+  //   @GetUser() user,
+  //   @UploadedFiles() file: Array<Express.Multer.File>,
+  //   @Body() data: newsfeedCheckDto
+  //   ): Promise<void> {
+  //     const userId = user.id
+ 
+  //   await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
+  // }
+
+  // 뉴스피드 작성(테스트)
+  @Post('newsfeed/:groupId')
   async postnewsfeed(
     @Param('groupId')groupId:number ,
-    @GetUser() user,
-    @UploadedFiles() file: Array<Express.Multer.File>,
     @Body() data: newsfeedCheckDto
-    ): Promise<void> {
-      const userId = user.id
-      console.log("data.tag의 값! :" ,data.tag);
-      console.log("data.tag의 타입! :",typeof(data.tag));
-      
-      
-    await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
+    ) {
+      console.log(groupId);
+      console.log(data);
+     return await this.newsfeedService.postnewsfeed(data,groupId);
   }
+
 
   // 뉴스피드 읽기
   @Get('newsfeed/:id')
