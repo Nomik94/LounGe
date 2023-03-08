@@ -13,7 +13,8 @@ import { group } from 'console';
 export class NewsfeedController {
   constructor(private readonly newsfeedService: NewsfeedService) {}
 
-    // 뉴스피드 작성
+
+  // 뉴스피드 작성
   @Post('newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
@@ -25,7 +26,7 @@ export class NewsfeedController {
     @Body() data: newsfeedCheckDto
     ): Promise<void> {
       const userId = user.id
- 
+
     await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
   }
 

@@ -23,4 +23,8 @@ export class AppController {
   @Get('/auth')
   @Render('auth')
   auth() {}
+
+  @Get('/group/management')
+  @Render('hub-group-management')
+  groupManagement() {}
 }

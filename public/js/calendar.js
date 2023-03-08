@@ -8,11 +8,12 @@
       expandRows: true, // 화면에 맞게 높이 재설정
       slotMinTime: '08:00', // Day 캘린더에서 시작 시간
       slotMaxTime: '20:00', // Day 캘린더에서 종료 시간
+      headers: {},
       // 해더에 표시할 툴바
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+        right: 'dayGridMonth,listWeek',
       },
       initialView: 'dayGridMonth', // 초기 로드 될때 보이는 캘린더 화면(기본 설정: 달)
       /** initialDate: '2021-07-15', // 초기 날짜 설정 (설정하지 않으면 오늘 날짜가 보인다.)**/
@@ -28,7 +29,6 @@
         const title = obj.event.title;
         const start = obj.event.startStr;
         const end = obj.event.endStr;
-
       },
       eventChange: function (obj) {
         // 이벤트가 수정되면 발생하는 이벤트
@@ -80,19 +80,22 @@
         calendar.unselect();
       },
       // 이벤트
-      events: [{
-        title: 'title',
-        start: '2023-01-05',
-        end: '2023-01-01',
-        color: 'red'},
+      events: [
+        {
+          title: 'title',
+          start: '2023-01-05',
+          end: '2023-01-01',
+          color: 'red',
+        },
         {
           title: 'title1',
           start: '2023-01-05',
           end: '2023-01-05',
-          color: 'purple'}]
+          color: 'purple',
+        },
+      ],
     });
     // 캘린더 랜더링
     calendar.render();
   });
 })();
-

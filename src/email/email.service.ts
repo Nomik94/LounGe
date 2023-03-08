@@ -43,7 +43,6 @@ export class EmailService {
       to: emailAddress,
       subject: '가입 인증 메일',
       html: `
-
       인증번호 : ${signupVerifyToken}`,
     };
 
