@@ -36,14 +36,6 @@ export class CalendarController {
     return await this.calendarService.getUserEventById(eventId);
   }
 
-  // 유저이벤트 전체 리스트불러오기
-  // @Get('/uevents/list')
-  // // @UseGuards(JwtAuthGuard)
-  // getAllUserEvent(@GetUser() user) {
-  //   const userId:number = user.id;
-  //   return this.calendarService.getAllUserEvent(userId);
-  // }
-
   @Post('/uevents')
   createUserEvent(@Body() data: CreateUserEventDto) {
     return this.calendarService.createUserEvent(
