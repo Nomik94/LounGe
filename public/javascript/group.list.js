@@ -3,9 +3,6 @@ $(document).ready(function () {
 });
 
 async function getGroupList() {
-  console.log(document.cookie.split('=')[1])
-
-  
   axios({
     url: '/api/groups',
     method: 'get',
@@ -29,7 +26,7 @@ async function getGroupList() {
           icon: 'error',
           title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
         });
-        window.location.replace('auth');
+        window.location.replace('/auth');
       }
       Swal.fire({
         icon: 'false',
@@ -76,7 +73,7 @@ function joinGroup(groupId, groupName) {
               icon: 'error',
               title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
             });
-            window.location.replace('auth');
+            window.location.replace('/auth');
           }
           Swal.fire({
             icon: 'false',
@@ -124,7 +121,7 @@ function searchGroups(tag) {
           icon: 'error',
           title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
         });
-        window.location.replace('auth');
+        window.location.replace('/auth');
       }
       Swal.fire({
         icon: 'false',

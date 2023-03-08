@@ -237,92 +237,11 @@
     <div class="popup-box-body">
       <!-- POPUP BOX SIDEBAR -->
       <div class="popup-box-sidebar">
-        <!-- USER PREVIEW -->
-        <div class="user-preview small">
-          <!-- USER PREVIEW COVER -->
-          <figure class="user-preview-cover liquid">
-            <img src="img/cover/29.jpg" alt="cover-29">
-          </figure>
-          <!-- /USER PREVIEW COVER -->
-
-          <!-- USER PREVIEW INFO -->
-          <div class="user-preview-info">
-            <!-- USER SHORT DESCRIPTION -->
-            <div class="user-short-description small">
-              <!-- USER SHORT DESCRIPTION AVATAR -->
-              <a class="user-short-description-avatar user-avatar no-stats" href="group-timeline.html">
-                <!-- USER AVATAR BORDER -->
-                <div class="user-avatar-border">
-                  <!-- HEXAGON -->
-                  <div class="hexagon-100-108"></div>
-                  <!-- /HEXAGON -->
-                </div>
-                <!-- /USER AVATAR BORDER -->
-            
-                <!-- USER AVATAR CONTENT -->
-                <div class="user-avatar-content">
-                  <!-- HEXAGON -->
-                  <div class="hexagon-image-84-92" data-src="img/avatar/24.jpg"></div>
-                  <!-- /HEXAGON -->
-                </div>
-                <!-- /USER AVATAR CONTENT -->
-              </a>
-              <!-- /USER SHORT DESCRIPTION AVATAR -->
-        
-              <!-- USER SHORT DESCRIPTION TITLE -->
-              <p class="user-short-description-title small"><a href="group-timeline.html">Cosplayers of the World</a></p>
-              <!-- /USER SHORT DESCRIPTION TITLE -->
-        
-              <!-- USER SHORT DESCRIPTION TEXT -->
-              <p class="user-short-description-text regular">Group Organizer</p>
-              <!-- /USER SHORT DESCRIPTION TEXT -->
-            </div>
-            <!-- /USER SHORT DESCRIPTION -->
-          </div>
-          <!-- /USER PREVIEW INFO -->
-        </div>
-        <!-- /USER PREVIEW -->
-
-        <!-- SIDEBAR MENU ITEM -->
-        <div class="sidebar-menu-item">
-          <!-- SIDEBAR MENU BODY -->
-          <div class="sidebar-menu-body secondary">
-            <!-- SIDEBAR MENU LINK -->
-            <p class="sidebar-menu-link active">Group Info</p>
-            <!-- /SIDEBAR MENU LINK -->
-
-            <!-- SIDEBAR MENU LINK -->
-            <p class="sidebar-menu-link">Avatar and Cover</p>
-            <!-- /SIDEBAR MENU LINK -->
-
-            <!-- SIDEBAR MENU LINK -->
-            <p class="sidebar-menu-link">Social Networks</p>
-            <!-- /SIDEBAR MENU LINK -->
-
-            <!-- SIDEBAR MENU LINK -->
-            <p class="sidebar-menu-link">Settings</p>
-            <!-- /SIDEBAR MENU LINK -->
-
-            <!-- SIDEBAR MENU LINK -->
-            <p class="sidebar-menu-link">Members</p>
-            <!-- /SIDEBAR MENU LINK -->
-
-            <!-- SIDEBAR MENU LINK -->
-            <p class="sidebar-menu-link">Delete Group</p>
-            <!-- /SIDEBAR MENU LINK -->
-          </div>
-          <!-- /SIDEBAR MENU BODY -->
-        </div>
-        <!-- /SIDEBAR MENU ITEM -->
 
         <!-- POPUP BOX SIDEBAR FOOTER -->
         <div class="popup-box-sidebar-footer">
           <!-- BUTTON -->
-          <p class="button secondary full popup-manage-group-trigger">Save Changes!</p>
-          <!-- /BUTTON -->
-
-          <!-- BUTTON -->
-          <p class="button white full popup-manage-group-trigger">Discard All</p>
+          <p class="button secondary full popup-manage-group-trigger" onclick="createGroup()">그룹 생성</p>
           <!-- /BUTTON -->
         </div>
         <!-- /POPUP BOX SIDEBAR FOOTER -->
@@ -347,8 +266,8 @@
                 <div class="form-item">
                   <!-- FORM INPUT -->
                   <div class="form-input small active">
-                    <label for="group-name">그룹 이름</label>
-                    <input type="text" id="group-name" name="group_name" >
+                    <label for="groupName">그룹 이름</label>
+                    <input type="text" id="groupName" name="groupName" >
                   </div>
                   <!-- /FORM INPUT -->
                 </div>
@@ -362,8 +281,8 @@
                 <div class="form-item">
                   <!-- FORM INPUT -->
                   <div class="form-input small active">
-                    <label for="group-tagline">태그</label>
-                    <input type="text" id="group-tagline" name="group_tagline" placeholder="그룹 태그는 3개까지 등록 가능 합니다. ex) 치킨,피자,사람">
+                    <label for="groupTags">태그</label>
+                    <input type="text" id="groupTags" name="groupTags" placeholder="그룹 태그는 3개까지 등록 가능 합니다. ex) 치킨,피자,사람">
                   </div>
                   <!-- /FORM INPUT -->
                 </div>
@@ -377,7 +296,7 @@
                 <div class="form-item">
                   <!-- FORM INPUT -->
                   <div class="form-input small mid-textarea">
-                    <textarea id="group-description" name="group_description" placeholder="그룹에 대한 설명을 입력해주세요."></textarea>
+                    <textarea id="groupDescription" name="groupDescription" placeholder="그룹에 대한 설명을 입력해주세요."></textarea>
                   </div>
                   <!-- /FORM INPUT -->
                 </div>
@@ -406,8 +325,8 @@
                 <div class="form-item">
                   <!-- FORM INPUT -->
                   <div class="form-input small active">
-                  <label for='backgroudImage'>그룹 배경이미지</label>
-                  <input type='file' class='form-control' id='backgroudImage' style="background-color: #1d2333; color:antiquewhite"/>
+                  <label for='backgroundImage'>그룹 배경이미지</label>
+                  <input type='file' class='form-control' id='backgroundImage' style="background-color: #1d2333; color:antiquewhite"/>
                   </div>
                   <!-- /FORM INPUT -->
                 </div>
@@ -456,5 +375,10 @@
 <script src="/js/form/form.utils.js"></script>
 <!-- SVG icons -->
 <script src="/js/utils/svg-loader.js"></script>
+<!--axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/javascript/create.group.js"></script>
 </body>
 </html>
