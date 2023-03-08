@@ -205,7 +205,13 @@ export class GroupService {
     }));
     return mappingList;
   }
-
+  async groupMembers(groupId) {
+    return await this.userGroupRepository.find({
+      where: { groupId, role: Not('가입대기') },
+      relations: ['user'],
+      order: { role: 'ASC' },
+    });
+  }
   async tagMappingGroups(groupList) {
     const modifiedGroupList = groupList.map((group) => {
       const TagGroups = [];
