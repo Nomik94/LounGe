@@ -115,7 +115,7 @@ function leaderGroupList() {
             <!-- /USER SHORT DESCRIPTION -->
 
             <!-- BUTTON -->
-            <p class="button white full" onclick="window.location.href='/'">그룹 관리</p>
+            <p class="button white full" onclick="window.location.href='/group/management/members?groupId=${data.id}'">그룹 관리</p>
             <!-- /BUTTON -->
           </div>
           <!-- /USER PREVIEW INFO -->

@@ -52,7 +52,7 @@ function joinGroup(groupId, groupName) {
       const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
 
       axios({
-        url: `/api/groups/join/${groupId}`,
+        url: `/api/groups/${groupId}/join`,
         method: 'post',
         headers: {
           Authorization: `${accessToken}`,
