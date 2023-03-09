@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
 import { Repository } from 'typeorm';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
+import { UserEventDto } from './dto/userEvent.dto';
+import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
 
 @Injectable()
 export class CalendarService {
@@ -36,30 +38,18 @@ export class CalendarService {
   //     }
   //   })
   // }
-
-  createUserEvent(
-    eventName: string, 
-    eventContent: string, 
-    start:string, 
-    end:string, 
-    userId:number, ){
-      this.userEventRepository.insert({
-        eventName,
-        eventContent, 
-        start,
-        end,
+  
+  async createUserEvent(userId : number, data : UserEventDto){
+      await this.userEventRepository.insert({
+        eventName : data.eventName,
+        eventContent : data.eventContent, 
+        start : data.start,
+        end : data.end,
         user:{id:userId}
       })
     };
 
-  async updateUserEvent(
-    eventId: number,
-    eventName: string, 
-    eventContent: string, 
-    start:string, 
-    end:string, 
-    userId:number,
-    ){
+  async updateUserEvent(userId : number, eventId : number, data : UpdateUserEventDto){
       const userEvent = await this.userEventRepository.findOne({
         where: {id:eventId},
         select: ["user","id","eventName","eventContent","start","end"],
@@ -70,9 +60,9 @@ export class CalendarService {
         throw new NotFoundException(`event를 찾을 수 없습니다. id:${userId}`);
       }
       if (userEvent.user.id!==userId){
-        throw new UnauthorizedException(`이 이벤트를 게시한 유저가 맞으신가요?? 유저id가 맞지 않습니다: ${userId}`);
+        throw new UnauthorizedException(`이 이벤트를 게시한 유저가 아닙니다: ${userId}`);
       }
-      this.userEventRepository.update(userEvent.id, {eventName,eventContent,start,end})
+      this.userEventRepository.update(userEvent.id, data)
     }
 
     async deleteUserEvent(eventId: number, userId: number){

@@ -14,7 +14,7 @@ export class NewsfeedController {
   constructor(private readonly newsfeedService: NewsfeedService) {}
 
 
-  // 뉴스피드 작성
+// 뉴스피드 작성
   @Post('newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
@@ -26,15 +26,8 @@ export class NewsfeedController {
     @Body() data: newsfeedCheckDto
     ): Promise<void> {
       const userId = user.id
-
+ 
     await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
-  }
-
-
-  // 뉴스피드 읽기
-  @Get('newsfeed/:id')
-  async readnewsfeed(@Param('id') userId: number) {
-    return await this.newsfeedService.readnewsfeed(userId);
   }
 
   // 뉴스피드 삭제
@@ -76,6 +69,28 @@ export class NewsfeedController {
     @Param('id') groupId: number
     ) {
     return await this.newsfeedService.readnewsfeedgroup(groupId)
+  }
+
+  // 뉴스피드 읽기
+  @Get('newsfeed')
+  @UseGuards(JwtAuthGuard)
+  async readnewsfeedmy(
+    @GetUser() user,
+    ) {
+      const userId = user.id
+      console.log("유저아이디",userId);
+      
+    return await this.newsfeedService.readnewsfeedmy(userId);
+  }
+
+  // 뉴스피드 읽기 (내가 소속된 모든 그룹의 뉴스피드)
+  @Get('newsfeed/mygroup')
+  @UseGuards(JwtAuthGuard)
+  async readnewsfeedmygroup(
+    @GetUser() user,
+  ){
+    const userId = user.id
+    return await this.newsfeedService.readnewsfeedmygroup(userId)
   }
 }
 function UploadFiles() {
