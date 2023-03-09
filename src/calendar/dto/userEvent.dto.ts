@@ -1,6 +1,6 @@
 import { IsNumber, IsString, IsDate } from 'class-validator';
 
-export class CreateUserEventDto {
+export class UserEventDto {
   @IsString()
   readonly eventName: string;
 
@@ -12,7 +12,4 @@ export class CreateUserEventDto {
 
   @IsString()
   readonly end: string;
-
-  @IsNumber()
-  readonly userId: number;
 }
