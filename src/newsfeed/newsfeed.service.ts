@@ -353,7 +353,7 @@ export class NewsfeedService {
             select: ['id', 'content', 'createdAt', 'updatedAt'],
             where: { id: In(newsfeedIds), deletedAt: null }
           });
-
+  
           const result = newsfeeds.map(feed => {
             const userName = feed.user.username;
             const userImage = feed.user.image;

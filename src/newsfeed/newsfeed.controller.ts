@@ -15,18 +15,20 @@ export class NewsfeedController {
 
 
 // 뉴스피드 작성
-  @Post('newsfeed/:groupId')
+  @Post('/newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
 
   async postnewsfeed(
-    @Param('groupId')groupId:number ,
+    @Param('groupId') groupId:number ,
     @GetUser() user,
     @UploadedFiles() file: Array<Express.Multer.File>,
     @Body() data: newsfeedCheckDto
-    ): Promise<void> {
+    ) {
       const userId = user.id
- 
+      console.log(userId);
+      console.log(groupId);
+      
     await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
   }
 
@@ -71,7 +73,7 @@ export class NewsfeedController {
     return await this.newsfeedService.readnewsfeedgroup(groupId)
   }
 
-  // 뉴스피드 읽기
+  // 뉴스피드 읽기 (내가 쓴 뉴스피드만)
   @Get('newsfeed')
   @UseGuards(JwtAuthGuard)
   async readnewsfeedmy(
@@ -79,6 +81,7 @@ export class NewsfeedController {
     ) {
       const userId = user.id
       console.log("유저아이디",userId);
+      
       
     return await this.newsfeedService.readnewsfeedmy(userId);
   }
