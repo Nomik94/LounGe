@@ -3,7 +3,7 @@ $(document).ready(function () {
 });
 
 function managementMemberList() {
-  $('.notification-box-list').empty()
+  $('.notification-box-list').empty();
   let query = window.location.search;
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
@@ -21,13 +21,13 @@ function managementMemberList() {
     },
   })
     .then(function (res) {
-      $('#groupTitle').empty()
-      $('#groupTitle').append(`${res.data.group.groupName}`)
-  
+      $('#groupTitle').empty();
+      $('#groupTitle').append(`${res.data.group.groupName}`);
+
       res.data.members.forEach((data) => {
-        if(data.userRole === '회원'){
+        if (data.userRole === '회원') {
           let temp_html = `          <!-- 멤버 리스트 추방 -->
-        <div class="notification-box">
+        <div class="notification-box" id="kickdeletebox${data.userId}">
           <!-- USER STATUS -->
           <div class="user-status request">
             <!-- USER STATUS AVATAR -->
@@ -72,7 +72,7 @@ function managementMemberList() {
             <!-- ACTION REQUEST LIST -->
             <div class="action-request-list">
             <!-- ACTION REQUEST -->
-              <p class="action-request accept with-text">
+              <p class="action-request accept with-text" onclick="groupTransfer(${groupId}, ${data.userId},'${data.userName}')">
                 <!-- ACTION REQUEST ICON -->
                 <svg class="action-request-icon icon-add-friend">
                   <use xlink:href="#svg-add-friend"></use>
@@ -85,7 +85,7 @@ function managementMemberList() {
               </p>
               <!-- /ACTION REQUEST -->
               <!-- ACTION REQUEST -->
-              <div class="action-request decline with-text">
+              <div class="action-request decline with-text" onclick="kickOutGroup(${groupId}, ${data.userId},'${data.userName}')">
                 <!-- ACTION REQUEST ICON -->
                 <svg class="action-request-icon icon-remove-friend">
                   <use xlink:href="#svg-remove-friend"></use>
@@ -101,10 +101,10 @@ function managementMemberList() {
           </div>
           <!-- /USER STATUS -->
         </div>
-        <!-- /NOTIFICATION BOX -->`
-        $('.notification-box-list').append(temp_html);
+        <!-- /NOTIFICATION BOX -->`;
+          $('.notification-box-list').append(temp_html);
         }
-      })
+      });
       const js = `
       <script src="/js/global/global.hexagons.js"></script>
       <script src="/js/utils/liquidify.js"></script>`;
@@ -133,7 +133,7 @@ function managementMemberList() {
 }
 
 function managementApplyList() {
-  $('.notification-box-list').empty()
+  $('.notification-box-list').empty();
   let query = window.location.search;
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
@@ -154,7 +154,7 @@ function managementApplyList() {
       console.log(res.data);
       res.data.forEach((data) => {
         let temp_html = `          <!-- 가입 신청자 수락 거절 -->
-        <div class="notification-box" id="deletebox${data.userId}">
+        <div class="notification-box" id="acceptdeletebox${data.userId}">
           <!-- USER STATUS -->
           <div class="user-status request">
             <!-- USER STATUS AVATAR -->
@@ -230,9 +230,9 @@ function managementApplyList() {
           </div>
           <!-- /USER STATUS -->
         </div>
-        <!-- /NOTIFICATION BOX -->`
+        <!-- /NOTIFICATION BOX -->`;
         $('.notification-box-list').append(temp_html);
-      })
+      });
       const js = `
       <script src="/js/global/global.hexagons.js"></script>
       <script src="/js/utils/liquidify.js"></script>`;
@@ -260,12 +260,12 @@ function managementApplyList() {
     });
 }
 
-function applyJoin(groupId, memberId, userName){
+function applyJoin(groupId, memberId, userName) {
   console.log(groupId);
   console.log(memberId);
   console.log(userName);
   Swal.fire({
-    text: `${userName}의 가입신청을 수락하시겠습니까?`,
+    text: `${userName}님의 가입신청을 수락하시겠습니까?`,
     icon: 'question',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
@@ -275,7 +275,10 @@ function applyJoin(groupId, memberId, userName){
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
+      const accessToken = document.cookie
+        .split(';')
+        .filter((token) => token.includes('accessToken'))[0]
+        .split('=')[1];
 
       axios({
         url: `/api/groups/${groupId}/members/${memberId}`,
@@ -285,7 +288,115 @@ function applyJoin(groupId, memberId, userName){
         },
       })
         .then(function (res) {
-          $(`#deletebox${memberId}`).empty()
+          managementApplyList()
+        })
+        .catch(async function (error) {
+          if (error.response.data.statusCode === 401) {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'center-center',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
+            await Toast.fire({
+              icon: 'error',
+              title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+            });
+            window.location.replace('/');
+          }
+          Swal.fire({
+            icon: 'false',
+            text: `${error.response.data.message}`,
+          });
+        });
+    }
+  });
+}
+
+function groupTransfer(groupId, memberId, userName) {
+  console.log(groupId);
+  console.log(memberId);
+  console.log(userName);
+  Swal.fire({
+    text: `${userName}님께 그룹을 양도하시겠습니까?`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '승인',
+    cancelButtonText: '취소',
+    reverseButtons: false, // 버튼 순서 거꾸로
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const accessToken = document.cookie
+        .split(';')
+        .filter((token) => token.includes('accessToken'))[0]
+        .split('=')[1];
+
+      axios({
+        url: `/api/groups/${groupId}/leaders/transfer/${memberId}`,
+        method: 'put',
+        headers: {
+          Authorization: `${accessToken}`,
+        },
+      })
+        .then(function (res) {
+          managementMemberList()
+        })
+        .catch(async function (error) {
+          if (error.response.data.statusCode === 401) {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'center-center',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
+            await Toast.fire({
+              icon: 'error',
+              title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+            });
+            window.location.replace('/');
+          }
+          Swal.fire({
+            icon: 'false',
+            text: `${error.response.data.message}`,
+          });
+        });
+    }
+  });
+}
+
+function kickOutGroup(groupId, memberId, userName) {
+  console.log(groupId);
+  console.log(memberId);
+  console.log(userName);
+  Swal.fire({
+    text: `${userName}님을 그룹에서 추방하시겠습니까?`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '승인',
+    cancelButtonText: '취소',
+    reverseButtons: false, // 버튼 순서 거꾸로
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const accessToken = document.cookie
+        .split(';')
+        .filter((token) => token.includes('accessToken'))[0]
+        .split('=')[1];
+
+      axios({
+        url: `/api/groups/${groupId}/kickout/${memberId}`,
+        method: 'delete',
+        headers: {
+          Authorization: `${accessToken}`,
+        },
+      })
+        .then(function (res) {
+          managementMemberList()
         })
         .catch(async function (error) {
           if (error.response.data.statusCode === 401) {
