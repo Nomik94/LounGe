@@ -212,7 +212,7 @@ export class NewsfeedService {
         }
     }
 
-    async serchtagnewsfeed(data:serchtagnewsfeedCheckDto){
+    async serchtagnewsfeed(data){
 
         try {
             const tag = data.tag

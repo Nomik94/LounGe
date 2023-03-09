@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors, } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFiles, UseGuards, UseInterceptors, } from '@nestjs/common';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
@@ -58,11 +58,13 @@ export class NewsfeedController {
   }
 
   // 태그로 뉴스피드 검색
-  @Get('/tag/newsfeed')
+  @Get('tag/newsfeed')
   async serchtagnewsfeed(
-    @Body() data:serchtagnewsfeedCheckDto
+    @Query() data
   ){
-    return await this.newsfeedService.serchtagnewsfeed(data)
+    const {tag} = data
+    
+    return await this.newsfeedService.serchtagnewsfeed(tag)
   }
 
   // 뉴스피드 그룹별 읽기

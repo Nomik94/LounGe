@@ -170,7 +170,7 @@ async function newsfeedlist(data) {
           <!-- /USER STATUS AVATAR -->
       
           <!-- USER STATUS TITLE -->
-          <p class="user-status-title medium"><a class="bold" href="profile-timeline.html">${data.userName}</a> 님의 뉴스피드</p>
+          <p class="user-status-title medium"><a class="bold" href="profile-timeline.html">${data.userName}</a>님의 뉴스피드</p>
           <!-- /USER STATUS TITLE -->
       
           <!-- USER STATUS TEXT -->
@@ -186,7 +186,7 @@ async function newsfeedlist(data) {
         <!-- TAG LIST -->
           <div class="tag-list">
           ${data.tagsName.map(tag => `
-          <a class="tag-item secondary" onclick="${tag}">${tag}</a>
+          <a class="tag-item secondary" onclick="serchtag('${tag}')">${tag}</a>
           `).join("")}
           </div>
         <!-- /TAG LIST -->
@@ -257,7 +257,17 @@ async function deletenewsfeed(newsfeedId){
 }
 
 async function serchtag(tag) {
-alert(tag)
+  const test = tag
+    axios({
+      method: 'Get',
+      url: '/api/newsfeed/tag/newsfeed',
+      params: {
+        tag:test
+      },
+    })
+    .then(async (res) => {
+      console.log(res.data);
+    })
 }
 
 function clearnewsfeed(){
