@@ -421,3 +421,59 @@ function kickOutGroup(groupId, memberId, userName) {
     }
   });
 }
+
+function deleteGroup() {
+  $('.notification-box-list').empty();
+  let query = window.location.search;
+  let param = new URLSearchParams(query);
+  let groupId = param.get('groupId');
+
+  Swal.fire({
+    text: `정말로 그룹을 삭제하시겠습니까?`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '승인',
+    cancelButtonText: '취소',
+    reverseButtons: false, // 버튼 순서 거꾸로
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const accessToken = document.cookie
+        .split(';')
+        .filter((token) => token.includes('accessToken'))[0]
+        .split('=')[1];
+
+      axios({
+        url: `/api/groups/${groupId}`,
+        method: 'delete',
+        headers: {
+          Authorization: `${accessToken}`,
+        },
+      })
+        .then(function (res) {
+          window.location.replace('/group/management')
+        })
+        .catch(async function (error) {
+          if (error.response.data.statusCode === 401) {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'center-center',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
+            await Toast.fire({
+              icon: 'error',
+              title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+            });
+            window.location.replace('/');
+          }
+          Swal.fire({
+            icon: 'false',
+            text: `${error.response.data.message}`,
+          });
+        });
+    }
+  });
+}
