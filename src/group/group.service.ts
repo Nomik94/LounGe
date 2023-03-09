@@ -185,10 +185,21 @@ export class GroupService {
   }
 
   async joinedGroupList(userId) {
-    return await this.groupRepository.find({
-      select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
+    const resultList = await this.groupRepository.find({
+      select: ['id', 'groupName', 'groupImage', 'backgroundImage','description','user'],
+      relations : ['user'],
       where: { userGroups: { userId, role: Not('가입대기') } },
     });
+
+    return await resultList.map((group) => ({
+      groupId : group.id,
+      groupName : group.groupName,
+      groupImage : group.groupImage,
+      backgroundImage : group.backgroundImage,
+      description : group.description,
+      leader : group.user.username,
+      leaderImage : group.user.image
+    }))
   }
 
   async groupApplicantList(userId, groupId) {

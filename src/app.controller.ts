@@ -29,4 +29,8 @@ export class AppController {
   @Get('/group/management/members')
   @Render('hub-group-members')
   groupMembersManagement(){}
+
+  @Get('/joined/grouplist')
+  @Render('hub-group-joinedlist')
+  groupJoinedList(){}
 }
