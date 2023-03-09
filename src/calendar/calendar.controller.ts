@@ -10,13 +10,10 @@ import {
 } from '@nestjs/common';
 import { CalendarService } from './calendar.service';
 import { CreateGroupEventDto } from './dto/create-groupEvent.dto';
-import { DeleteGroupEventDto } from './dto/delete-groupEvent.dto';
-import { UpdateGroupEventDto } from './dto/update-groupEvent.dto';
-import { CreateUserEventDto } from './dto/create-userEvent.dto';
-import { DeleteUserEventDto } from './dto/delete-userEvent.dto';
-import { UpdateUserEventDto } from './dto/update-userEvent.dto';
+import { UserEventDto } from './dto/userEvent.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
+import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
 
 @Controller('calendar')
 export class CalendarController {
@@ -37,35 +34,24 @@ export class CalendarController {
   }
 
   @Post('/uevents')
-  createUserEvent(@Body() data: CreateUserEventDto) {
-    return this.calendarService.createUserEvent(
-      data.eventName,
-      data.eventContent,
-      data.start,
-      data.end,
-      data.userId,
-    );
+  async createUserEvent(@Body() data: UserEventDto) {
+    const userId = 2
+    return await this.calendarService.createUserEvent(userId, data);
   }
 
   @Put('/uevents/:id')
   updateUserEvent(
     @Param('id') eventId: number,
-    @Body() data: UpdateUserEventDto,
+    @Body() data: UpdateUserEventDto
   ) {
-    return this.calendarService.updateUserEvent(
-      eventId,
-      data.eventName,
-      data.eventContent,
-      data.start,
-      data.end,
-      data.userId,
-    );
+    const userId = 1
+    return this.calendarService.updateUserEvent(userId,eventId,data);
   }
 
   @Delete('/uevents/:id')
   deleteUserEvent(
     @Param('id') eventId: number,
-    @Body() data: DeleteUserEventDto,
+    @Body() data,
   ) {
     return this.calendarService.deleteUserEvent(eventId, data.userId);
   }
@@ -96,7 +82,7 @@ export class CalendarController {
   @Put('/gevents/:id')
   updateGroupEvent(
     @Param('id') eventId: number,
-    @Body() data: UpdateGroupEventDto,
+    @Body() data
   ) {
     return this.calendarService.updateGroupEvent(
       eventId,
@@ -111,7 +97,7 @@ export class CalendarController {
   @Delete('/gevents/:id')
   deleteGroupEvent(
     @Param('id') eventId: number,
-    @Body() data: DeleteGroupEventDto,
+    @Body() data
   ) {
     return this.calendarService.deleteGroupEvent(eventId, data.groupId);
   }
