@@ -222,11 +222,11 @@ export class GroupService {
     const findUser = await this.userGroupRepository.findOne({
       where: { userId: memberId, groupId, role: '회원' },
     });
-    if(!findUser) {
-      throw new BadRequestException('그룹원에게만 양도할 수 있습니다.')
+    if (!findUser) {
+      throw new BadRequestException('그룹원에게만 양도할 수 있습니다.');
     }
     await this.groupLeaderCheck(userId, groupId);
-    
+
     await this.groupRepository.update(groupId, {
       user: { id: memberId },
     });
@@ -238,6 +238,27 @@ export class GroupService {
       { userId: memberId, groupId },
       { role: '그룹장' },
     );
+  }
+
+  async kickOutGroup(userId, ids: GroupTransfer) {
+    const groupId = Number(ids.groupId);
+    const memberId = Number(ids.memberId);
+
+    await this.groupLeaderCheck(userId, groupId);
+
+    const findUser = await this.userGroupRepository.findOne({
+      where: { userId: memberId, groupId, role: '회원' },
+    });
+
+    if (!findUser) {
+      throw new BadRequestException('존재하지 않는 회원입니다.');
+    }
+
+    await this.userGroupRepository.delete({
+      groupId,
+      userId: memberId,
+      role: '회원',
+    });
   }
   async tagMappingGroups(groupList) {
     const modifiedGroupList = groupList.map((group) => {

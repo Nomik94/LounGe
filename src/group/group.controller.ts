@@ -44,7 +44,7 @@ export class GroupController {
     const userId: number = user.id;
     return await this.groupService.getAllGroup(userId);
   }
- 
+
   // 그룹 수정 API
   @Put('/:groupId')
   @UseGuards(JwtAuthGuard)
@@ -66,7 +66,7 @@ export class GroupController {
   }
 
   // 그룹 가입 API
-  @Post('/join/:groupId')
+  @Post('/:groupId/join')
   @UseGuards(JwtAuthGuard)
   async sendGroupJoin(@GetUser() user, @Param('groupId') groupId: number) {
     const userId: number = user.id;
@@ -74,7 +74,7 @@ export class GroupController {
   }
 
   // 그룹 가입 신청 수락 API
-  @Put('/members/:groupId/:memberId')
+  @Put('/:groupId/members/:memberId')
   @UseGuards(JwtAuthGuard)
   async acceptGroupJoin(@GetUser() user, @Param() ids) {
     const userId: number = user.id;
@@ -90,7 +90,7 @@ export class GroupController {
   }
 
   // 그룹 탈퇴 API
-  @Delete('/withdraw/:groupId')
+  @Delete('/:groupId/withdraw')
   @UseGuards(JwtAuthGuard)
   async withdrawalGroup(@GetUser() user, @Param('groupId') groupId: number) {
     const userId: number = user.id;
@@ -114,7 +114,7 @@ export class GroupController {
   }
 
   // 그룹 가입 신청자 API
-  @Get('/applicant/list/:groupId')
+  @Get('/:groupId/applicant/list/')
   @UseGuards(JwtAuthGuard)
   async groupApplicantList(@GetUser() user, @Param('groupId') groupId: number) {
     const userId: number = user.id;
@@ -122,17 +122,25 @@ export class GroupController {
   }
 
   // 그룹 멤버 리스트 API
-  @Get('/members/list/:groupId')
+  @Get(':groupId/members/list/')
   @UseGuards(JwtAuthGuard)
   async groupMembers(@Param('groupId') groupId: number) {
     return await this.groupService.groupMembers(groupId);
   }
 
   // 그룹 양도 API
-  @Put('/leaders/transfer/:groupId/:memberId')
+  @Put('/:groupId/leaders/transfer/:memberId')
   @UseGuards(JwtAuthGuard)
   async groupTransfer(@GetUser() user, @Param() ids: GroupTransfer) {
     const userId: number = user.id;
     return await this.groupService.groupTransfer(userId, ids);
+  }
+
+  // 그룹 추방 API
+  @Delete('/:groupId/kickout/:memberId')
+  @UseGuards(JwtAuthGuard)
+  async kickOutGroup(@GetUser() user, @Param() ids: GroupTransfer) {
+    const userId: number = user.id;
+    return await this.groupService.kickOutGroup(userId, ids);
   }
 }
