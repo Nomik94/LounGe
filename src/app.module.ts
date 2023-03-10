@@ -10,6 +10,7 @@ import { NewsfeedModule } from './newsfeed/newsfeed.module';
 import { EmailModule } from './email/email.module';
 import { CalendarModule } from './calendar/calendar.module';
 import * as redisStore from 'cache-manager-redis-store';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import * as redisStore from 'cache-manager-redis-store';
     NewsfeedModule,
     EmailModule,
     CalendarModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
