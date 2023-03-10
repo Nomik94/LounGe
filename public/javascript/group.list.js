@@ -153,7 +153,7 @@ async function groupList(list) {
         <!-- USER SHORT DESCRIPTION -->
         <div class="user-short-description">
           <!-- USER SHORT DESCRIPTION AVATAR -->
-          <a class="user-short-description-avatar user-avatar medium no-stats" href="/group/timeline">
+          <a class="user-short-description-avatar user-avatar medium no-stats" href="/group/timeline?groupId=${data.id}">
             <!-- USER AVATAR BORDER -->
             <div class="user-avatar-border">
               <!-- HEXAGON -->
@@ -175,7 +175,7 @@ async function groupList(list) {
           <!-- /USER SHORT DESCRIPTION AVATAR -->
     
           <!-- USER SHORT DESCRIPTION TITLE -->
-          <p class="user-short-description-title"><a href="/group/timeline">${
+          <p class="user-short-description-title"><a href="/group/timeline?groupId=${data.id}">${
             data.groupName
           }</a></p>
           <!-- /USER SHORT DESCRIPTION TITLE -->
