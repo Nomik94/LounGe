@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { Render } from '@nestjs/common/decorators';
+import { Query, Render } from '@nestjs/common/decorators';
 import { AppService } from './app.service';
 
 @Controller()
@@ -34,7 +34,10 @@ export class AppController {
   @Render('hub-group-joinedlist')
   groupJoinedList(){}
 
-  @Get('/group/timeline')
+  @Get('/group/timeline/')
   @Render('group-timeline')
-  groupTimeline(){}
+  async groupTimeline(@Query('groupId') groupId : number){ 
+    const a = await this.appService.groupInfo(groupId)
+    return a
+  }
 }
