@@ -90,6 +90,26 @@ async function readnewsfeedmy() {
 
   })
 }
+
+async function readnewsfeedgroup(id) {
+  console.log(id);
+
+  axios({
+    method: 'get',
+    url: `/api/newsfeed/group/${id}`,
+  })
+  .then((res) => {
+    console.log("그룹별 뉴스피드읽기",res.data);
+    // clearnewsfeed();
+    // newsfeedlist(res.data);
+
+  })
+}
+
+async function readnewsfeedmygroup(userId) {
+
+}
+
 async function newsfeedlist(data) {
 
   data.forEach((data) => {
@@ -203,6 +223,118 @@ async function newsfeedlist(data) {
   $('#ddd').append(asd);
 }
 
+async function newsfeedserchgtaglist(data) {
+
+  data.forEach((data) => {
+    const creadteDate = new Date(data.newsfeedcreateat) 
+    const timeOptions = {
+      hour12: false,
+      hour: "2-digit", 
+      minute: "2-digit"
+    }
+    const creadteDateFormat = creadteDate.toLocaleDateString("Ko-KR",timeOptions)
+
+    let temp_html = `
+    <br>
+    <div class="widget-box no-padding">
+    <!-- WIDGET BOX SETTINGS -->
+    <div class="widget-box-settings">
+      <!-- POST SETTINGS WRAP -->
+      <div class="post-settings-wrap">
+
+
+
+        <!-- SIMPLE DROPDOWN -->
+        <div class="simple-dropdown widget-box-post-settings-dropdown" style="width:60px">
+          <!-- SIMPLE DROPDOWN LINK -->
+          <p class="simple-dropdown-link" onclick="modinewsfeed(${data.newsfeedid})">수정</p>
+          <!-- /SIMPLE DROPDOWN LINK -->
+
+          <!-- SIMPLE DROPDOWN LINK -->
+          <p class="simple-dropdown-link" onclick="deletenewsfeed(${data.newsfeedid})">삭제</p>
+          <!-- /SIMPLE DROPDOWN LINK -->
+
+        </div>
+        <!-- /SIMPLE DROPDOWN -->
+      </div>
+      <!-- /POST SETTINGS WRAP -->
+    </div>
+    <!-- /WIDGET BOX SETTINGS -->
+    
+    <!-- WIDGET BOX STATUS -->
+    <div class="widget-box-status">
+      <!-- WIDGET BOX STATUS CONTENT -->
+      <div class="widget-box-status-content">
+        <!-- USER STATUS -->
+        <div class="user-status">
+          <!-- USER STATUS AVATAR -->
+          <a class="user-status-avatar" href="profile-timeline.html">
+            <!-- USER AVATAR -->
+            <div class="user-avatar small no-outline">
+              <!-- USER AVATAR CONTENT -->
+              <div class="user-avatar-content">
+                <!-- HEXAGON -->
+                <div class="hexagon-image-30-32" data-src="img/avatar/02.jpg"></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR CONTENT -->
+          
+              <!-- USER AVATAR PROGRESS -->
+              <div class="user-avatar-progress">
+                <!-- HEXAGON -->
+                <div class="hexagon-progress-40-44"></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR PROGRESS -->
+          
+              <!-- USER AVATAR PROGRESS BORDER -->
+              <div class="user-avatar-progress-border">
+                <!-- HEXAGON -->
+                <div class="hexagon-border-40-44"></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR PROGRESS BORDER -->
+          
+
+            </div>
+            <!-- /USER AVATAR -->
+          </a>
+          <!-- /USER STATUS AVATAR -->
+      
+          <!-- USER STATUS TITLE -->
+          <p class="user-status-title medium"><a class="bold" href="profile-timeline.html">${data.username}</a>님의 뉴스피드</p>
+          <!-- /USER STATUS TITLE -->
+      
+          <!-- USER STATUS TEXT -->
+          <p class="user-status-text small">${creadteDateFormat}</p>
+          <!-- /USER STATUS TEXT -->
+        </div>
+        <!-- /USER STATUS -->
+
+        <!-- WIDGET BOX STATUS TEXT -->
+        <p class="widget-box-status-text">${data.newsfeedcontent}</p>
+        <!-- /WIDGET BOX STATUS TEXT -->
+
+        <!-- TAG LIST -->
+          <div class="tag-list">
+          ${data.tagname.map(tag => `
+          <a class="tag-item secondary" onclick="serchtag('${tag}')">${tag}</a>
+          `).join("")}
+          </div>
+        <!-- /TAG LIST -->
+      <br>
+
+      </div>
+      <!-- /WIDGET BOX STATUS CONTENT -->
+    </div>
+    <!-- /WIDGET BOX STATUS -->
+  </div>`;
+  $('#newsfeedbox').append(temp_html)
+  });
+  const asd = `<script src="/js/vendor/xm_plugins.min.js"></script>`;
+  $('#ddd').append(asd);
+}
+
 async function deletenewsfeed(newsfeedId){
               await Swal.fire({
                 title: '해당 뉴스피드를 지울까요?',
@@ -266,15 +398,14 @@ async function serchtag(tag) {
       },
     })
     .then(async (res) => {
-      console.log(res.data);
+      clearnewsfeed();
+      newsfeedserchgtaglist(res.data);
     })
 }
 
 function clearnewsfeed(){
   $('#newsfeedbox').empty();
 }
-
-
 
 function modinewsfeed(a){
   console.log("하이!",a);

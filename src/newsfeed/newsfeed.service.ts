@@ -215,7 +215,7 @@ export class NewsfeedService {
     async serchtagnewsfeed(data){
 
         try {
-            const tag = data.tag
+            const tag = data
 
             const serchtag = await this.tagRepository.find({
                 where: { tagName: Like(`%${tag}%`) },
