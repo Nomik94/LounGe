@@ -1,18 +1,19 @@
-import { IsNumber, IsString, IsDate } from 'class-validator';
+import { IsOptional,IsNumber, IsString, IsDate } from 'class-validator';
 
-export class CreateGroupEventDto {
+export class UpdateGroupEventDto {
+  @IsOptional()
   @IsString()
   readonly eventName: string;
 
+  @IsOptional()
   @IsString()
   readonly eventContent: string;
 
+  @IsOptional()
   @IsString()
   readonly start: string;
 
+  @IsOptional()
   @IsString()
   readonly end: string;
-
-  @IsNumber()
-  readonly groupId: number;
 }

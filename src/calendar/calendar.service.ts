@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
 import { UserEventDto } from './dto/userEvent.dto';
 import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
+import { GroupEventDto } from './dto/groupEvent.dto';
+import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 
 @Injectable()
 export class CalendarService {
@@ -31,13 +33,6 @@ export class CalendarService {
     })
   }
 
-  // getAllUserEvent(userId:number)/*:Promise<UserEvent>*/{
-  //   return this.userEventRepository.find({
-  //     where: {
-  //       id: userId,
-  //     }
-  //   })
-  // }
   
   async createUserEvent(userId : number, data : UserEventDto){
       await this.userEventRepository.insert({
@@ -85,63 +80,60 @@ export class CalendarService {
 
   
   // groupEvents
-  private groupEvents = [];
-  private eventsGroupId = new Map();
-  
-
-  getGroupEvent() {
-    return this.groupEvents;
+  async getGroupEvent() {
+    return await this.groupEventRepository.find({
+      where: {deletedAt:null},
+      select: ["eventName","createdAt"],
+    });
   }
 
-  getGroupEventById(eventId:number){
-    return this.groupEvents.find((events)=>{return events.id===eventId;})
+  async getGroupEventById(eventId:number){
+    return this.groupEventRepository.findOne({
+      where: {id:eventId, deletedAt:null },
+      select:["eventName","eventContent","createdAt"],
+    })
   }
 
-  createGroupEvent(
-    eventName: string, 
-    eventContent: string, 
-    start:string, 
-    end:string, 
-    groupId:number, ){
-      const eventId = this.groupEvents.length + 1;
-      this.groupEvents.push({id:eventId,eventName,
-        eventContent, 
-        start,
-        end
-      })
-      this.eventsGroupId.set(eventId,groupId);
-      return eventId;
+  async createGroupEvent(groupId : number, data : GroupEventDto){
+    await this.groupEventRepository.insert({
+      eventName : data.eventName,
+      eventContent : data.eventContent, 
+      start : data.start,
+      end : data.end,
+      group:{id:groupId}
+    })
+  }
+
+  async updateGroupEvent(GroupId : number, eventId : number, data : UpdateGroupEventDto){
+    const groupEvent = await this.groupEventRepository.findOne({
+      where: {id:eventId},
+      select: ["group","id","eventName","eventContent","start","end"],
+      relations:["user"],
+    })
+    if (_.isNil(groupEvent)){
+      throw new NotFoundException(`event를 찾을 수 없습니다. id:${eventId}`);
     }
-
-  updateGroupEvent(
-    eventId: number,
-    eventName: string, 
-    eventContent: string, 
-    start:string, 
-    end:string, 
-    groupId:number,
-    ){
-      if (this.eventsGroupId.get(eventId)!==groupId){
-        throw new UnauthorizedException('이 이벤트를 개시한 그룹이 맞으신가요?? 그룹id가 맞지 않습니다.'+groupId);
-      }
-      const event = this.getGroupEventById(eventId);
-      console.log(this.getGroupEventById(eventId))
-      if (_.isNil(event)){
-        throw new NotFoundException('event를 찾을 수 없습니다. id:'+eventId);
-      }
-
-      event.eventName = eventName;
-      event.eventContent = eventContent;
-      event.start = start;
-      event.end = end;
+    if (groupEvent.group.id!==GroupId){
+      throw new UnauthorizedException(`이 이벤트를 게시한 그룹이 아닙니다: ${GroupId}`);
     }
-
-  deleteGroupEvent(eventId: number, groupId: number){
-    if (this.eventsGroupId.get(eventId)!==groupId){
-    throw new UnauthorizedException('이 이벤트를 개시한 그룹이 맞으신가요?? 그룹id가 맞지 않습니다.'+groupId);
+    this.groupEventRepository.update(groupEvent.id, data)
   }
 
-  this.groupEvents = this.groupEvents.filter((events)=>{return events.id !== eventId});
-
+  async deleteGroupEvent(eventId: number, groupId: number){
+    await this.checkGroup(eventId,groupId);
+    this.groupEventRepository.softDelete(eventId)
+  }
+  private async checkGroup(eventId: number, groupId: number){
+    const groupEvent = await this.groupEventRepository.findOne({
+      where:{id:eventId},
+      select:["group"],
+      relations:["group"],
+    });
+    if(_.isNil(groupEvent)){
+      throw new NotFoundException(`groupEvent를 찾을 수 없습니다. id: ${eventId}`)
+    } 
+    if(groupEvent.group.id !== groupId){
+      throw new UnauthorizedException(`이 이벤트를 게시한 유저가 아닙니다. id: ${groupId}`)
+    }
   }
 }
