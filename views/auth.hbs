@@ -164,7 +164,7 @@
     
       
         <!-- FORM -->
-        <form class="form" >
+        <form class="form"onsubmit="return false;" >
                     <!-- FORM ROW -->
           <div class="form-row">
             <!-- FORM ITEM -->
@@ -188,7 +188,7 @@
               <div class="form-input">
                 <label for="certification_number">인증번호</label>
                 <input type="text" id="certification_number" name="certification_number">
-              <button class="button small primary" onclick="emailCheck()">인증번호 확인</button>
+              <button class="button small primary checkNumber" onclick="emailCheck()">인증번호 확인</button>
               </div>
               <!-- /FORM INPUT -->
             </div>
@@ -210,6 +210,21 @@
             <!-- /FORM ITEM -->
           </div>
           <!-- /FORM ROW -->
+
+          <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small active">
+                    <label for="register-image">프로필 이미지</label>
+                    <input type='file' class='form-control' id='userImage' style="background-color: #1D2333; color:antiquewhite"/>
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
     
           <!-- FORM ROW -->
           <div class="form-row">

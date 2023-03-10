@@ -109,37 +109,6 @@ export class NewsfeedService {
         return
         }
 
-    async readnewsfeed(userId:number) {
-
-        const newsfeeds = await this.newsfeedRepository.find({
-            relations: ['newsFeedTags.tag','newsImages','user'],
-            select: ['id','content','createdAt','updatedAt'],
-            where:{'user' : {id:userId},'deletedAt': null}
-            });
-
-            const result = newsfeeds.map(feed => {
-                const userName = feed.user.username;
-                const userImage = feed.user.image;
-                const userEmail = feed.user.email;
-                const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
-                const newsfeedImage = feed.newsImages.map(image => image.image);
-
-                return {
-                    id: feed.id,
-                    content: feed.content,
-                    createAt: feed.createdAt,
-                    updateAt: feed.updatedAt,
-                    userName: userName,
-                    userEmail: userEmail,
-                    userImage: userImage,
-                    tagsName: tagsName,
-                    newsfeedImage: newsfeedImage
-                }
-            })
-
-        return result
-    }
-
     async deletenewsfeed(userId:number,id:number) {
 
         const checknewsfeed = await this.newsfeedRepository.findOne({
@@ -243,10 +212,10 @@ export class NewsfeedService {
         }
     }
 
-    async serchtagnewsfeed(data:serchtagnewsfeedCheckDto){
+    async serchtagnewsfeed(data){
 
         try {
-            const tag = data.tag
+            const tag = data
 
             const serchtag = await this.tagRepository.find({
                 where: { tagName: Like(`%${tag}%`) },
@@ -303,7 +272,6 @@ export class NewsfeedService {
         })
 
         const newsfeedIds = newsfeed.map(Newsfeed => Newsfeed.newsFeedId)
-        console.log(newsfeedIds);
         
         const newsfeeds = await this.newsfeedRepository.find({
             relations: ['newsFeedTags.tag', 'newsImages', 'user'],
@@ -334,4 +302,90 @@ export class NewsfeedService {
 
     return result
     }
+
+    async readnewsfeedmy(userId:number) {
+
+        const newsfeeds = await this.newsfeedRepository.find({
+            relations: ['newsFeedTags.tag','newsImages','user'],
+            select: ['id','content','createdAt','updatedAt'],
+            where:{'user' : {id:userId},'deletedAt': null}
+            });
+
+            const result = newsfeeds.map(feed => {
+                const userName = feed.user.username;
+                const userImage = feed.user.image;
+                const userEmail = feed.user.email;
+                const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
+                const newsfeedImage = feed.newsImages.map(image => image.image);
+
+                return {
+                    id: feed.id,
+                    content: feed.content,
+                    createAt: feed.createdAt,
+                    updateAt: feed.updatedAt,
+                    userName: userName,
+                    userEmail: userEmail,
+                    userImage: userImage,
+                    tagsName: tagsName,
+                    newsfeedImage: newsfeedImage
+                }
+            })
+
+        return result
+    }
+
+    async readnewsfeedmygroup(userId:number){
+        const mygroup = await this.userGroupRepository.find({
+            where: [{userId:userId, role:'그룹장'}, {userId:userId, role:'회원'}]
+        });
+    
+        const groupIds = mygroup.map(group => group.groupId);
+    
+        const newsfeed = await this.groupNewsfeedRepository.find({
+            where: { groupId: In(groupIds) },
+            select: ['newsFeedId']
+        });
+
+        const newsfeedIds = newsfeed.map(item => item.newsFeedId)
+    
+        const newsfeeds = await this.newsfeedRepository.find({
+            relations: ['newsFeedTags.tag', 'newsImages', 'user','groupNewsFeeds','groupNewsFeeds.group'],
+            select: ['id', 'content', 'createdAt', 'updatedAt'],
+            where: { id: In(newsfeedIds), deletedAt: null }
+          });
+  
+          const result = newsfeeds.map(feed => {
+            const userName = feed.user.username;
+            const userImage = feed.user.image;
+            const userEmail = feed.user.email;
+            const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
+            const newsfeedImage = feed.newsImages.map(image => image.image);
+            const groupId = feed.groupNewsFeeds.map(group => group.groupId)
+            const groupName = feed.groupNewsFeeds.map(group => group.group.groupName)
+            const groupImage = feed.groupNewsFeeds.map(group => group.group.groupImage)
+            
+
+            return {
+                id: feed.id,
+                content: feed.content,
+                createAt: feed.createdAt,
+                updateAt: feed.updatedAt,
+                userName: userName,
+                userEmail: userEmail,
+                userImage: userImage,
+                tagsName: tagsName,
+                newsfeedImage: newsfeedImage,
+                groupId: groupId,
+                groupName: groupName,
+                groupImage:groupImage
+            }
+        })
+
+    return result
+          
+        
+    }
+    
+
 }
+

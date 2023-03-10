@@ -3,14 +3,13 @@ $(document).ready(function () {
 });
 
 async function getGroupList() {
-  console.log(document.cookie.split('=')[1])
+  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
 
-  
   axios({
     url: '/api/groups',
     method: 'get',
     headers: {
-      Authorization: `${document.cookie.split('=')[1]}`,
+      Authorization: `${accessToken}`,
     },
   })
     .then(function (res) {
@@ -29,7 +28,7 @@ async function getGroupList() {
           icon: 'error',
           title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
         });
-        window.location.replace('auth');
+        window.location.replace('/');
       }
       Swal.fire({
         icon: 'false',
@@ -50,11 +49,13 @@ function joinGroup(groupId, groupName) {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
+      const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
+
       axios({
-        url: `/api/groups/join/${groupId}`,
+        url: `/api/groups/${groupId}/join`,
         method: 'post',
         headers: {
-          Authorization: `${document.cookie.split('=')[1]}`,
+          Authorization: `${accessToken}`,
         },
       })
         .then(function (res) {
@@ -76,7 +77,7 @@ function joinGroup(groupId, groupName) {
               icon: 'error',
               title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
             });
-            window.location.replace('auth');
+            window.location.replace('/');
           }
           Swal.fire({
             icon: 'false',
@@ -88,6 +89,8 @@ function joinGroup(groupId, groupName) {
 }
 
 function searchGroups(tag) {
+  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
+
   if (!tag) {
     tag = document.getElementById('groups-search').value;
   }
@@ -104,7 +107,7 @@ function searchGroups(tag) {
     url: `/api/groups/search/${tag}`,
     method: 'get',
     headers: {
-      Authorization: `${document.cookie.split('=')[1]}`,
+      Authorization: `${accessToken}`,
     },
   })
     .then(function (res) {
@@ -124,7 +127,7 @@ function searchGroups(tag) {
           icon: 'error',
           title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
         });
-        window.location.replace('auth');
+        window.location.replace('/');
       }
       Swal.fire({
         icon: 'false',

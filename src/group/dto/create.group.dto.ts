@@ -3,10 +3,10 @@ import { IsString, MaxLength, MinLength, IsOptional } from 'class-validator';
 export class CreateGroupDto {
   @IsString()
   @MaxLength(10)
-  @MinLength(1)
   groupName: string;
 
   @IsString()
+  @MaxLength(40)
   description: string;
 
   @IsOptional()

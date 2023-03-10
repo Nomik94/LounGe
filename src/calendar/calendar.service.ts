@@ -1,60 +1,139 @@
 import _ from 'lodash';
 import { Injectable, NotFoundException, UnauthorizedException, } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEvent } from 'src/database/entities/userEvent.entity';
+import { Repository } from 'typeorm';
+import { GroupEvent } from 'src/database/entities/groupEvent.entity';
+import { UserEventDto } from './dto/userEvent.dto';
+import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
+import { GroupEventDto } from './dto/groupEvent.dto';
+import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 
 @Injectable()
 export class CalendarService {
+  constructor(
+    @InjectRepository(UserEvent)
+    private readonly userEventRepository: Repository<UserEvent>,
+    @InjectRepository(GroupEvent)
+    private readonly groupEventRepository: Repository<GroupEvent>,
+  ){}
 
-  private events = [];
-  private eventsGroupId = new Map();
-
-
-  getEvent() {
-    return this.events;
+  // userEvents 
+  async getUserEvent(){
+    return await this.userEventRepository.find({
+      where: {deletedAt:null},
+      select: ["eventName","createdAt"],
+    });
   }
 
-  getEventById(eventId: number){
-    return this.events.find((events)=>{events.id===eventId;})
+  async getUserEventById(eventId:number){
+    return this.userEventRepository.findOne({
+      where: {id:eventId, deletedAt:null },
+      select:["eventName","eventContent","createdAt"],
+    })
   }
 
-  createEvent(
-    eventName: string, 
-    eventContent: string, 
-    start:Date, 
-    end:Date, 
-    groupId:number, ){
-      const eventId = this.events.length + 1;
-      this.events.push({id:eventId,eventName, eventContent, start,end})
-      this.eventsGroupId.set(eventId,groupId);
-      return eventId;
+  
+  async createUserEvent(userId : number, data : UserEventDto){
+      await this.userEventRepository.insert({
+        eventName : data.eventName,
+        eventContent : data.eventContent, 
+        start : data.start,
+        end : data.end,
+        user:{id:userId}
+      })
+    };
+
+  async updateUserEvent(userId : number, eventId : number, data : UpdateUserEventDto){
+      const userEvent = await this.userEventRepository.findOne({
+        where: {id:eventId},
+        select: ["user","id","eventName","eventContent","start","end"],
+        relations:["user"],
+      })
+      console.log(userEvent)
+      if (_.isNil(userEvent)){
+        throw new NotFoundException(`event를 찾을 수 없습니다. id:${userId}`);
+      }
+      if (userEvent.user.id!==userId){
+        throw new UnauthorizedException(`이 이벤트를 게시한 유저가 아닙니다: ${userId}`);
+      }
+      this.userEventRepository.update(userEvent.id, data)
     }
 
-  updateEvent(
-    eventId: number,
-    eventName: string, 
-    eventContent: string, 
-    start:Date, 
-    end:Date, 
-    groupId:number, ){
-      if (this.eventsGroupId.get(groupId)!==groupId){
-        throw new UnauthorizedException('이 이벤트를 개시한 그룹이 맞으신가요?? 그룹id가 맞지 않습니다.'+groupId);
+    async deleteUserEvent(eventId: number, userId: number){
+      await this.checkUser(eventId,userId);
+      this.userEventRepository.softDelete(eventId)
+    }
+    private async checkUser(eventId: number, userId: number){
+      const userEvent = await this.userEventRepository.findOne({
+        where:{id:eventId},
+        select:["user"],
+        relations:["user"],
+      });
+      if(_.isNil(userEvent)){
+        throw new NotFoundException(`userEvent를 찾을 수 없습니다. id: ${eventId}`)
+      } 
+      if(userEvent.user.id !== userId){
+        throw new UnauthorizedException(`이 이벤트를 게시한 유저가 아닙니다. id: ${userId}`)
       }
-      const event = this.getEventById(eventId);
-      if (_.isNil(event)){
-        throw new NotFoundException('event를 찾을 수 없습니다. id:'+eventId);
-      }
-
-      event.eventName = eventName;
-      event.eventContent = eventContent;
-      // event.start = start;
-      // event.end = end;
     }
 
-  deleteEvent(eventId: number, groupId: number){
-    if (this.eventsGroupId.get(groupId)!==groupId){
-    throw new UnauthorizedException('이 이벤트를 개시한 그룹이 맞으신가요?? 그룹id가 맞지 않습니다.'+groupId);
+  
+  // groupEvents
+  async getGroupEvent() {
+    return await this.groupEventRepository.find({
+      where: {deletedAt:null},
+      select: ["eventName","createdAt"],
+    });
   }
 
-  this.events = this.events.filter((events)=>events.id !== groupId);
+  async getGroupEventById(eventId:number){
+    return this.groupEventRepository.findOne({
+      where: {id:eventId, deletedAt:null },
+      select:["eventName","eventContent","createdAt"],
+    })
+  }
 
+  async createGroupEvent(groupId : number, data : GroupEventDto){
+    await this.groupEventRepository.insert({
+      eventName : data.eventName,
+      eventContent : data.eventContent, 
+      start : data.start,
+      end : data.end,
+      group:{id:groupId}
+    })
+  }
+
+  async updateGroupEvent(GroupId : number, eventId : number, data : UpdateGroupEventDto){
+    const groupEvent = await this.groupEventRepository.findOne({
+      where: {id:eventId},
+      select: ["group","id","eventName","eventContent","start","end"],
+      relations:["user"],
+    })
+    if (_.isNil(groupEvent)){
+      throw new NotFoundException(`event를 찾을 수 없습니다. id:${eventId}`);
+    }
+    if (groupEvent.group.id!==GroupId){
+      throw new UnauthorizedException(`이 이벤트를 게시한 그룹이 아닙니다: ${GroupId}`);
+    }
+    this.groupEventRepository.update(groupEvent.id, data)
+  }
+
+  async deleteGroupEvent(eventId: number, groupId: number){
+    await this.checkGroup(eventId,groupId);
+    this.groupEventRepository.softDelete(eventId)
+  }
+  private async checkGroup(eventId: number, groupId: number){
+    const groupEvent = await this.groupEventRepository.findOne({
+      where:{id:eventId},
+      select:["group"],
+      relations:["group"],
+    });
+    if(_.isNil(groupEvent)){
+      throw new NotFoundException(`groupEvent를 찾을 수 없습니다. id: ${eventId}`)
+    } 
+    if(groupEvent.group.id !== groupId){
+      throw new UnauthorizedException(`이 이벤트를 게시한 유저가 아닙니다. id: ${groupId}`)
+    }
   }
 }

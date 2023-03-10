@@ -11,6 +11,7 @@ import { UserGroup } from 'src/database/entities/user-group.entity';
 import { Like, Not, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
+import { GroupTransfer } from './interface/group.transfer.interface';
 
 @Injectable()
 export class GroupService {
@@ -106,24 +107,19 @@ export class GroupService {
   }
 
   async acceptGroupJoin(userId: number, ids) {
-    const adminCheckResult = await this.userGroupRepository.findOneBy({
-      userId,
-      groupId: Number(ids.groupId),
-      role: '그룹장',
-    });
-    if (!adminCheckResult) {
-      throw new ForbiddenException('권한이 존재하지 않습니다.');
-    }
+    const groupId = Number(ids.groupId);
+    const memberId = Number(ids.memberId);
+    await this.groupLeaderCheck(userId, groupId);
     const joinGroupMember = await this.userGroupRepository.findOneBy({
-      userId: Number(ids.memberId),
-      groupId: Number(ids.groupId),
+      userId: memberId,
+      groupId,
     });
 
-    if (joinGroupMember.role !== '가입대기') {
+    if (!joinGroupMember || joinGroupMember.role !== '가입대기') {
       throw new BadRequestException('가입대기 상태만 수락할 수 있습니다.');
     }
     await this.userGroupRepository.update(
-      { userId: Number(ids.memberId), groupId: Number(ids.groupId) },
+      { userId: memberId, groupId },
       { role: '회원' },
     );
   }
@@ -173,7 +169,7 @@ export class GroupService {
     }
 
     if (findUser.role === '그룹장') {
-      throw new BadRequestException('그룹장을 양도해주세요 ㅠㅠ');
+      throw new BadRequestException('그룹장을 양도해주세요.');
     }
 
     await this.userGroupRepository.delete({
@@ -182,6 +178,108 @@ export class GroupService {
     });
   }
 
+  async createdGroupList(userId) {
+    return await this.groupRepository.find({
+      where: { userGroups: { userId, role: '그룹장' } },
+    });
+  }
+
+  async joinedGroupList(userId) {
+    const resultList = await this.groupRepository.find({
+      select: ['id', 'groupName', 'groupImage', 'backgroundImage','description','user'],
+      relations : ['user'],
+      where: { userGroups: { userId, role: Not('가입대기') } },
+    });
+
+    return await resultList.map((group) => ({
+      groupId : group.id,
+      groupName : group.groupName,
+      groupImage : group.groupImage,
+      backgroundImage : group.backgroundImage,
+      description : group.description,
+      leader : group.user.username,
+      leaderImage : group.user.image
+    }))
+  }
+
+  async groupApplicantList(userId, groupId) {
+    await this.groupLeaderCheck(userId, groupId);
+    const resultList = await this.userGroupRepository.find({
+      where: { groupId, role: '가입대기' },
+      select: ['userId', 'groupId'],
+      relations: ['user'],
+    });
+
+    return await resultList.map((data) => ({
+      userId: data.userId,
+      groupId: data.groupId,
+      userName: data.user.username,
+      userEmail: data.user.email,
+      userImage: data.user.image,
+    }));
+  }
+  async groupMembers(groupId) {
+    const group = await this.groupRepository.findOneBy({id:groupId});
+    const resultList = await this.userGroupRepository.find({
+      where: { groupId, role: Not('가입대기') },
+      relations: ['user'],
+      order: { role: 'ASC' },
+    });
+    const mappingList = await resultList.map((data) => ({
+      userId: data.userId,
+      groupId: data.groupId,
+      userName: data.user.username,
+      userEmail: data.user.email,
+      userImage: data.user.image,
+      userRole: data.role
+    }));
+    return { members: mappingList, group };
+  }
+
+  async groupTransfer(userId: number, ids: GroupTransfer) {
+    const groupId = Number(ids.groupId);
+    const memberId = Number(ids.memberId);
+    const findUser = await this.userGroupRepository.findOne({
+      where: { userId: memberId, groupId, role: '회원' },
+    });
+    if (!findUser) {
+      throw new BadRequestException('그룹원에게만 양도할 수 있습니다.');
+    }
+    await this.groupLeaderCheck(userId, groupId);
+
+    await this.groupRepository.update(groupId, {
+      user: { id: memberId },
+    });
+    await this.userGroupRepository.update(
+      { userId, groupId },
+      { role: '회원' },
+    );
+    await this.userGroupRepository.update(
+      { userId: memberId, groupId },
+      { role: '그룹장' },
+    );
+  }
+
+  async kickOutGroup(userId, ids: GroupTransfer) {
+    const groupId = Number(ids.groupId);
+    const memberId = Number(ids.memberId);
+
+    await this.groupLeaderCheck(userId, groupId);
+
+    const findUser = await this.userGroupRepository.findOne({
+      where: { userId: memberId, groupId, role: '회원' },
+    });
+
+    if (!findUser) {
+      throw new BadRequestException('존재하지 않는 회원입니다.');
+    }
+
+    await this.userGroupRepository.delete({
+      groupId,
+      userId: memberId,
+      role: '회원',
+    });
+  }
   async tagMappingGroups(groupList) {
     const modifiedGroupList = groupList.map((group) => {
       const TagGroups = [];
@@ -240,5 +338,15 @@ export class GroupService {
         .values(existTags.map((tag) => ({ tagId: tag.id, groupId })))
         .execute();
     }
+  }
+
+  async groupLeaderCheck(userId: number, groupId: number) {
+    const LeaderCheckResult = await this.groupRepository.findOne({
+      where: { id: groupId },
+      relations: ['user'],
+    });
+
+    if (LeaderCheckResult.user.id !== userId)
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
   }
 }
