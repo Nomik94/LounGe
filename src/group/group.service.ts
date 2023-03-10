@@ -282,10 +282,7 @@ export class GroupService {
   }
   async tagMappingGroups(groupList) {
     const modifiedGroupList = groupList.map((group) => {
-      const TagGroups = [];
-      group.tagGroups.forEach((tag) => {
-        TagGroups.push(tag.tag.tagName);
-      });
+      const TagGroups = group.tagGroups.map((tag) => tag.tag.tagName)
 
       return {
         id: group.id,

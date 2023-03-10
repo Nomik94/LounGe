@@ -33,4 +33,8 @@ export class AppController {
   @Get('/joined/grouplist')
   @Render('hub-group-joinedlist')
   groupJoinedList(){}
+
+  @Get('/group/timeline')
+  @Render('group-timeline')
+  groupTimeline(){}
 }
