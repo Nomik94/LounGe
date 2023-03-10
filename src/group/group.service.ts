@@ -185,10 +185,21 @@ export class GroupService {
   }
 
   async joinedGroupList(userId) {
-    return await this.groupRepository.find({
-      select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
+    const resultList = await this.groupRepository.find({
+      select: ['id', 'groupName', 'groupImage', 'backgroundImage','description','user'],
+      relations : ['user'],
       where: { userGroups: { userId, role: Not('가입대기') } },
     });
+
+    return await resultList.map((group) => ({
+      groupId : group.id,
+      groupName : group.groupName,
+      groupImage : group.groupImage,
+      backgroundImage : group.backgroundImage,
+      description : group.description,
+      leader : group.user.username,
+      leaderImage : group.user.image
+    }))
   }
 
   async groupApplicantList(userId, groupId) {
@@ -196,24 +207,33 @@ export class GroupService {
     const resultList = await this.userGroupRepository.find({
       where: { groupId, role: '가입대기' },
       select: ['userId', 'groupId'],
-      relations: ['group', 'user'],
+      relations: ['user'],
     });
 
-    const mappingList = await resultList.map((data) => ({
+    return await resultList.map((data) => ({
       userId: data.userId,
       groupId: data.groupId,
-      groupName: data.group.groupName,
       userName: data.user.username,
+      userEmail: data.user.email,
       userImage: data.user.image,
     }));
-    return mappingList;
   }
   async groupMembers(groupId) {
-    return await this.userGroupRepository.find({
+    const group = await this.groupRepository.findOneBy({id:groupId});
+    const resultList = await this.userGroupRepository.find({
       where: { groupId, role: Not('가입대기') },
       relations: ['user'],
       order: { role: 'ASC' },
     });
+    const mappingList = await resultList.map((data) => ({
+      userId: data.userId,
+      groupId: data.groupId,
+      userName: data.user.username,
+      userEmail: data.user.email,
+      userImage: data.user.image,
+      userRole: data.role
+    }));
+    return { members: mappingList, group };
   }
 
   async groupTransfer(userId: number, ids: GroupTransfer) {
