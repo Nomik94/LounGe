@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors, } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFiles, UseGuards, UseInterceptors, } from '@nestjs/common';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
 import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
 import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
@@ -15,18 +15,20 @@ export class NewsfeedController {
 
 
 // 뉴스피드 작성
-  @Post('newsfeed/:groupId')
+  @Post('/newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
 
   async postnewsfeed(
-    @Param('groupId')groupId:number ,
+    @Param('groupId') groupId:number ,
     @GetUser() user,
     @UploadedFiles() file: Array<Express.Multer.File>,
     @Body() data: newsfeedCheckDto
-    ): Promise<void> {
+    ) {
       const userId = user.id
- 
+      console.log(userId);
+      console.log(groupId);
+      
     await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
   }
 
@@ -56,11 +58,13 @@ export class NewsfeedController {
   }
 
   // 태그로 뉴스피드 검색
-  @Get('/tag/newsfeed')
+  @Get('tag/newsfeed')
   async serchtagnewsfeed(
-    @Body() data:serchtagnewsfeedCheckDto
+    @Query() data
   ){
-    return await this.newsfeedService.serchtagnewsfeed(data)
+    const {tag} = data
+    
+    return await this.newsfeedService.serchtagnewsfeed(tag)
   }
 
   // 뉴스피드 그룹별 읽기
@@ -71,7 +75,7 @@ export class NewsfeedController {
     return await this.newsfeedService.readnewsfeedgroup(groupId)
   }
 
-  // 뉴스피드 읽기
+  // 뉴스피드 읽기 (내가 쓴 뉴스피드만)
   @Get('newsfeed')
   @UseGuards(JwtAuthGuard)
   async readnewsfeedmy(
@@ -79,6 +83,7 @@ export class NewsfeedController {
     ) {
       const userId = user.id
       console.log("유저아이디",userId);
+      
       
     return await this.newsfeedService.readnewsfeedmy(userId);
   }
