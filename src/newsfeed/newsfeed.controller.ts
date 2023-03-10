@@ -63,8 +63,17 @@ export class NewsfeedController {
     @Query() data
   ){
     const {tag} = data
-    
     return await this.newsfeedService.serchtagnewsfeed(tag)
+  }
+
+  // 태그로 특정 그룹에서 뉴스피드 검색
+  @Get('tag/:groupId')
+  async serchtagnewsfeedgroup(
+    @Query() data,
+    @Param('groupId') groupId:number
+  ){
+
+    return await this.newsfeedService.serchtagnewsfeedgroup(data,groupId)
   }
 
   // 뉴스피드 읽기 (특정 그룹에 소속된 모든 뉴스피드)

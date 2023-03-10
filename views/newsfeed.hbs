@@ -28,96 +28,12 @@
 
       <!-- GRID COLUMN -->
       <div class="grid-column">
-        <!-- QUICK POST -->
-        <div class="quick-post">
-          <!-- QUICK POST HEADER -->
-          <div class="quick-post-header">
-            <!-- OPTION ITEMS -->
-            <div class="option-items">
-              <!-- OPTION ITEM -->
-              <div class="option-item active">
-                <!-- OPTION ITEM ICON -->
-                <svg class="option-item-icon icon-status">
-                  <use xlink:href="#svg-status"></use>
-                </svg>
-                <!-- /OPTION ITEM ICON -->
-      
-                <!-- OPTION ITEM TITLE -->
-                <p class="option-item-title">뉴스피드</p>
-                <!-- /OPTION ITEM TITLE -->
-              </div>
-              <!-- /OPTION ITEM -->
-            </div>
-            <!-- /OPTION ITEMS -->
-          </div>
-          <!-- /QUICK POST HEADER -->
-      
-          <!-- QUICK POST BODY -->
-          <div class="quick-post-body">
-            <!-- FORM -->
-            <form class="form">
-              <!-- FORM ROW -->
-              <div class="form-row">
-                <!-- FORM ITEM -->
-                <div class="form-item">
-                  <!-- FORM TEXTAREA -->
-                  <div class="form-textarea">
-                    <textarea id="quick-post-text" name="quick-post-text" placeholder="오늘은 당신에게 어떤 일들이 있었나요?"></textarea>
 
-                  </div>
-                  <!-- /FORM TEXTAREA -->
-                </div>
-                <!-- /FORM ITEM -->
-              </div>
-              <!-- /FORM ROW -->
-            </form>
-            <!-- /FORM -->
-          </div>
-          <!-- /QUICK POST BODY -->
-      
-          <!-- QUICK POST FOOTER -->
-          <div class="quick-post-footer">
-            <!-- QUICK POST FOOTER ACTIONS -->
-            <div class="quick-post-footer-actions">
-              <!-- QUICK POST FOOTER ACTION -->
-              <div class="quick-post-footer-action text-tooltip-tft-medium" data-title="이미지 추가" onclick="getImages()">
-                <!-- QUICK POST FOOTER ACTION ICON -->
-                <svg class="quick-post-footer-action-icon icon-camera">
-                  <use xlink:href="#svg-camera"></use>
-                </svg>
-                <!-- /QUICK POST FOOTER ACTION ICON -->
-              </div>
-              <!-- /QUICK POST FOOTER ACTION -->
-      
-              <!-- QUICK POST FOOTER ACTION -->
-              <div class="quick-post-footer-action text-tooltip-tft-medium" data-title="태그 추가" onclick="getTags()">
-                <!-- QUICK POST FOOTER ACTION ICON -->
-                <svg class="quick-post-footer-action-icon icon-tags">
-                  <use xlink:href="#svg-tags"></use>
-                </svg>
-                <!-- /QUICK POST FOOTER ACTION ICON -->
-              </div>
-              <!-- /QUICK POST FOOTER ACTION -->
-            </div>
-            <!-- /QUICK POST FOOTER ACTIONS -->
-      
-              <!-- QUICK POST FOOTER ACTIONS -->
-              <div class="quick-post-footer-actions">
-                <!-- BUTTON -->
-                <p class="button small secondary" onclick="readnewsfeedgroup(1)">작성</p>
-                <!-- /BUTTON -->
-              </div>
-              <!-- /QUICK POST FOOTER ACTIONS -->
-          </div>
-
-          <!-- /QUICK POST FOOTER -->
-        </div>
-        <!-- /QUICK POST -->
 
       <!-- 뉴스피드 목록 -->
       <div class="newsfeedbox" id="newsfeedbox">
         <!-- WIDGET BOX -->
-        <div class="widget-box no-padding">
+        {{!-- <div class="widget-box no-padding">
           <!-- WIDGET BOX SETTINGS -->
           <div class="widget-box-settings">
             <!-- POST SETTINGS WRAP -->
@@ -135,7 +51,7 @@
               <!-- SIMPLE DROPDOWN -->
               <div class="simple-dropdown widget-box-post-settings-dropdown">
                 <!-- SIMPLE DROPDOWN LINK -->
-                <p class="simple-dropdown-link">Edit Post</p>
+                <p class="simple-dropdown-link">수정</p>
                 <!-- /SIMPLE DROPDOWN LINK -->
       
                 <!-- SIMPLE DROPDOWN LINK -->
@@ -229,7 +145,7 @@
           <!-- /WIDGET BOX STATUS -->
       
 
-        </div>
+        </div> --}}
         <!-- /WIDGET BOX -->
       </div>
 
@@ -289,11 +205,11 @@
 <script src="js/form/form.utils.js"></script>
 <!-- SVG icons -->
 <script src="js/utils/svg-loader.js"></script>
-<script src="/javascript/newsfeed.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.slim.js" integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
-<div id="ddd" class="ddd">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/javascript/newsfeed.js"></script>
+<div id="ddd"></div>
 </body>
 </html>
