@@ -9,15 +9,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CalendarService } from './calendar.service';
-import { CreateGroupEventDto } from './dto/create-groupEvent.dto';
+import { GroupEventDto } from './dto/groupEvent.dto';
 import { UserEventDto } from './dto/userEvent.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
+import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 
 @Controller('calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
+
   // userEvents
   @Get('/uevents')
   // @UseGuards(JwtAuthGuard)
@@ -59,39 +61,32 @@ export class CalendarController {
 
   // groupEvents
   @Get('/gevents')
-  getGroupEvent() {
-    return this.calendarService.getGroupEvent();
+  // @UseGuards(JwtAuthGuard)
+  async getGroupEvent(@GetUser() user) {
+    const GroupId: number = user.id;
+    return await this.calendarService.getGroupEvent();
   }
-
+  
   @Get('/gevents/:id')
+    // @UseGuards(JwtAuthGuard)
   getGroupEventById(@Param('id') eventId: number) {
     return this.calendarService.getGroupEventById(eventId);
   }
 
   @Post('/gevents')
-  createGroupEvent(@Body() data: CreateGroupEventDto) {
-    return this.calendarService.createGroupEvent(
-      data.eventName,
-      data.eventContent,
-      data.start,
-      data.end,
-      data.groupId,
+  async createGroupEvent(@Body() data: GroupEventDto) {
+    const groupId = 1
+    return this.calendarService.createGroupEvent(groupId,data
     );
   }
 
   @Put('/gevents/:id')
   updateGroupEvent(
     @Param('id') eventId: number,
-    @Body() data
+    @Body() data: UpdateGroupEventDto
   ) {
-    return this.calendarService.updateGroupEvent(
-      eventId,
-      data.eventName,
-      data.eventContent,
-      data.start,
-      data.end,
-      data.groupId,
-    );
+    const groupId = 1
+    return this.calendarService.updateGroupEvent(groupId,eventId,data)
   }
 
   @Delete('/gevents/:id')
