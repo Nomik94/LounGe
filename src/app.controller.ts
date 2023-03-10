@@ -41,4 +41,8 @@ export class AppController {
   @Get('/account/password')
   @Render('hub-account-password')
   accountPassword() {}
+
+  @Get('/profile/info')
+  @Render('hub-profile-info')
+  profileInfo() {}
 }

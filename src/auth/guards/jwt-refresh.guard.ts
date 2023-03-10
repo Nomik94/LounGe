@@ -13,7 +13,6 @@ export class JwtRefreshGuard extends AuthGuard('refresh') {
   ): boolean | Promise<boolean> | Observable<boolean> {
     return super.canActivate(context);
   }
-
   handleRequest(err: any, user: any) {
     if (err || !user) {
       throw err || new UnauthorizedException();

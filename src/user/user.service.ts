@@ -51,10 +51,9 @@ export class UserService {
     await this.userRepository.update(userId, { username: data.username });
   }
 
-  async updateUserImage({ user, file }) {
+  async updateUserImage({ user, file }): Promise<void> {
     const userId = user.id;
     await this.getById(userId);
-    console.log(file.filename);
 
     const filename = file.filename;
     await this.userRepository.update(userId, { image: filename });

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Put,
   UploadedFile,
   UseGuards,
@@ -9,6 +10,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/common/decorator/get-user.decorator';
+import { User } from 'src/database/entities/user.entity';
 import { FindPasswordDTO } from './dto/findPassword.dto';
 import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import { UserUpdateDTO } from './dto/updateUser.dto';
@@ -17,6 +19,13 @@ import { UserService } from './user.service';
 @Controller('api/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getUser(@GetUser() user): Promise<User> {
+    const userId = user.id;
+    return await this.userService.getById(userId);
+  }
 
   @Put('username')
   @UseGuards(JwtAuthGuard)
@@ -33,7 +42,7 @@ export class UserController {
   async updateUserImage(
     @GetUser() user,
     @UploadedFile() file: Express.Multer.File,
-  ) {
+  ): Promise<void> {
     return await this.userService.updateUserImage({ user, file });
   }
 

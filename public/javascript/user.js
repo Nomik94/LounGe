@@ -1,3 +1,195 @@
+$(document).ready(function () {
+  getUser();
+});
+
+function getScript() {}
+
+function getUser() {
+  const accessToken = document.cookie
+    .split(';')
+    .filter((token) => token.includes('accessToken'))[0]
+    .split('=')[1];
+
+  axios({
+    url: '/api/user',
+    method: 'get',
+    headers: {
+      Authorization: `${accessToken}`,
+    },
+  })
+    .then((res) => {
+      let temp_html = `<!-- GRID -->
+    <div class='grid grid-3-3-3 centered'>
+      <!-- USER PREVIEW -->
+      <div class='user-preview small fixed-height'>
+        <!-- USER PREVIEW COVER -->
+        <figure class='user-preview-cover liquid'>
+          <img src='' alt='cover-01' />
+        </figure>
+        <!-- /USER PREVIEW COVER -->
+
+        <!-- USER PREVIEW INFO -->
+        <div class='user-preview-info'>
+          <!-- USER SHORT DESCRIPTION -->
+          <div class='user-short-description small'>
+            <!-- USER SHORT DESCRIPTION AVATAR -->
+            <div class='user-short-description-avatar user-avatar'>
+              <!-- USER AVATAR BORDER -->
+              <div class='user-avatar-border'>
+                <!-- HEXAGON -->
+                <div class='hexagon-100-110'></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR BORDER -->
+
+              <!-- USER AVATAR CONTENT -->
+              <div class='user-avatar-content'>
+                <!-- HEXAGON -->
+                <div
+                  class='hexagon-image-68-74' id='userImage'
+                  data-src='/userImage/${res.data.image}'
+                ></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR CONTENT -->
+
+
+
+              <!-- USER AVATAR PROGRESS BORDER -->
+              <div class='user-avatar-progress-border'>
+                <!-- HEXAGON -->
+                <div class='hexagon-border-84-92'></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR PROGRESS BORDER -->
+
+            </div>
+            <!-- /USER SHORT DESCRIPTION AVATAR -->
+          </div>
+          <!-- /USER SHORT DESCRIPTION -->
+        </div>
+        <!-- /USER PREVIEW INFO -->
+      </div>
+      <!-- /USER PREVIEW -->
+    </div>
+    <!-- /GRID -->
+
+    <!-- WIDGET BOX -->
+    <div class='widget-box'>
+      <!-- WIDGET BOX TITLE -->
+      <p class='widget-box-title'>나의 프로필</p>
+      <!-- /WIDGET BOX TITLE -->
+
+      <!-- WIDGET BOX CONTENT -->
+      <div class='widget-box-content'>
+        <!-- FORM -->
+        <form class='form'>
+          <!-- FORM ROW -->
+          <div class='form-row split'>
+            <!-- FORM ITEM -->
+            <div class='form-item'>
+              <!-- FORM INPUT -->
+              <div class='form-input small active'>
+                <label for='profile-name'>닉네임</label>
+                <input
+                  type='text'
+                  id='profile-name'
+                  name='profile_name'
+                  value='${res.data.username}'
+                />
+              </div>
+              <!-- /FORM INPUT -->
+            </div>
+            <!-- /FORM ITEM -->
+
+            <!-- FORM ITEM -->
+            <div class='form-item'>
+              <!-- FORM INPUT -->
+              <div class='form-input small active'>
+                <p class='button full primary' onclick="updateUserName()">닉네임 변경</p>
+              </div>
+              <!-- /FORM INPUT -->
+            </div>
+            <!-- /FORM ITEM -->
+          </div>
+          <!-- /FORM ROW -->
+
+      
+
+          <!-- FORM ROW -->
+          <div class='form-row split'>
+
+
+          <!-- FORM ITEM -->
+          <div class="form-item">
+            <!-- FORM INPUT -->
+            <div class="form-input small active">
+              <label for="register-image">프로필 이미지</label>
+              <input type='file' class='form-control' id='profileImage' style="background-color: #1D2333; color:antiquewhite"/>
+            </div>
+            <!-- /FORM INPUT -->
+          </div>
+          <!-- /FORM ITEM -->
+
+          <!-- FORM ITEM -->
+            <div class='form-item'>
+              <!-- FORM INPUT -->
+              <div class='form-input small active'>
+                <p class='button full primary' onclick="updateImage()">이미지 변경</p>
+              </div>
+              <!-- /FORM INPUT -->
+            </div>
+            <!-- /FORM ITEM -->
+          </div>
+          <!-- /FORM ROW -->
+
+      
+        </form>
+        <!-- /FORM -->
+      </div>
+      <!-- WIDGET BOX CONTENT -->
+    </div>
+    <!-- /WIDGET BOX -->
+  </div>
+  <!-- /GRID COLUMN -->
+</div>
+<!-- /GRID COLUMN -->
+</div>
+<!-- /GRID -->`;
+      $('#getUser').append(temp_html);
+      let script_html = `  <!-- app -->
+      
+      <!-- liquidify -->
+      <script src='/js/utils/liquidify.js'></script>
+      <!-- global.hexagons -->
+      <script src='/js/global/global.hexagons.js'></script>
+
+      
+`;
+      $('#script').append(script_html);
+    })
+    .catch(async (error) => {
+      if (error.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+        });
+        window.location.replace('/');
+      }
+      Swal.fire({
+        icon: 'false',
+        text: `${error.response.data.message}`,
+      });
+    });
+}
+
 function findPassword() {
   const email = $('#register-email').val();
   const password = $('#register-password').val();
@@ -53,7 +245,6 @@ function updatePassword() {
       },
     })
       .then((res) => {
-        console.log(res);
         alert('비밀번호가 변경되었습니다.');
         window.location.reload();
       })
@@ -62,4 +253,88 @@ function updatePassword() {
         alert(error.response.data.message);
       });
   }
+}
+function updateImage() {
+  const accessToken = document.cookie
+    .split(';')
+    .filter((token) => token.includes('accessToken'))[0]
+    .split('=')[1];
+  const image = $('#profileImage')[0].files[0];
+  const formData = new FormData();
+  formData.append('userImage', image);
+
+  axios({
+    method: 'put',
+    url: '/api/user/userImage',
+    headers: {
+      Authorization: `${accessToken}`,
+    },
+    data: formData,
+  })
+    .then((res) => {
+      alert('이미지 업데이트가 완료되었습니다.');
+      window.location.reload();
+    })
+    .catch(async (error) => {
+      if (error.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+        });
+        window.location.replace('/');
+      }
+      Swal.fire({
+        icon: 'false',
+        text: `${error.response.data.message}`,
+      });
+    });
+}
+
+function updateUserName() {
+  const accessToken = document.cookie
+    .split(';')
+    .filter((token) => token.includes('accessToken'))[0]
+    .split('=')[1];
+
+  const username = $('#profile-name')[0].value;
+
+  axios({
+    method: 'put',
+    url: '/api/user/username',
+    headers: {
+      Authorization: `${accessToken}`,
+    },
+    data: { username: username },
+  })
+    .then((res) => {
+      alert('닉네임 업데이트가 완료되었습니다.');
+      window.location.reload();
+    })
+    .catch(async (error) => {
+      if (error.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+        });
+        window.location.replace('/');
+      }
+      Swal.fire({
+        icon: 'false',
+        text: `${error.response.data.message}`,
+      });
+    });
 }
