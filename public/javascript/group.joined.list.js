@@ -51,7 +51,7 @@ function joinedGroupList() {
               <!-- /USER SHORT DESCRIPTION AVATAR -->
         
               <!-- USER SHORT DESCRIPTION TITLE -->
-              <p class="user-short-description-title"><a href="group-timeline.html">${group.groupName}</a></p>
+              <p class="user-short-description-title"><a href="/group/timeline">${group.groupName}</a></p>
               <!-- /USER SHORT DESCRIPTION TITLE -->
         
               <!-- USER SHORT DESCRIPTION TEXT -->
