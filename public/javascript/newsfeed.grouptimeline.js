@@ -1,78 +1,31 @@
 $(document).ready(function(){
-  // readnewsfeedmy() // 내가 쓴 뉴스피드만 보기
-  readnewsfeedmygroup() // 내가 가입한 모든 그룹의 뉴스피드 보기
+  const urlParams = new URLSearchParams(window.location.search);
+  const groupId = urlParams.get('groupId');
+
+  readnewsfeedgrouptimeline(groupId)
 });
 
-// 내가 쓴 뉴스피드만 보기
-async function readnewsfeedmy() {
-  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
-
+function readnewsfeedgrouptimeline(id) {
   axios({
     method: 'get',
-    url: '/api/newsfeed/newsfeed',
-    headers: {
-      Authorization: `${accessToken}` // 엑세스 토큰
-    }
+    url: `/api/newsfeed/group/${id}`,
   })
   .then((res) => {
-    console.log(res.data);
+    // console.log(res.data);
     // clearnewsfeed();
     newsfeedlist(res.data);
   })
   .catch((err) => {
-    console.log("알 수 없는 이유로 실행되지 않았습니다.",err);
+    console.log(err);
     Swal.fire({
       icon: 'error',
       title: '알수없는 이유로 실행되지 않았습니다.',
       text: "관리자에게 문의해 주세요.",
     })
-
   })
 }
 
-// 내가 가입한 모든 그룹의 뉴스피드 보기
-async function readnewsfeedmygroup() {
-  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
-
-  axios({
-    method: 'get',
-    url: '/api/newsfeed/newsfeed/mygroup',
-    headers: {
-      Authorization: `${accessToken}` // 엑세스 토큰
-    }
-  })
-  .then((res) => {
-    console.log(res.data);
-    // clearnewsfeed();
-    newsfeedlist(res.data);
-  })
-  .catch(async (err) => {
-    if(err.response.data.statusCode === 401) {
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'center-center',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-      });
-      await Toast.fire({
-        icon: 'error',
-        title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
-      });
-    }
-
-    if(err.response.data.statusCode !== 401) {
-      Swal.fire({
-        icon: 'error',
-        title: '알수없는 이유로 실행되지 않았습니다.',
-        text: "관리자에게 문의해 주세요.",
-      })
-    }
-  })
-}
-
-// 리스트 불러오기
-async function newsfeedlist(data) {
+function newsfeedlist(data) {
 
   data.reverse().forEach((data) => {
     const creadteDate = new Date(data.createAt) 
@@ -158,10 +111,6 @@ async function newsfeedlist(data) {
           <!-- USER STATUS TITLE -->
           <p class="user-status-title medium"><a class="bold" href="profile-timeline.html">${data.userName}</a>님의 뉴스피드</p>
           <!-- /USER STATUS TITLE -->
-
-          <!-- USER STATUS TEXT -->
-          <a href="/group/timeline?groupId=${data.groupId}"><p class="user-status-text middle">${data.groupName}</p></a>
-          <!-- /USER STATUS TEXT -->
       
           <!-- USER STATUS TEXT -->
           <p class="user-status-text small">${creadteDateFormat}</p>
@@ -194,69 +143,20 @@ async function newsfeedlist(data) {
   <script src="/js/utils/liquidify.js"></script>
   `;
   $('#ddd').append(asd);
-  
 }
 
-// 뉴스피드 삭제하기
-async function deletenewsfeed(newsfeedId){
-              await Swal.fire({
-                title: '해당 뉴스피드를 지울까요?',
-                text: "삭제된 뉴스피드는 복구되지 않습니다.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: '삭제',
-                cancelButtonText: '취소'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
-                  axios({
-                    method: 'Delete',
-                    url: `/api/newsfeed/newsfeed/${newsfeedId}`,
-                    headers: {
-                      Authorization: `${accessToken}` // 엑세스 토큰
-                    }
-                  })
-                  .then(async (res) => {
-                    await Swal.fire({
-                      icon: 'success',
-                      title: '삭제되었습니다.',
-                      text: '태그 및 이미지도 삭제되었습니다.'
-                    })
-                    window.location.reload()
-                  })
-                  .catch(async (err) => {
-                    if(err.response.data.statusCode === 401) {
-                      const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'center-center',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true,
-                      });
-                      await Toast.fire({
-                        icon: 'error',
-                        title: '로그인 정보가 일치하지 않습니다.',
-                      });
-                      window.location.replace('auth');
-                    }
-                    Swal.fire({
-                      icon: 'error',
-                      title: '알수없는 이유로 실행되지 않았습니다.',
-                      text: "관리자에게 문의해 주세요.",
-                    })
-                  })
-                }
-              })
+function clearnewsfeed(){
+  $('#newsfeedbox').empty();
 }
 
-// 태그 클릭 시 해당 태그로 작성된 뉴스피드 검색
-async function serchtag(tag) {
+function serchtag(tag) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const groupId = urlParams.get('groupId');
+
   const test = tag
     axios({
       method: 'Get',
-      url: '/api/newsfeed/tag/newsfeed',
+      url: `/api/newsfeed/tag/${groupId}`,
       params: {
         tag:test
       },
@@ -274,10 +174,60 @@ async function serchtag(tag) {
         text: "관리자에게 문의해 주세요.",
       })
     })
+
 }
 
-// 리스트 비우기
-function clearnewsfeed(){
-  $('#newsfeedbox').empty();
-}
+async function deletenewsfeed(newsfeedId) {
+  await Swal.fire({
+    title: '해당 뉴스피드를 지울까요?',
+    text: "삭제된 뉴스피드는 복구되지 않습니다.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '삭제',
+    cancelButtonText: '취소'
+}).then((result) => {
+    if (result.isConfirmed) {
+      const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
+      axios({
+        method: 'Delete',
+        url: `/api/newsfeed/newsfeed/${newsfeedId}`,
+        headers: {
+          Authorization: `${accessToken}` // 엑세스 토큰
+        }
+      })
+      .then(async (res) => {
+        await Swal.fire({
+          icon: 'success',
+          title: '삭제되었습니다.',
+          text: '태그 및 이미지도 삭제되었습니다.'
+        })
+        window.location.reload()
+      })
+      .catch(async (err) => {
+        if(err.response.data.statusCode === 403) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'center-center',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+          await Toast.fire({
+            icon: 'error',
+            title: '뉴스피드 삭제 권한이 없습니다.',
+          });
+        }
+        if(err.response.data.statusCode !== 403) {
 
+          Swal.fire({
+            icon: 'error',
+            title: '알수없는 이유로 실행되지 않았습니다.',
+            text: "관리자에게 문의해 주세요.",
+          })
+        }
+      })
+    }
+  })
+}
