@@ -27,6 +27,7 @@ export class AppService {
       where: { groupId },
       relations: ['user'],
       order: { createdAt: 'DESC' },
+      take : 5
     });
 
     const newsfeedCount = await this.groupNewsfeedRepository.count({
