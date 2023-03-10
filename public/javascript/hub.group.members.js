@@ -21,6 +21,7 @@ function managementMemberList() {
     },
   })
     .then(function (res) {
+      console.log(res)
       $('#groupTitle').empty();
       $('#groupTitle').append(`${res.data.group.groupName}`);
 

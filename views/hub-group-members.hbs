@@ -53,8 +53,13 @@
             <!-- /SECTION HEADER ACTION -->
 
             <!-- SECTION HEADER ACTION -->
+            <p class="section-header-action popup-manage-group-trigger-1"><span style="color:chartreuse;" >그룹 수정</span></p>
+            <!-- /SECTION HEADER ACTION -->
+
+            <!-- SECTION HEADER ACTION -->
             <p class="section-header-action" onclick="deleteGroup()"><span style="color: red;" >그룹 삭제</span></p>
             <!-- /SECTION HEADER ACTION -->
+
           </div>
           <!-- /SECTION HEADER ACTIONS -->
         </div>
@@ -72,7 +77,131 @@
     <!-- /GRID -->
   </div>
   <!-- /CONTENT GRID -->
+  <!-- POPUP BOX -->
+  <div class="popup-box mid popup-manage-group-1">
+    <!-- POPUP CLOSE BUTTON -->
+    <div class="popup-close-button popup-manage-group-trigger-1">
+      <!-- POPUP CLOSE BUTTON ICON -->
+      <svg class="popup-close-button-icon icon-cross">
+        <use xlink:href="#svg-cross"></use>
+      </svg>
+      <!-- /POPUP CLOSE BUTTON ICON -->
+    </div>
+    <!-- /POPUP CLOSE BUTTON -->
 
+    <!-- POPUP BOX BODY -->
+    <div class="popup-box-body">
+      <!-- POPUP BOX SIDEBAR -->
+      <div class="popup-box-sidebar">
+
+        <!-- POPUP BOX SIDEBAR FOOTER -->
+        <div class="popup-box-sidebar-footer">
+          <!-- BUTTON -->
+          <p class="button secondary full popup-manage-group-trigger" onclick="createGroup()">그룹 수정</p>
+          <!-- /BUTTON -->
+        </div>
+        <!-- /POPUP BOX SIDEBAR FOOTER -->
+      </div>
+      <!-- /POPUP BOX SIDEBAR -->
+  
+      <!-- POPUP BOX CONTENT -->
+      <div class="popup-box-content">
+        <!-- WIDGET BOX -->
+        <div class="widget-box">
+          <!-- WIDGET BOX TITLE -->
+          <p class="widget-box-title">그룹 정보</p>
+          <!-- /WIDGET BOX TITLE -->
+      
+          <!-- WIDGET BOX CONTENT -->
+          <div class="widget-box-content">
+            <!-- FORM -->
+            <form class="form">
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small active">
+                    <label for="groupName">그룹 이름</label>
+                    <input type="text" id="groupName" name="groupName" >
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small active">
+                    <label for="groupTags">태그</label>
+                    <input type="text" id="groupTags" name="groupTags" placeholder="그룹 태그는 3개까지 등록 가능 합니다. ex) 치킨,피자,사람">
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small mid-textarea">
+                    <textarea id="groupDescription" name="groupDescription" placeholder="그룹에 대한 설명을 입력해주세요. 제한 40글자"></textarea>
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small active">
+                    <label for="groupImage">그룹 대표이미지</label>
+                    <input type='file' class='form-control' id='groupImage' style="background-color: #1d2333; color:antiquewhite"/>
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small active">
+                  <label for='backgroundImage'>그룹 배경이미지</label>
+                  <input type='file' class='form-control' id='backgroundImage' style="background-color: #1d2333; color:antiquewhite"/>
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+            </form>
+            <!-- /FORM -->
+          </div>
+          <!-- WIDGET BOX CONTENT -->
+        </div>
+        <!-- /WIDGET BOX -->
+      </div>
+      <!-- /POPUP BOX CONTENT -->
+    </div>
+    <!-- /POPUP BOX BODY -->
+  </div>
+  <!-- /POPUP BOX -->
 <!-- app -->
 <script src="/js/utils/app.js"></script>
 <!-- page loader -->
@@ -89,6 +218,8 @@
 <script src="/js/global/global.tooltips.js"></script>
 <!-- global.accordions -->
 <script src="/js/global/global.accordions.js"></script>
+<!-- global.popups -->
+<script src="/js/global/global.popups.js"></script>
 <!-- header -->
 <script src="/js/header/header.js"></script>
 <!-- sidebar -->

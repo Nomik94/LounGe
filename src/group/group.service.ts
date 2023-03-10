@@ -8,7 +8,7 @@ import { Group } from 'src/database/entities/group.entity';
 import { TagGroup } from 'src/database/entities/tag-group.entity';
 import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
-import { Like, Not, Repository } from 'typeorm';
+import { In, Like, Not, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { GroupTransfer } from './interface/group.transfer.interface';
@@ -55,6 +55,11 @@ export class GroupService {
   }
 
   async getAllGroup(userId: number) {
+    const joinGroupIds = await this.userGroupRepository.find({
+      where: { userId },
+    });
+
+    const groupIds = joinGroupIds.map((data) => data.groupId);
     const groupList = await this.groupRepository.find({
       select: [
         'id',
@@ -63,8 +68,8 @@ export class GroupService {
         'backgroundImage',
         'description',
       ],
-      relations: ['tagGroups.tag', 'userGroups'],
-      // where: { userGroups: { userId: Not(userId) } },
+      relations: ['tagGroups.tag'],
+      where: { id: Not(In(groupIds)) },
     });
 
     const resultGroupList = this.tagMappingGroups(groupList);
@@ -186,20 +191,27 @@ export class GroupService {
 
   async joinedGroupList(userId) {
     const resultList = await this.groupRepository.find({
-      select: ['id', 'groupName', 'groupImage', 'backgroundImage','description','user'],
-      relations : ['user'],
+      select: [
+        'id',
+        'groupName',
+        'groupImage',
+        'backgroundImage',
+        'description',
+        'user',
+      ],
+      relations: ['user'],
       where: { userGroups: { userId, role: Not('가입대기') } },
     });
 
     return await resultList.map((group) => ({
-      groupId : group.id,
-      groupName : group.groupName,
-      groupImage : group.groupImage,
-      backgroundImage : group.backgroundImage,
-      description : group.description,
-      leader : group.user.username,
-      leaderImage : group.user.image
-    }))
+      groupId: group.id,
+      groupName: group.groupName,
+      groupImage: group.groupImage,
+      backgroundImage: group.backgroundImage,
+      description: group.description,
+      leader: group.user.username,
+      leaderImage: group.user.image,
+    }));
   }
 
   async groupApplicantList(userId, groupId) {
@@ -219,7 +231,7 @@ export class GroupService {
     }));
   }
   async groupMembers(groupId) {
-    const group = await this.groupRepository.findOneBy({id:groupId});
+    const group = await this.groupRepository.findOneBy({ id: groupId });
     const resultList = await this.userGroupRepository.find({
       where: { groupId, role: Not('가입대기') },
       relations: ['user'],
@@ -231,7 +243,7 @@ export class GroupService {
       userName: data.user.username,
       userEmail: data.user.email,
       userImage: data.user.image,
-      userRole: data.role
+      userRole: data.role,
     }));
     return { members: mappingList, group };
   }
@@ -282,7 +294,7 @@ export class GroupService {
   }
   async tagMappingGroups(groupList) {
     const modifiedGroupList = groupList.map((group) => {
-      const TagGroups = group.tagGroups.map((tag) => tag.tag.tagName)
+      const TagGroups = group.tagGroups.map((tag) => tag.tag.tagName);
 
       return {
         id: group.id,

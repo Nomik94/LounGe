@@ -33,6 +33,7 @@ function createGroup() {
         icon: 'success',
         text: `그룹이 생성되었습니다.`,
       });
+      window.location.reload()
     })
     .catch(async function (error) {
       if (error.response.data.statusCode === 401) {
