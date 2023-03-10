@@ -50,7 +50,7 @@ function createGroup() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -144,7 +144,7 @@ function leaderGroupList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });

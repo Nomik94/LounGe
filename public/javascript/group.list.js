@@ -31,7 +31,7 @@ async function getGroupList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -80,7 +80,7 @@ function joinGroup(groupId, groupName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -130,7 +130,7 @@ function searchGroups(tag) {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });

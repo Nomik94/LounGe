@@ -126,7 +126,7 @@ function managementMemberList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -254,7 +254,7 @@ function managementApplyList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -306,7 +306,7 @@ function applyJoin(groupId, memberId, userName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -360,7 +360,7 @@ function groupTransfer(groupId, memberId, userName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -414,7 +414,7 @@ function kickOutGroup(groupId, memberId, userName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -470,7 +470,7 @@ function deleteGroup() {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
