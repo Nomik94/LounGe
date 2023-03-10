@@ -49,6 +49,8 @@ export class UserController {
 
   @Put('findPassword')
   async findPassword(@Body() data: FindPasswordDTO): Promise<void> {
+    console.log(data);
+
     return await this.userService.findPassword(data);
   }
 }
