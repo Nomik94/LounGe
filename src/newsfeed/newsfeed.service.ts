@@ -323,6 +323,10 @@ export class NewsfeedService {
         }
     }
 
+    serchtagmynewsfeed(data,userId) {
+        return `${data},${userId}의 리턴값이라네`
+    }
+
     async readnewsfeedgroup(groupId:number) {
 
         const newsfeed = await this.groupNewsfeedRepository.find({
@@ -365,7 +369,7 @@ export class NewsfeedService {
     async readnewsfeedmy(userId:number) {
 
         const newsfeeds = await this.newsfeedRepository.find({
-            relations: ['newsFeedTags.tag','newsImages','user'],
+            relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds','groupNewsFeeds.group'],
             select: ['id','content','createdAt','updatedAt'],
             where:{'user' : {id:userId},'deletedAt': null}
             });
@@ -376,6 +380,8 @@ export class NewsfeedService {
                 const userEmail = feed.user.email;
                 const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
                 const newsfeedImage = feed.newsImages.map(image => image.image);
+                const groupName = feed.groupNewsFeeds.map(group => group.group.groupName)
+                const groupId = feed.groupNewsFeeds.map(group => group.groupId)
 
                 return {
                     id: feed.id,
@@ -386,7 +392,9 @@ export class NewsfeedService {
                     userEmail: userEmail,
                     userImage: userImage,
                     tagsName: tagsName,
-                    newsfeedImage: newsfeedImage
+                    newsfeedImage: newsfeedImage,
+                    groupName: groupName,
+                    groupId: groupId
                 }
             })
 

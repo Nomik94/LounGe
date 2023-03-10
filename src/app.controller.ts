@@ -40,4 +40,9 @@ export class AppController {
     const a = await this.appService.groupInfo(groupId)
     return a
   }
+
+  @Get('/newsfeed/mylist')
+  @Render('newsfeed-mylist')
+  mylist(){}
+
 }
