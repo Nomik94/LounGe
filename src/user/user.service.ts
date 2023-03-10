@@ -45,9 +45,19 @@ export class UserService {
     return user;
   }
 
-  async updateUser({ userId, data }): Promise<void> {
+  async updateUserName({ user, data }): Promise<void> {
+    const userId = user.id;
     await this.getById(userId);
-    await this.userRepository.update(userId, data);
+    await this.userRepository.update(userId, { username: data.username });
+  }
+
+  async updateUserImage({ user, file }) {
+    const userId = user.id;
+    await this.getById(userId);
+    console.log(file.filename);
+
+    const filename = file.filename;
+    await this.userRepository.update(userId, { image: filename });
   }
 
   async updatePassword({ userId, data }): Promise<void> {
