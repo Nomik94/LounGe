@@ -91,6 +91,25 @@ async function readnewsfeedmy() {
   })
 }
 
+async function readnewsfeedgroup(id) {
+  console.log(id);
+
+  axios({
+    method: 'get',
+    url: `/api/newsfeed/group/${id}`,
+  })
+  .then((res) => {
+    console.log("그룹별 뉴스피드읽기",res.data);
+    // clearnewsfeed();
+    // newsfeedlist(res.data);
+
+  })
+}
+
+async function readnewsfeedmygroup(userId) {
+
+}
+
 async function newsfeedlist(data) {
 
   data.forEach((data) => {
@@ -387,8 +406,6 @@ async function serchtag(tag) {
 function clearnewsfeed(){
   $('#newsfeedbox').empty();
 }
-
-
 
 function modinewsfeed(a){
   console.log("하이!",a);

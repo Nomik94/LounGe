@@ -67,7 +67,7 @@ export class NewsfeedController {
     return await this.newsfeedService.serchtagnewsfeed(tag)
   }
 
-  // 뉴스피드 그룹별 읽기
+  // 뉴스피드 읽기 (특정 그룹에 소속된 모든 뉴스피드)
   @Get('group/:id')
   async readnewsfeedgroup(
     @Param('id') groupId: number
