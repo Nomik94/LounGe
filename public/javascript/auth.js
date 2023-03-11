@@ -1,14 +1,40 @@
 $(document).ready(function () {
-  const cookie = document.cookie.split('=')[0];
-  if (cookie === 'accessToken') {
-    window.location.href = 'http://localhost:3000/newsfeed';
+  const accessToken = getCookie('accessToken');
+
+  if (!accessToken) {
+    restoreAccessToken();
   }
-  restoreAccessToken();
 });
+
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function accessTokenExpires() {
+  const accessDate = new Date();
+  accessDate.setTime(accessDate.getTime() + 1000 * 60);
+  const accessExpires = accessDate.toGMTString();
+  return accessExpires;
+}
+
+function refreshTokenExpires() {
+  const refreshDate = new Date();
+  refreshDate.setTime(refreshDate.getTime() + 1000 * 60 * 60 * 7);
+  const refreshExpires = refreshDate.toGMTString();
+  return refreshExpires;
+}
 
 function login() {
   const email = $('#login-username').val();
   const password = $('#login-password').val();
+
   if (!email || !password) {
     alert('이메일 또는 비밀번호가 입력되지 않았습니다.');
   }
@@ -18,11 +44,11 @@ function login() {
       password: password,
     })
     .then((res) => {
-      const date = new Date();
-      date.setTime(date.getTime() + 1000 * 60);
-      const expires = date.toGMTString();
-      document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${expires}`;
-      document.cookie = `refreshToken=Bearer ${res.data.refreshToken}; path=/;`;
+      const accessExpires = accessTokenExpires();
+      const refreshExpires = refreshTokenExpires();
+      document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${accessExpires}`;
+      document.cookie = `refreshToken=Bearer ${res.data.refreshToken}; path=/; expires=${refreshExpires}`;
+      window.location.href = 'http://localhost:3000/newsfeed';
     })
     .catch(async (error) => {
       console.log(error);
@@ -36,11 +62,13 @@ function kakaoLogin() {
     if (event.data?.accessToken) {
       const accessToken = event.data?.accessToken;
       const refreshToken = event.data?.refreshToken;
-      document.cookie = `accessToken=Bearer ${accessToken}; path=/;`;
-      document.cookie = `refreshToken=Bearer ${refreshToken}; path=/;`;
+      const accessExpires = accessTokenExpires();
+      const refreshExpires = refreshTokenExpires();
+      document.cookie = `accessToken=Bearer ${accessToken}; path=/; expires=${accessExpires}`;
+      document.cookie = `refreshToken=Bearer ${refreshToken}; path=/; expires=${refreshExpires}`;
     }
     window.removeEventListener('message', loginCallback);
-    window.location.reload();
+    window.location.href = 'http://localhost:3000/newsfeed';
   }
   window.addEventListener('message', loginCallback);
 }
@@ -130,25 +158,19 @@ function logout() {
 }
 
 function restoreAccessToken() {
-  const accessToken = document.cookie.filter((token) =>
-    token.includes('accessToken'),
-  );
-  const refreshToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('refreshToken'))[0]
-    .split('=')[1]
-    .split('Bearer ')[1];
-  console.log(accessToken);
+  const refreshToken = getCookie('refreshToken').replace('Bearer ', '');
+  const expires = accessTokenExpires();
 
   if (!refreshToken) {
     alert('로그인을 다시 해주세요.');
-  } else if (!accessToken) {
+  } else {
     axios
       .post('/api/auth/restoreAccessToken', {
         refreshToken: refreshToken,
       })
       .then((res) => {
-        document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/;`;
+        document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${expires}`;
+        window.location.reload();
       });
   }
 }
