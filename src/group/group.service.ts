@@ -36,17 +36,17 @@ export class GroupService {
     if (tagArray.length >= 4) {
       throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
     }
-   
-    let groupImage = '1.png'
-    let backgroundImage = '1.png'
-    
+
+    let groupImage = '1.png';
+    let backgroundImage = '1.png';
+
     if (file.groupImage) {
-      groupImage = file.groupImage[0].filename
+      groupImage = file.groupImage[0].filename;
     }
-    if(file.backgroundImage) {
-      backgroundImage = file.backgroundImage[0].filename
+    if (file.backgroundImage) {
+      backgroundImage = file.backgroundImage[0].filename;
     }
-    
+
     const group = await this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
@@ -242,7 +242,11 @@ export class GroupService {
     }));
   }
   async groupMembers(groupId) {
-    const group = await this.groupRepository.findOneBy({ id: groupId });
+    const group = await this.groupRepository.findOne({
+      where: { id: groupId },
+      relations: ['tagGroups.tag'],
+    });
+    const tags = group.tagGroups.map((tag) => tag.tag.tagName);
     const resultList = await this.userGroupRepository.find({
       where: { groupId, role: Not('가입대기') },
       relations: ['user'],
@@ -256,7 +260,7 @@ export class GroupService {
       userImage: data.user.image,
       userRole: data.role,
     }));
-    return { members: mappingList, group };
+    return { members: mappingList, group, tags };
   }
 
   async groupTransfer(userId: number, ids: GroupTransfer) {
