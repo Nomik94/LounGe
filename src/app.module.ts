@@ -11,11 +11,15 @@ import { EmailModule } from './email/email.module';
 import { CalendarModule } from './calendar/calendar.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { UserModule } from './user/user.module';
+import { Group } from './database/entities/group.entity';
+import { UserGroup } from './database/entities/user-group.entity';
+import { GroupNewsFeed } from './database/entities/group-newsfeed.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfig }),
+    TypeOrmModule.forFeature([Group,UserGroup,GroupNewsFeed]),
     CacheModule.register({
       isGlobal: true,
       // store: "memory",

@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { Render } from '@nestjs/common/decorators';
+import { Query, Render } from '@nestjs/common/decorators';
 import { AppService } from './app.service';
 
 @Controller()
@@ -45,4 +45,12 @@ export class AppController {
   @Get('/profile/info')
   @Render('hub-profile-info')
   profileInfo() {}
+
+
+  @Get('/group/timeline/')
+  @Render('group-timeline')
+  async groupTimeline(@Query('groupId') groupId : number){ 
+    const a = await this.appService.groupInfo(groupId)
+    return a
+  }
 }

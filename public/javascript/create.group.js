@@ -85,7 +85,7 @@ function leaderGroupList() {
             <!-- USER SHORT DESCRIPTION -->
             <div class="user-short-description small">
               <!-- USER SHORT DESCRIPTION AVATAR -->
-              <a class="user-short-description-avatar user-avatar no-stats" href="group-timeline.html">
+              <a class="user-short-description-avatar user-avatar no-stats" href="/group/timeline?groupId=${data.id}">
                 <!-- USER AVATAR BORDER -->
                 <div class="user-avatar-border">
                   <!-- HEXAGON -->
@@ -105,7 +105,7 @@ function leaderGroupList() {
               <!-- /USER SHORT DESCRIPTION AVATAR -->
         
               <!-- USER SHORT DESCRIPTION TITLE -->
-              <p class="user-short-description-title small"><a href="group-timeline.html">${data.groupName}</a></p>
+              <p class="user-short-description-title small"><a href="/group/timeline?groupId=${data.id}">${data.groupName}</a></p>
               <!-- /USER SHORT DESCRIPTION TITLE -->
         
               <!-- USER SHORT DESCRIPTION TEXT -->
