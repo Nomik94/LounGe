@@ -96,8 +96,7 @@
         <!-- USER PREVIEW -->
         <div class="user-preview small">
           <!-- USER PREVIEW COVER -->
-          <figure class="user-preview-cover liquid">
-            <img src="/backgroundImage/1.png" alt="backgroundImg">
+          <figure class="user-preview-cover liquid" id="backImg">
           </figure>
           <!-- /USER PREVIEW COVER -->
 
@@ -116,21 +115,18 @@
                 <!-- /USER AVATAR BORDER -->
             
                 <!-- USER AVATAR CONTENT -->
-                <div class="user-avatar-content">
-                  <!-- HEXAGON -->
-                  <div class="hexagon-image-84-92" data-src="/groupImage/1.png"></div>
-                  <!-- /HEXAGON -->
+                <div class="user-avatar-content" id="avatarImg">
                 </div>
                 <!-- /USER AVATAR CONTENT -->
               </a>
               <!-- /USER SHORT DESCRIPTION AVATAR -->
         
               <!-- USER SHORT DESCRIPTION TITLE -->
-              <p class="user-short-description-title small">Cosplayers of the World</p>
+              <p class="user-short-description-title small">그룹 이미지</p>
               <!-- /USER SHORT DESCRIPTION TITLE -->
         
               <!-- USER SHORT DESCRIPTION TEXT -->
-              <p class="user-short-description-text regular">Group Organizer</p>
+              <p class="user-short-description-text regular">이미지는 선택 사항 입니다.<br> 미선택 시 위의 그룹 이미지가 유지됩니다.</p>
               <!-- /USER SHORT DESCRIPTION TEXT -->
             </div>
             <!-- /USER SHORT DESCRIPTION -->
@@ -172,9 +168,9 @@
         <!-- /SIDEBAR MENU ITEM -->
 
         <!-- POPUP BOX SIDEBAR FOOTER -->
-        <div class="popup-box-sidebar-footer">
+        <div class="popup-box-sidebar-footer" id="popupButton">
           <!-- BUTTON -->
-          <p class="button secondary full popup-manage-group-trigger" onclick="modifyGroup()">그룹 수정하기</p>
+
           <!-- /BUTTON -->
 
         </div>
@@ -297,7 +293,6 @@
 <!-- global.accordions -->
 <script src="/js/global/global.accordions.js"></script>
 <!-- global.popups -->
-<script src="/js/global/global.popups.js"></script>
 <!-- header -->
 <script src="/js/header/header.js"></script>
 <!-- sidebar -->

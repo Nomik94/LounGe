@@ -23,8 +23,8 @@ function createGroup() {
     },
     data: formData,
   })
-    .then(function (res) {
-      Swal.fire({
+    .then(async function (res) {
+      await Swal.fire({
         icon: 'success',
         text: `그룹이 생성되었습니다.`,
       });
