@@ -63,6 +63,22 @@ function getUser() {
               </div>
               <!-- /USER AVATAR CONTENT -->
 
+              <!-- USER AVATAR PROGRESS -->
+              <div class="user-avatar-progress">
+                <!-- HEXAGON -->
+                <div class="hexagon-progress-84-92"></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR PROGRESS -->
+          
+              <!-- USER AVATAR PROGRESS BORDER -->
+              <div class="user-avatar-progress-border">
+                <!-- HEXAGON -->
+                <div class="hexagon-border-84-92"></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR PROGRESS BORDER -->
+
 
 
               <!-- USER AVATAR PROGRESS BORDER -->
