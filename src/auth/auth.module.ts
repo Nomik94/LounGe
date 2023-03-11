@@ -5,8 +5,10 @@ import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/user.entity';
 import { EmailService } from 'src/email/email.service';
+import { UserService } from 'src/user/user.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { JwtRefreshStrategy } from './strategy/jwt-refresh.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { KakaoStrategy } from './strategy/kakao.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
@@ -26,6 +28,8 @@ import { userImageFactory } from './utils/user.img.multer';
     EmailService,
     KakaoStrategy,
     LocalStrategy,
+    UserService,
+    JwtRefreshStrategy,
   ],
   exports: [AuthService, JwtModule],
 })

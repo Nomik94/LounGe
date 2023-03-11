@@ -34,6 +34,19 @@ export class AppController {
   @Render('hub-group-joinedlist')
   groupJoinedList() {}
 
+  @Get('/findPassword')
+  @Render('findPassword')
+  findPassword() {}
+
+  @Get('/account/password')
+  @Render('hub-account-password')
+  accountPassword() {}
+
+  @Get('/profile/info')
+  @Render('hub-profile-info')
+  profileInfo() {}
+
+
   @Get('/group/timeline')
   @Render('group-timeline')
   async groupTimeline(@Query('groupId') groupId: number) {
