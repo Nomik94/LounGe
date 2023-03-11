@@ -3,13 +3,11 @@ $(document).ready(function () {
 });
 
 async function getGroupList() {
-  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
-
   axios({
     url: '/api/groups',
     method: 'get',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
@@ -31,7 +29,7 @@ async function getGroupList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -55,7 +53,7 @@ function joinGroup(groupId, groupName) {
         url: `/api/groups/${groupId}/join`,
         method: 'post',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
@@ -80,7 +78,7 @@ function joinGroup(groupId, groupName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -89,8 +87,6 @@ function joinGroup(groupId, groupName) {
 }
 
 function searchGroups(tag) {
-  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
-
   if (!tag) {
     tag = document.getElementById('groups-search').value;
   }
@@ -107,7 +103,7 @@ function searchGroups(tag) {
     url: `/api/groups/search/${tag}`,
     method: 'get',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
@@ -130,7 +126,7 @@ function searchGroups(tag) {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -238,4 +234,15 @@ async function groupList(list) {
   const js = `<!-- global.hexagons -->
   <script src="/js/global/global.hexagons.js"></script><script src="/js/utils/liquidify.js"></script>`;
   $('#groupjs').append(js);
+}
+
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { GroupNewsFeed } from './database/entities/group-newsfeed.entity';
 import { Group } from './database/entities/group.entity';
 import { UserGroup } from './database/entities/user-group.entity';
@@ -20,7 +20,7 @@ export class AppService {
       where: { id: groupId },
     });
     const memberCount = await this.userGroupRepository.count({
-      where: { groupId },
+      where: { groupId , role : Not("가입대기")},
     });
 
     const newMembers = await this.userGroupRepository.find({

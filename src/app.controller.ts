@@ -28,17 +28,50 @@ export class AppController {
 
   @Get('/group/management/members')
   @Render('hub-group-members')
-  groupMembersManagement(){}
+  groupMembersManagement() {}
 
   @Get('/joined/grouplist')
   @Render('hub-group-joinedlist')
-  groupJoinedList(){}
+  groupJoinedList() {}
 
-  @Get('/group/timeline/')
+  @Get('/findPassword')
+  @Render('findPassword')
+  findPassword() {}
+
+  @Get('/account/password')
+  @Render('hub-account-password')
+  accountPassword() {}
+
+  @Get('/profile/info')
+  @Render('hub-profile-info')
+  profileInfo() {}
+
+
+  @Get('/group/timeline')
   @Render('group-timeline')
-  async groupTimeline(@Query('groupId') groupId : number){ 
-    const a = await this.appService.groupInfo(groupId)
-    return a
+  async groupTimeline(@Query('groupId') groupId: number) {
+    if (!groupId) {
+      return;
+    }
+    return await this.appService.groupInfo(groupId);
+  }
+
+  @Get('/group/events')
+  @Render('group-events')
+  async groupEvents(@Query('groupId') groupId: number) {
+    if (!groupId) {
+      return;
+    }
+    return await this.appService.groupInfo(groupId);
+  }
+
+  @Get('/group/members')
+  @Render('group-members')
+  async groupMembers(@Query('groupId') groupId: number) {
+    if (!groupId) {
+      return;
+    }
+    return await this.appService.groupInfo(groupId);
   }
 
   @Get('/newsfeed/mylist')

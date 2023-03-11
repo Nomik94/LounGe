@@ -2,11 +2,6 @@ $(document).ready(function () {
   leaderGroupList();
 });
 function createGroup() {
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
   const groupName = document.getElementById('groupName').value;
   const groupDescription = document.getElementById('groupDescription').value;
   const groupTags = document.getElementById('groupTags').value;
@@ -24,7 +19,7 @@ function createGroup() {
     url: `/api/groups`,
     method: 'post',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
     data: formData,
   })
@@ -33,6 +28,7 @@ function createGroup() {
         icon: 'success',
         text: `그룹이 생성되었습니다.`,
       });
+      window.location.reload()
     })
     .catch(async function (error) {
       if (error.response.data.statusCode === 401) {
@@ -50,23 +46,18 @@ function createGroup() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
 }
 
 function leaderGroupList() {
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
   axios({
     url: `/api/groups/created/list`,
     method: 'get',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
@@ -144,8 +135,19 @@ function leaderGroupList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
+}
+
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
 }

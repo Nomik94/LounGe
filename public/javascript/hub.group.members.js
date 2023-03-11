@@ -8,19 +8,15 @@ function managementMemberList() {
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
 
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
   axios({
     url: `/api/groups/${groupId}/members/list`,
     method: 'get',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
+      console.log(res)
       $('#groupTitle').empty();
       $('#groupTitle').append(`${res.data.group.groupName}`);
 
@@ -126,7 +122,7 @@ function managementMemberList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -139,15 +135,11 @@ function managementApplyList() {
   let groupId = param.get('groupId');
 
   const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
   axios({
     url: `/api/groups/${groupId}/applicant/list`,
     method: 'get',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
@@ -254,7 +246,7 @@ function managementApplyList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -275,16 +267,11 @@ function applyJoin(groupId, memberId, userName) {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie
-        .split(';')
-        .filter((token) => token.includes('accessToken'))[0]
-        .split('=')[1];
-
       axios({
         url: `/api/groups/${groupId}/members/${memberId}`,
         method: 'put',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
@@ -306,7 +293,7 @@ function applyJoin(groupId, memberId, userName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -329,16 +316,11 @@ function groupTransfer(groupId, memberId, userName) {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie
-        .split(';')
-        .filter((token) => token.includes('accessToken'))[0]
-        .split('=')[1];
-
       axios({
         url: `/api/groups/${groupId}/leaders/transfer/${memberId}`,
         method: 'put',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
@@ -360,7 +342,7 @@ function groupTransfer(groupId, memberId, userName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -383,16 +365,11 @@ function kickOutGroup(groupId, memberId, userName) {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie
-        .split(';')
-        .filter((token) => token.includes('accessToken'))[0]
-        .split('=')[1];
-
       axios({
         url: `/api/groups/${groupId}/kickout/${memberId}`,
         method: 'delete',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
@@ -414,7 +391,7 @@ function kickOutGroup(groupId, memberId, userName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -439,16 +416,11 @@ function deleteGroup() {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie
-        .split(';')
-        .filter((token) => token.includes('accessToken'))[0]
-        .split('=')[1];
-
       axios({
         url: `/api/groups/${groupId}`,
         method: 'delete',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
@@ -470,10 +442,21 @@ function deleteGroup() {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
     }
   });
+}
+
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
 }

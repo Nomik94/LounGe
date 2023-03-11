@@ -1,13 +1,40 @@
-// $(document).ready(function () {
-//   const cookie = document.cookie.split('=')[0];
-//   if (cookie === 'accessToken') {
-//     window.location.href = 'http://localhost:3000/newsfeed';
-//   }
-// });
+$(document).ready(function () {
+  const refreshToken = getCookie('refreshToken');
+
+  if (refreshToken) {
+    window.location.href = '/newsfeed';
+  }
+});
+
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function accessTokenExpires() {
+  const accessDate = new Date();
+  accessDate.setTime(accessDate.getTime() + 1000 * 60);
+  const accessExpires = accessDate.toGMTString();
+  return accessExpires;
+}
+
+function refreshTokenExpires() {
+  const refreshDate = new Date();
+  refreshDate.setTime(refreshDate.getTime() + 1000 * 60 * 60 * 24 * 7);
+  const refreshExpires = refreshDate.toGMTString();
+  return refreshExpires;
+}
 
 function login() {
   const email = $('#login-username').val();
   const password = $('#login-password').val();
+
   if (!email || !password) {
     alert('이메일 또는 비밀번호가 입력되지 않았습니다.');
   }
@@ -17,8 +44,10 @@ function login() {
       password: password,
     })
     .then((res) => {
-      document.cookie = `accessToken=Bearer ${res.data.accessToken}`;
-      document.cookie = `refreshToken=Bearer ${res.data.refreshToken}`;
+      const accessExpires = accessTokenExpires();
+      const refreshExpires = refreshTokenExpires();
+      document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${accessExpires}`;
+      document.cookie = `refreshToken=Bearer ${res.data.refreshToken}; path=/; expires=${refreshExpires}`;
       window.location.href = 'http://localhost:3000/newsfeed';
     })
     .catch(async (error) => {
@@ -29,18 +58,19 @@ function login() {
 
 function kakaoLogin() {
   window.open('http://localhost:3000/api/auth/login/kakao');
-
   function loginCallback(event) {
     if (event.data?.accessToken) {
       const accessToken = event.data?.accessToken;
       const refreshToken = event.data?.refreshToken;
-      document.cookie = `accessToken=Bearer ${accessToken}`;
-      document.cookie = `refreshToken=Bearer ${refreshToken}`;
+      const accessExpires = accessTokenExpires();
+      const refreshExpires = refreshTokenExpires();
+      document.cookie = `accessToken=Bearer ${accessToken}; path=/; expires=${accessExpires}`;
+      document.cookie = `refreshToken=Bearer ${refreshToken}; path=/; expires=${refreshExpires}`;
     }
     window.removeEventListener('message', loginCallback);
+    window.location.href = 'http://localhost:3000/newsfeed';
   }
   window.addEventListener('message', loginCallback);
-  window.location.href = 'http://localhost:3000/newsfeed';
 }
 
 function emailVerify() {
@@ -54,7 +84,6 @@ function emailVerify() {
       email: email,
     })
     .then((res) => {
-      console.log(res);
       alert('인증번호가 발송되었습니다.');
     })
     .catch(async (error) => {
@@ -73,7 +102,7 @@ function emailCheck() {
     alert('번호를 입력해주세요.');
   }
   axios
-    .post('api/emailVerify/check', {
+    .post('/api/emailVerify/check', {
       email: email,
       checkNumber: checkNumber,
     })
@@ -108,7 +137,7 @@ function register() {
   } else {
     axios({
       method: 'post',
-      url: 'api/auth/register',
+      url: '/api/auth/register',
       data: formData,
     })
       .then((res) => {

@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import _ from 'lodash';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    private readonly userService: UserService,
   ) {}
 
   async register(authDTO: AuthDTO, file): Promise<void> {
@@ -49,25 +51,6 @@ export class AuthService {
     await this.userRepository.insert(createUser);
   }
 
-  async getByEmail(email: string): Promise<User | undefined> {
-    return await this.userRepository.findOne({ where: { email } });
-  }
-
-  async validateUser({ email, password }) {
-    const user = await this.userRepository.findOne({ where: { email } });
-    if (!user) {
-      throw new NotFoundException('이메일 또는 비밀번호가 틀렸습니다.');
-    }
-
-    const isRegister = await bcrypt.compare(password, user.password);
-
-    if (user && isRegister) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
-
   async login({ user }): Promise<{
     accessToken: string;
     refreshToken: string;
@@ -88,7 +71,7 @@ export class AuthService {
     const email = user.email;
     const nickname = user.username;
 
-    const existUser = await this.getByEmail(email);
+    const existUser = await this.userService.getByEmail(email);
     if (!existUser) {
       const newUser = await this.userRepository.save({
         username: nickname,
@@ -153,19 +136,16 @@ export class AuthService {
     return refreshToken;
   }
 
-  async restoreAccessToken({ accessToken, refreshToken }): Promise<{
+  async restoreAccessToken(refreshToken): Promise<{
     accessToken: string;
   }> {
-    await this.jwtService.verifyAsync(accessToken, {
-      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-    });
     const userEmail: string = await this.cacheManager.get(refreshToken);
 
     if (_.isNil(userEmail)) {
       throw new UnauthorizedException();
     }
 
-    const user = await this.getByEmail(userEmail);
+    const user = await this.userService.getByEmail(userEmail);
     const userId = user.id;
     if (_.isNil(user)) {
       throw new NotFoundException();

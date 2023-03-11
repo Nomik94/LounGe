@@ -41,7 +41,7 @@ export class EmailService {
   ): Promise<any> {
     const mailOptions: EmailOptions = {
       to: emailAddress,
-      subject: '가입 인증 메일',
+      subject: '인증 메일',
       html: `
       인증번호 : ${signupVerifyToken}`,
     };
