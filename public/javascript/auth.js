@@ -26,7 +26,7 @@ function accessTokenExpires() {
 
 function refreshTokenExpires() {
   const refreshDate = new Date();
-  refreshDate.setTime(refreshDate.getTime() + 1000 * 60 * 60 * 7);
+  refreshDate.setTime(refreshDate.getTime() + 1000 * 60 * 60 * 24 * 7);
   const refreshExpires = refreshDate.toGMTString();
   return refreshExpires;
 }
@@ -158,19 +158,16 @@ function logout() {
 }
 
 function restoreAccessToken() {
-  const refreshToken = getCookie('refreshToken').replace('Bearer ', '');
+  const Token = getCookie('refreshToken');
   const expires = accessTokenExpires();
 
-  if (!refreshToken) {
-    alert('로그인을 다시 해주세요.');
-  } else {
-    axios
-      .post('/api/auth/restoreAccessToken', {
-        refreshToken: refreshToken,
-      })
-      .then((res) => {
-        document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${expires}`;
-        window.location.reload();
-      });
-  }
+  const refreshToken = Token.replace('Bearer ', '');
+  axios
+    .post('/api/auth/restoreAccessToken', {
+      refreshToken: refreshToken,
+    })
+    .then((res) => {
+      document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${expires}`;
+      window.location.reload();
+    });
 }
