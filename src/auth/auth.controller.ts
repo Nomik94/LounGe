@@ -54,6 +54,7 @@ export class AuthController {
     accessToken: string;
   }> {
     const refreshToken = body.refreshToken;
+    console.log(refreshToken);
 
     return await this.authService.restoreAccessToken(refreshToken);
   }

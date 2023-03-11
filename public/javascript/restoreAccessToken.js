@@ -32,6 +32,7 @@ function restoreAccessToken() {
   const expires = accessTokenExpires();
 
   const refreshToken = Token.replace('Bearer ', '');
+
   axios
     .post('/api/auth/restoreAccessToken', {
       refreshToken: refreshToken,
@@ -39,5 +40,8 @@ function restoreAccessToken() {
     .then((res) => {
       document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${expires}`;
       window.location.reload();
+    })
+    .catch((error) => {
+      console.log(error);
     });
 }
