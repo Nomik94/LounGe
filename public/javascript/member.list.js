@@ -75,6 +75,9 @@ function managementMemberList() {
               <!-- USER SHORT DESCRIPTION TITLE -->
               <p class="user-short-description-title">${data.userName}</p>
               <!-- /USER SHORT DESCRIPTION TITLE -->
+              <!-- USER SHORT DESCRIPTION TITLE -->
+              <p class="user-short-description-text">${data.userRole}</p>
+              <!-- /USER SHORT DESCRIPTION TITLE -->
             </div>
             <!-- /USER SHORT DESCRIPTION -->
           </div>
