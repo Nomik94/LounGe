@@ -36,11 +36,22 @@ export class GroupService {
     if (tagArray.length >= 4) {
       throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
     }
+   
+    let groupImage = '1.png'
+    let backgroundImage = '1.png'
+    
+    if (file.groupImage) {
+      groupImage = file.groupImage[0].filename
+    }
+    if(file.backgroundImage) {
+      backgroundImage = file.backgroundImage[0].filename
+    }
+    
     const group = await this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
-      groupImage: file.groupImage[0].filename,
-      backgroundImage: file.backgroundImage[0].filename,
+      groupImage,
+      backgroundImage,
       user: { id: userId }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
     });
     await this.groupRepository.save(group);
