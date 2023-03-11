@@ -1,10 +1,6 @@
 $(document).ready(function () {
   const accessToken = getCookie('accessToken');
-  const refreshToken = getCookie('refreshToken');
-  if (!refreshToken) {
-    alert('로그인을 다시 해주세요.');
-    window.location.href = '/';
-  }
+
   if (accessToken) {
     getUser();
   }
