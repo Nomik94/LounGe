@@ -53,14 +53,8 @@ export class AuthController {
   async restoreAccessToken(@Body() body): Promise<{
     accessToken: string;
   }> {
-    const accessToken = body.accessToken;
     const refreshToken = body.refreshToken;
-    console.log(accessToken);
-    console.log(refreshToken);
 
-    return await this.authService.restoreAccessToken({
-      accessToken,
-      refreshToken,
-    });
+    return await this.authService.restoreAccessToken(refreshToken);
   }
 }

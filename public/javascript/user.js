@@ -1,14 +1,28 @@
 $(document).ready(function () {
-  getUser();
+  const accessToken = getCookie('accessToken');
+  const refreshToken = getCookie('refreshToken');
+  if (!refreshToken) {
+    alert('로그인을 다시 해주세요.');
+    window.location.href = '/';
+  }
+  if (accessToken) {
+    getUser();
+  }
 });
 
-function getScript() {}
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
 function getUser() {
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
+  const accessToken = getCookie('accessToken');
 
   axios({
     url: '/api/user',
