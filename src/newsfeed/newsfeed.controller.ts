@@ -76,21 +76,15 @@ export class NewsfeedController {
   }
 
   // 태그로 내가 쓴 뉴스피드 검색
-  @Get('tag/mylist')
+  @Get('tagmylist')
   @UseGuards(JwtAuthGuard)
-  serchtagmynewsfeed(
-    @Query() data,
+  async serchtagmynewsfeed(
+    @Query('tag') data:string,
     @GetUser() user,
   ) {
-    // const userId = user.id
-    // console.log("윳저아이디",userId);
+    const userId = user.id
     
-    // return this.newsfeedService.serchtagmynewsfeed(data,userId)
-    console.log("data",data);
-    console.log("user",user);
-    
-    
-    return "헬롱"
+    return await this.newsfeedService.serchtagmynewsfeed(data,userId)
   }
 
   // 뉴스피드 읽기 (특정 그룹에 소속된 모든 뉴스피드)

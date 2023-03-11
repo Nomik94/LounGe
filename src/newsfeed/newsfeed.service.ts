@@ -307,8 +307,8 @@ export class NewsfeedService {
                         userEmail: feed.user.email,
                         tagsName: feed.newsFeedTags.map(tag => tag.tag.tagName),
                         newsfeedImage : feed.newsImages.map(image => image.image),
-                        groupid: feed.groupNewsFeeds.map(group => group.group.id),
-                        groupname: feed.groupNewsFeeds.map(group => group.group.groupName)
+                        groupId: feed.groupNewsFeeds.map(group => group.group.id),
+                        groupName: feed.groupNewsFeeds.map(group => group.group.groupName)
                     }
                     result.push(obj)
                 }
@@ -323,8 +323,62 @@ export class NewsfeedService {
         }
     }
 
-    serchtagmynewsfeed(data,userId) {
-        return `${data},${userId}의 리턴값이라네`
+    async serchtagmynewsfeed(data,userId) {
+        
+        try {
+            const tag = data
+            
+            const serchtag = await this.tagRepository.find({
+                where: { tagName: Like(`%${tag}%`) },
+                select: ['id']
+            })
+            
+            const wherenewsfeedid = serchtag.map((tag) => ({ tagId : tag.id }))
+            
+            const newsfeedTag = await this.newsfeedTagRepository.find({
+                where: wherenewsfeedid,
+                select: ['newsFeedId']
+            })   
+            
+            const newsfeedserchid = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
+            
+            const numberingid = newsfeedserchid.map(id => ({id}))
+            
+            const findnewsfeed = await this.newsfeedRepository.find({
+                relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
+                where: numberingid
+            })
+            
+            const result = [];
+            for (const id of newsfeedserchid) {
+                const feed = findnewsfeed.find(item => item.id ===id);
+                if (feed) {
+                    const obj = {
+                        id: feed.id,
+                        content: feed.content,
+                        createAt: feed.createdAt,
+                        updateAt: feed.updatedAt,
+                        userId: feed.user.id,
+                        userName: feed.user.username,
+                        userImage: feed.user.image,
+                        userEmail: feed.user.email,
+                        tagsName: feed.newsFeedTags.map(tag => tag.tag.tagName),
+                        newsfeedImage : feed.newsImages.map(image => image.image),
+                        groupId: feed.groupNewsFeeds.map(group => group.group.id),
+                        groupName: feed.groupNewsFeeds.map(group => group.group.groupName)
+                    }
+                    result.push(obj)
+                }
+            }
+            const filteredResult = result.filter(obj => obj.userId === userId);
+
+            return filteredResult
+
+        } catch(err){
+            console.log("알 수 없는 에러가 발생했습니다.", err);
+            throw new Error(err)
+        }
+
     }
 
     async readnewsfeedgroup(groupId:number) {

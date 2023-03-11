@@ -5,6 +5,19 @@ $(document).ready(function(){
   readnewsfeedgrouptimeline(groupId)
 });
 
+// 유저 쿠키 가져오기
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+// 특정 그룹의 뉴스피드 가져오기
 function readnewsfeedgrouptimeline(id) {
   axios({
     method: 'get',
@@ -25,6 +38,7 @@ function readnewsfeedgrouptimeline(id) {
   })
 }
 
+// 뉴스피드 불러오기
 function newsfeedlist(data) {
 
   data.reverse().forEach((data) => {
@@ -145,10 +159,12 @@ function newsfeedlist(data) {
   $('#ddd').append(asd);
 }
 
+// 뉴스피드 목록 비우기
 function clearnewsfeed(){
   $('#newsfeedbox').empty();
 }
 
+// 특정 그룹에서 뉴스피드 태그로 검색하기
 function serchtag(tag) {
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
@@ -177,6 +193,7 @@ function serchtag(tag) {
 
 }
 
+// 뉴스피드 삭제하기
 async function deletenewsfeed(newsfeedId) {
   await Swal.fire({
     title: '해당 뉴스피드를 지울까요?',
@@ -189,13 +206,13 @@ async function deletenewsfeed(newsfeedId) {
     cancelButtonText: '취소'
 }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
+      
       axios({
         method: 'Delete',
         url: `/api/newsfeed/newsfeed/${newsfeedId}`,
         headers: {
-          Authorization: `${accessToken}` // 엑세스 토큰
-        }
+          Authorization: `${getCookie('accessToken')}`,
+        },
       })
       .then(async (res) => {
         await Swal.fire({
@@ -228,6 +245,41 @@ async function deletenewsfeed(newsfeedId) {
           })
         }
       })
+    }
+  })
+}
+
+function getImages() {
+  const imageSelcet = document.createElement("input");
+  imageSelcet.type = "file";
+  imageSelcet.multiple = true;
+  imageSelcet.accept = "image/*";
+  imageSelcet.onchange = function(event) {
+    
+  const files = event.target.files;
+  console.log(files);
+  };
+  imageSelcet.click();
+}
+
+async function getTags() {
+  const { value: formValues } = await Swal.fire({
+    title: '태그는 최대 5글자까지 가능합니다.',
+    html:
+      '<input id="swal-input1" class="swal2-input">' +
+      '<input id="swal-input2" class="swal2-input">' +
+      '<input id="swal-input3" class="swal2-input">' +
+      '<input id="swal-input4" class="swal2-input">' +
+      '<input id="swal-input5" class="swal2-input">',
+    focusConfirm: false,
+    preConfirm: () => {
+      return [
+        document.getElementById('swal-input1').value,
+        document.getElementById('swal-input2').value,
+        document.getElementById('swal-input3').value,
+        document.getElementById('swal-input4').value,
+        document.getElementById('swal-input5').value
+      ]
     }
   })
 }

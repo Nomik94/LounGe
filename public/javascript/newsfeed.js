@@ -3,16 +3,27 @@ $(document).ready(function(){
   readnewsfeedmygroup() // 내가 가입한 모든 그룹의 뉴스피드 보기
 });
 
+// 유저 쿠키 
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
 // 내가 쓴 뉴스피드만 보기
 async function readnewsfeedmy() {
-  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
 
   axios({
     method: 'get',
     url: '/api/newsfeed/newsfeed',
     headers: {
-      Authorization: `${accessToken}` // 엑세스 토큰
-    }
+      Authorization: `${getCookie('accessToken')}`,
+    },
   })
   .then((res) => {
     console.log(res.data);
@@ -32,14 +43,13 @@ async function readnewsfeedmy() {
 
 // 내가 가입한 모든 그룹의 뉴스피드 보기
 async function readnewsfeedmygroup() {
-  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
 
   axios({
     method: 'get',
     url: '/api/newsfeed/newsfeed/mygroup',
     headers: {
-      Authorization: `${accessToken}` // 엑세스 토큰
-    }
+      Authorization: `${getCookie('accessToken')}`,
+    },
   })
   .then((res) => {
     console.log(res.data);
@@ -210,13 +220,13 @@ async function deletenewsfeed(newsfeedId){
                 cancelButtonText: '취소'
             }).then((result) => {
                 if (result.isConfirmed) {
-                  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
+                 
                   axios({
                     method: 'Delete',
                     url: `/api/newsfeed/newsfeed/${newsfeedId}`,
                     headers: {
-                      Authorization: `${accessToken}` // 엑세스 토큰
-                    }
+                      Authorization: `${getCookie('accessToken')}`,
+                    },
                   })
                   .then(async (res) => {
                     await Swal.fire({

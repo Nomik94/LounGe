@@ -5,16 +5,27 @@ $(document).ready(function(){
   readnewsfeedmylist()
 });
 
+// 유저 쿠키 가져오기
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
+// 내가 쓴 뉴스피드만 불러오기
 async function readnewsfeedmylist() {
-  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
 
   axios({
     method: 'get',
     url: '/api/newsfeed/newsfeed',
     headers: {
-      Authorization: `${accessToken}` // 엑세스 토큰
-    }
+      Authorization: `${getCookie('accessToken')}`,
+    },
   })
   .then((res) => {
     console.log(res.data);
@@ -46,6 +57,7 @@ async function readnewsfeedmylist() {
   })
 }
 
+// 리스트 불러오기
 async function newsfeedlist(data) {
 
   data.reverse().forEach((data) => {
@@ -171,6 +183,7 @@ async function newsfeedlist(data) {
   
 }
 
+// 뉴스피드 삭제하기
 function deletenewsfeed(newsfeedId) {
   
   Swal.fire({
@@ -184,13 +197,12 @@ function deletenewsfeed(newsfeedId) {
     cancelButtonText: '취소'
 }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
-      axios({
+        axios({
         method: 'Delete',
         url: `/api/newsfeed/newsfeed/${newsfeedId}`,
         headers: {
-          Authorization: `${accessToken}` // 엑세스 토큰
-        }
+          Authorization: `${getCookie('accessToken')}`,
+        },
       })
       .then(async (res) => {
         await Swal.fire({
@@ -227,24 +239,22 @@ function deletenewsfeed(newsfeedId) {
 
 }
 
-function serchtag(tag) {
-  const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
+// 내 뉴스피드에서 태그 정렬
+async function serchtag(tag) {
   const test = tag
   axios({
-    method: 'Get',
-    url: '/api/newsfeed/tag/mylist',
+    method: 'get',
+    url: '/api/newsfeed/tagmylist',
     params: {
-      tag:test
+      tag: test
     },
     headers: {
-      Authorization: `${accessToken}` // 엑세스 토큰
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
   .then((res) => {
-    console.log(res.data);
-
-    // clearnewsfeed();
-    // newsfeedlist(res.data);
+    clearnewsfeed();
+    newsfeedlist(res.data);
   })
   .catch(async (err) => {
     if(err.response.data.statusCode === 403) {
@@ -274,3 +284,4 @@ function serchtag(tag) {
 function clearnewsfeed(){
   $('#newsfeedbox').empty();
 }
+
