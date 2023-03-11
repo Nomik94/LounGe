@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { EmailService } from './email.service';
 
 @Controller('api/emailVerify')
@@ -14,8 +14,6 @@ export class EmailController {
   async verifyEmail(@Body() body): Promise<{
     message: string;
   }> {
-    console.log(body);
-
     const verifyToken = parseInt(body.checkNumber);
     const email = body.email;
 

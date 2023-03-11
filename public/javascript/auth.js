@@ -1,9 +1,10 @@
-// $(document).ready(function () {
-//   const cookie = document.cookie.split('=')[0];
-//   if (cookie === 'accessToken') {
-//     window.location.href = 'http://localhost:3000/newsfeed';
-//   }
-// });
+$(document).ready(function () {
+  // const cookie = document.cookie.split('=')[0];
+  // if (cookie === 'accessToken') {
+  //   window.location.href = 'http://localhost:3000/newsfeed';
+  // }
+  // restoreAccessToken();
+});
 
 function login() {
   const email = $('#login-username').val();
@@ -54,7 +55,6 @@ function emailVerify() {
       email: email,
     })
     .then((res) => {
-      console.log(res);
       alert('인증번호가 발송되었습니다.');
     })
     .catch(async (error) => {
@@ -73,7 +73,7 @@ function emailCheck() {
     alert('번호를 입력해주세요.');
   }
   axios
-    .post('api/emailVerify/check', {
+    .post('/api/emailVerify/check', {
       email: email,
       checkNumber: checkNumber,
     })
@@ -108,7 +108,7 @@ function register() {
   } else {
     axios({
       method: 'post',
-      url: 'api/auth/register',
+      url: '/api/auth/register',
       data: formData,
     })
       .then((res) => {
@@ -117,6 +117,39 @@ function register() {
       })
       .catch(async (error) => {
         alert(error.response.data.message);
+      });
+  }
+}
+
+function logout() {
+  document.cookie = 'accessToken' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
+  document.cookie =
+    'refreshToken' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
+  window.location.href = '/';
+}
+
+function restoreAccessToken() {
+  const accessToken = document.cookie
+    .split(';')
+    .filter((token) => token.includes('accessToken'))[0]
+    .split('=')[1]
+    .split('Bearer ')[1];
+  const refreshToken = document.cookie
+    .split(';')
+    .filter((token) => token.includes('refreshToken'))[0]
+    .split('=')[1]
+    .split('Bearer ')[1];
+
+  if (!refreshToken) {
+    alert('로그인을 다시 해주세요.');
+  } else if (refreshToken) {
+    axios
+      .post('/api/auth/restoreAccessToken', {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      })
+      .then((res) => {
+        document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/;`;
       });
   }
 }

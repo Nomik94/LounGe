@@ -28,11 +28,24 @@ export class AppController {
 
   @Get('/group/management/members')
   @Render('hub-group-members')
-  groupMembersManagement(){}
+  groupMembersManagement() {}
 
   @Get('/joined/grouplist')
   @Render('hub-group-joinedlist')
-  groupJoinedList(){}
+  groupJoinedList() {}
+
+  @Get('/findPassword')
+  @Render('findPassword')
+  findPassword() {}
+
+  @Get('/account/password')
+  @Render('hub-account-password')
+  accountPassword() {}
+
+  @Get('/profile/info')
+  @Render('hub-profile-info')
+  profileInfo() {}
+
 
   @Get('/group/timeline/')
   @Render('group-timeline')
