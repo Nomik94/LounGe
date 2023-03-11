@@ -292,3 +292,34 @@ function clearnewsfeed(){
   $('#newsfeedbox').empty();
 }
 
+
+const contents = document.querySelector('#newsfeedbox')
+let paraIndex = 1
+
+async function limitscroll() {
+    for(let i = 0; i < 6; i++) {
+        const $tr = document.createElement("tr")
+        $tr.innerHTML = `
+        <td width='50' align='center'>${paraIndex++}</td>
+                            <td>a번문항<br>b번문항<br>C번문항</td>
+                            `
+        contents.appendChild($tr)
+    }
+}
+
+function debounce(callback, limit = 500) {
+  let timeout
+  return function(...args) {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+          callback.apply(this, args)
+      }, limit)
+  }
+}
+
+document.addEventListener("scroll", debounce(e => {
+  const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement
+  if(clientHeight + scrollTop >= scrollHeight) {
+      limitscroll()
+  }
+}, 500))

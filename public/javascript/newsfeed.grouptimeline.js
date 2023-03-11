@@ -178,7 +178,6 @@ function serchtag(tag) {
       },
     })
     .then(async (res) => {
-      // console.log(res.data);
       clearnewsfeed();
       newsfeedlist(res.data);
     })
@@ -249,7 +248,77 @@ async function deletenewsfeed(newsfeedId) {
   })
 }
 
-function getImages() {
+let selectedTags = [];
+let selectedImages =[];
+
+// 뉴스피드 작성하기
+async function postnewsfeed() {
+  const content = document.getElementById("quick-post-text").value;
+  const urlParams = new URLSearchParams(window.location.search);
+  const groupId = urlParams.get('groupId');
+
+  const formData = new FormData();
+  // formData.append('newsfeedImages',selectedImages)
+  formData.append('newsfeedTags', selectedTags)
+  formData.append('content', content)
+
+  axios({
+    url: `/api/newsfeed/newsfeed/${groupId}`,
+    method: 'post',
+    headers : {
+      Authorization: `${getCookie('accessToken')}`,
+    },
+    data: formData
+  })
+  .then((res) => {
+    Swal.fire({
+      icon: 'success',
+      title: '뉴스피드 작성 완료!',
+      text: '잠시 후 새로고침 됩니다.',
+    });
+    // window.location.reload()
+  })
+  .catch((err) => {
+    console.log(err);
+    Swal.fire({
+      icon: 'error',
+      title: '알수없는 이유로 실행되지 않았습니다.',
+      text: "관리자에게 문의해 주세요.",
+    })
+  })
+
+}
+
+async function getTags() {
+  const tags = await Swal.fire({
+    title: '태그는 최대 3개까지 가능합니다.',
+    html:
+      '<input id="swal-input1" class="swal2-input">' +
+      '<input id="swal-input2" class="swal2-input">' +
+      '<input id="swal-input3" class="swal2-input">' ,
+    focusConfirm: false,
+    preConfirm: () => {
+      const values = [
+        document.getElementById('swal-input1').value,
+        document.getElementById('swal-input2').value,
+        document.getElementById('swal-input3').value
+      ]
+      return values.filter(value => value !== '');
+    }
+  });
+   let tagHtml = `
+   <div class="tag-list">
+    ${tags.value.map(tag => `
+    <a class="tag-item secondary">${tag}</a>
+   `).join("")}
+   </div>
+   `
+   selectedTags = tags.value;
+   $('#tag_box').empty();
+   $('#tag_box').append(tagHtml)
+}
+
+async function getImages() {
   const imageSelcet = document.createElement("input");
   imageSelcet.type = "file";
   imageSelcet.multiple = true;
@@ -258,28 +327,22 @@ function getImages() {
     
   const files = event.target.files;
   console.log(files);
+  selectedImages = files
+  if(files.length === 1){
+    let imageHtml = `
+    ${files[0].name}
+    `
+    $('#image_box').empty();
+    $('#image_box').append(imageHtml)
+  } else if(files.length !== 1) {
+    let imageHtml = `
+    ${files[0].name} 외 ${files.length - 1}장
+    `
+    $('#image_box').empty();
+    $('#image_box').append(imageHtml)
+  }
   };
   imageSelcet.click();
-}
 
-async function getTags() {
-  const { value: formValues } = await Swal.fire({
-    title: '태그는 최대 5글자까지 가능합니다.',
-    html:
-      '<input id="swal-input1" class="swal2-input">' +
-      '<input id="swal-input2" class="swal2-input">' +
-      '<input id="swal-input3" class="swal2-input">' +
-      '<input id="swal-input4" class="swal2-input">' +
-      '<input id="swal-input5" class="swal2-input">',
-    focusConfirm: false,
-    preConfirm: () => {
-      return [
-        document.getElementById('swal-input1').value,
-        document.getElementById('swal-input2').value,
-        document.getElementById('swal-input3').value,
-        document.getElementById('swal-input4').value,
-        document.getElementById('swal-input5').value
-      ]
-    }
-  })
+
 }

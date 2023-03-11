@@ -46,10 +46,11 @@ export class NewsfeedService {
         private readonly groupRepository: Repository<Group>,
     ) {}
 
-    async postnewsfeed(file,data: newsfeedCheckDto,userId:number,groupId:number): Promise<void> {
+    async postnewsfeed(file,data,userId:number,groupId:number): Promise<void> {
 
         const content = data.content;
-        const tag = data.tag;
+        const tag = data.newsfeedTags
+
         const checkJoinGroup = await this.userGroupRepository.find({
             where: {userId: userId, groupId:groupId}
         })
@@ -104,7 +105,6 @@ export class NewsfeedService {
             newsFeedId: newsfeedId.id,
             groupId: groupId
         })
-        
         
         return
         }
@@ -313,7 +313,7 @@ export class NewsfeedService {
                     result.push(obj)
                 }
             }
-            const filteredResult = result.filter(obj => obj.groupid.includes(groupId));
+            const filteredResult = result.filter(obj => obj.groupId.includes(groupId));
     
             return filteredResult
 
@@ -506,7 +506,5 @@ export class NewsfeedService {
           
         
     }
-    
-
 }
 

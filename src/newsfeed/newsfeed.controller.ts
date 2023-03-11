@@ -26,8 +26,6 @@ export class NewsfeedController {
     @Body() data: newsfeedCheckDto
     ) {
       const userId = user.id
-      console.log(userId);
-      console.log(groupId);
       
     await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
   }
