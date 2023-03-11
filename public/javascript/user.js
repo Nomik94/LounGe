@@ -194,42 +194,56 @@ function getUser() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
 }
 
-function findPassword() {
+async function findPassword() {
   const email = $('#register-email').val();
   const password = $('#register-password').val();
   const passwordRepeat = $('#register-password-repeat').val();
   const check = document.getElementById('check');
 
   if (!check) {
-    alert('이메일 인증을 해주세요.');
+    await Swal.fire({
+      icon: 'error',
+      text: '이메일 인증이 필요합니다.',
+    });
   } else if (!email || !password || !passwordRepeat) {
-    alert('모든 정보를 입력해주세요.');
+    await Swal.fire({
+      icon: 'error',
+      text: '모든 정보를 입력해주세요.',
+    });
   } else if (password !== passwordRepeat) {
-    alert('비밀번호를 확인해주세요.');
+    await Swal.fire({
+      icon: 'error',
+      text: '비밀번호를 확인해주세요.',
+    });
   } else {
     axios
       .put('api/user/findPassword', {
         email: email,
         password: password,
       })
-      .then((res) => {
-        alert('비밀번호가 변경되었습니다.');
+      .then(async (res) => {
+        await Swal.fire({
+          icon: 'success',
+          text: `비밀번호가 변경되었습니다.`,
+        });
         window.location.href('/');
       })
       .catch(async (error) => {
-        console.log(error);
-        alert(error.response.data.message);
+        Swal.fire({
+          icon: 'error',
+          text: `${error.response.data.message}`,
+        });
       });
   }
 }
 
-function updatePassword() {
+async function updatePassword() {
   const password = $('#account-current-password').val();
   const newPassword = $('#account-new-password').val();
   const newPasswordRepeat = $('#account-new-password-confirm').val();
@@ -239,9 +253,15 @@ function updatePassword() {
     .split('=')[1];
 
   if (!password || !newPassword || !newPasswordRepeat) {
-    alert('모든 정보를 입력해주세요.');
+    await Swal.fire({
+      icon: 'error',
+      text: '모든 정보를 입력해주세요.',
+    });
   } else if (newPassword !== newPasswordRepeat) {
-    alert('새 비밀번호를 확인해주세요.');
+    await Swal.fire({
+      icon: 'error',
+      text: '새 비밀번호를 확인해주세요.',
+    });
   } else {
     axios({
       url: '/api/user/password',
@@ -254,13 +274,32 @@ function updatePassword() {
         newPassword: newPassword,
       },
     })
-      .then((res) => {
-        alert('비밀번호가 변경되었습니다.');
+      .then(async (res) => {
+        await Swal.fire({
+          icon: 'success',
+          text: '비밀번호가 변경되었습니다.',
+        });
         window.location.reload();
       })
       .catch(async (error) => {
-        console.log(error);
-        alert(error.response.data.message);
+        if (error.response.data.statusCode === 401) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'center-center',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+          await Toast.fire({
+            icon: 'error',
+            title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+          });
+          window.location.replace('/');
+        }
+        Swal.fire({
+          icon: 'false',
+          text: `${error.response.data.message}`,
+        });
       });
   }
 }
@@ -281,8 +320,11 @@ function updateImage() {
     },
     data: formData,
   })
-    .then((res) => {
-      alert('이미지 업데이트가 완료되었습니다.');
+    .then(async (res) => {
+      await Swal.fire({
+        icon: 'success',
+        text: '이미지 업데이트가 완료되었습니다.',
+      });
       window.location.reload();
     })
     .catch(async (error) => {
@@ -301,7 +343,7 @@ function updateImage() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -323,8 +365,11 @@ function updateUserName() {
     },
     data: { username: username },
   })
-    .then((res) => {
-      alert('닉네임 업데이트가 완료되었습니다.');
+    .then(async (res) => {
+      await Swal.fire({
+        icon: 'success',
+        text: '닉네임 업데이트가 완료되었습니다.',
+      });
       window.location.reload();
     })
     .catch(async (error) => {
@@ -343,7 +388,7 @@ function updateUserName() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
