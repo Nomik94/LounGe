@@ -3,7 +3,7 @@ import { IsString, MaxLength, MinLength, IsOptional, IsArray } from 'class-valid
 export class ModifyGroupDto {
   @IsOptional()
   @IsString()
-  @MaxLength(10)
+  @MaxLength(15)
   @MinLength(1)
   groupName: string;
 
@@ -12,14 +12,6 @@ export class ModifyGroupDto {
   description: string;
 
   @IsOptional()
-  @IsString()
-  groupImage: string;
-
-  @IsOptional()
-  @IsString()
-  backgroundImage: string;
-
-  @IsOptional()
   @IsArray()
-  tag: string[];
+  tag: string | null;
 }

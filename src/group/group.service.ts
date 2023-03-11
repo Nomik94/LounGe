@@ -8,7 +8,7 @@ import { Group } from 'src/database/entities/group.entity';
 import { TagGroup } from 'src/database/entities/tag-group.entity';
 import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
-import { Like, Not, Repository } from 'typeorm';
+import { In, Like, Not, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { GroupTransfer } from './interface/group.transfer.interface';
@@ -36,11 +36,22 @@ export class GroupService {
     if (tagArray.length >= 4) {
       throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
     }
+   
+    let groupImage = '1.png'
+    let backgroundImage = '1.png'
+    
+    if (file.groupImage) {
+      groupImage = file.groupImage[0].filename
+    }
+    if(file.backgroundImage) {
+      backgroundImage = file.backgroundImage[0].filename
+    }
+    
     const group = await this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
-      groupImage: file.groupImage[0].filename,
-      backgroundImage: file.backgroundImage[0].filename,
+      groupImage,
+      backgroundImage,
       user: { id: userId }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
     });
     await this.groupRepository.save(group);
@@ -55,6 +66,11 @@ export class GroupService {
   }
 
   async getAllGroup(userId: number) {
+    const joinGroupIds = await this.userGroupRepository.find({
+      where: { userId },
+    });
+
+    const groupIds = joinGroupIds.map((data) => data.groupId);
     const groupList = await this.groupRepository.find({
       select: [
         'id',
@@ -63,8 +79,8 @@ export class GroupService {
         'backgroundImage',
         'description',
       ],
-      relations: ['tagGroups.tag', 'userGroups'],
-      // where: { userGroups: { userId: Not(userId) } },
+      relations: ['tagGroups.tag'],
+      where: { id: Not(In(groupIds)) },
     });
 
     const resultGroupList = this.tagMappingGroups(groupList);
@@ -186,20 +202,27 @@ export class GroupService {
 
   async joinedGroupList(userId) {
     const resultList = await this.groupRepository.find({
-      select: ['id', 'groupName', 'groupImage', 'backgroundImage','description','user'],
-      relations : ['user'],
+      select: [
+        'id',
+        'groupName',
+        'groupImage',
+        'backgroundImage',
+        'description',
+        'user',
+      ],
+      relations: ['user'],
       where: { userGroups: { userId, role: Not('가입대기') } },
     });
 
     return await resultList.map((group) => ({
-      groupId : group.id,
-      groupName : group.groupName,
-      groupImage : group.groupImage,
-      backgroundImage : group.backgroundImage,
-      description : group.description,
-      leader : group.user.username,
-      leaderImage : group.user.image
-    }))
+      groupId: group.id,
+      groupName: group.groupName,
+      groupImage: group.groupImage,
+      backgroundImage: group.backgroundImage,
+      description: group.description,
+      leader: group.user.username,
+      leaderImage: group.user.image,
+    }));
   }
 
   async groupApplicantList(userId, groupId) {
@@ -219,7 +242,7 @@ export class GroupService {
     }));
   }
   async groupMembers(groupId) {
-    const group = await this.groupRepository.findOneBy({id:groupId});
+    const group = await this.groupRepository.findOneBy({ id: groupId });
     const resultList = await this.userGroupRepository.find({
       where: { groupId, role: Not('가입대기') },
       relations: ['user'],
@@ -231,7 +254,7 @@ export class GroupService {
       userName: data.user.username,
       userEmail: data.user.email,
       userImage: data.user.image,
-      userRole: data.role
+      userRole: data.role,
     }));
     return { members: mappingList, group };
   }
@@ -282,7 +305,7 @@ export class GroupService {
   }
   async tagMappingGroups(groupList) {
     const modifiedGroupList = groupList.map((group) => {
-      const TagGroups = group.tagGroups.map((tag) => tag.tag.tagName)
+      const TagGroups = group.tagGroups.map((tag) => tag.tag.tagName);
 
       return {
         id: group.id,
