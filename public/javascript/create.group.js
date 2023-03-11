@@ -2,11 +2,6 @@ $(document).ready(function () {
   leaderGroupList();
 });
 function createGroup() {
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
   const groupName = document.getElementById('groupName').value;
   const groupDescription = document.getElementById('groupDescription').value;
   const groupTags = document.getElementById('groupTags').value;
@@ -24,7 +19,7 @@ function createGroup() {
     url: `/api/groups`,
     method: 'post',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
     data: formData,
   })
@@ -58,16 +53,11 @@ function createGroup() {
 }
 
 function leaderGroupList() {
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
   axios({
     url: `/api/groups/created/list`,
     method: 'get',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
@@ -149,4 +139,15 @@ function leaderGroupList() {
         text: `${error.response.data.message}`,
       });
     });
+}
+
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
 }
