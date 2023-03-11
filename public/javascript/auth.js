@@ -1,8 +1,8 @@
 $(document).ready(function () {
-  // const cookie = document.cookie.split('=')[0];
-  // if (cookie === 'accessToken') {
-  //   window.location.href = 'http://localhost:3000/newsfeed';
-  // }
+  const cookie = document.cookie.split('=')[0];
+  if (cookie === 'accessToken') {
+    window.location.href = 'http://localhost:3000/newsfeed';
+  }
   restoreAccessToken();
 });
 
@@ -21,10 +21,8 @@ function login() {
       const date = new Date();
       date.setTime(date.getTime() + 1000 * 60);
       const expires = date.toGMTString();
-      console.log(expires);
-      document.cookie = `accessToken=Bearer ${res.data.accessToken} path=/; expires=${expires}`;
-      document.cookie = `refreshToken=Bearer ${res.data.refreshToken} path=/;`;
-      window.location.href = 'http://localhost:3000/newsfeed';
+      document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${expires}`;
+      document.cookie = `refreshToken=Bearer ${res.data.refreshToken}; path=/;`;
     })
     .catch(async (error) => {
       console.log(error);
@@ -34,18 +32,17 @@ function login() {
 
 function kakaoLogin() {
   window.open('http://localhost:3000/api/auth/login/kakao');
-
   function loginCallback(event) {
     if (event.data?.accessToken) {
       const accessToken = event.data?.accessToken;
       const refreshToken = event.data?.refreshToken;
-      document.cookie = `accessToken=Bearer ${accessToken}`;
-      document.cookie = `refreshToken=Bearer ${refreshToken}`;
+      document.cookie = `accessToken=Bearer ${accessToken}; path=/;`;
+      document.cookie = `refreshToken=Bearer ${refreshToken}; path=/;`;
     }
     window.removeEventListener('message', loginCallback);
+    window.location.reload();
   }
   window.addEventListener('message', loginCallback);
-  window.location.href = 'http://localhost:3000/newsfeed';
 }
 
 function emailVerify() {
