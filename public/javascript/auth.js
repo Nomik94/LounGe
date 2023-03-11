@@ -3,7 +3,7 @@ $(document).ready(function () {
   // if (cookie === 'accessToken') {
   //   window.location.href = 'http://localhost:3000/newsfeed';
   // }
-  // restoreAccessToken();
+  restoreAccessToken();
 });
 
 function login() {
@@ -18,8 +18,12 @@ function login() {
       password: password,
     })
     .then((res) => {
-      document.cookie = `accessToken=Bearer ${res.data.accessToken}`;
-      document.cookie = `refreshToken=Bearer ${res.data.refreshToken}`;
+      const date = new Date();
+      date.setTime(date.getTime() + 1000 * 60);
+      const expires = date.toGMTString();
+      console.log(expires);
+      document.cookie = `accessToken=Bearer ${res.data.accessToken} path=/; expires=${expires}`;
+      document.cookie = `refreshToken=Bearer ${res.data.refreshToken} path=/;`;
       window.location.href = 'http://localhost:3000/newsfeed';
     })
     .catch(async (error) => {
@@ -129,23 +133,21 @@ function logout() {
 }
 
 function restoreAccessToken() {
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1]
-    .split('Bearer ')[1];
+  const accessToken = document.cookie.filter((token) =>
+    token.includes('accessToken'),
+  );
   const refreshToken = document.cookie
     .split(';')
     .filter((token) => token.includes('refreshToken'))[0]
     .split('=')[1]
     .split('Bearer ')[1];
+  console.log(accessToken);
 
   if (!refreshToken) {
     alert('로그인을 다시 해주세요.');
-  } else if (refreshToken) {
+  } else if (!accessToken) {
     axios
       .post('/api/auth/restoreAccessToken', {
-        accessToken: accessToken,
         refreshToken: refreshToken,
       })
       .then((res) => {

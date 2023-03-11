@@ -136,12 +136,12 @@ export class AuthService {
     return refreshToken;
   }
 
-  async restoreAccessToken({ accessToken, refreshToken }): Promise<{
+  async restoreAccessToken(refreshToken): Promise<{
     accessToken: string;
   }> {
-    await this.jwtService.verifyAsync(accessToken, {
-      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-    });
+    // await this.jwtService.verifyAsync(accessToken, {
+    //   secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+    // });
     const userEmail: string = await this.cacheManager.get(refreshToken);
 
     if (_.isNil(userEmail)) {
