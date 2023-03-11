@@ -1,8 +1,8 @@
 $(document).ready(function () {
-  const accessToken = getCookie('accessToken');
+  const refreshToken = getCookie('refreshToken');
 
-  if (!accessToken) {
-    restoreAccessToken();
+  if (refreshToken) {
+    window.location.href = '/newsfeed';
   }
 });
 
@@ -155,19 +155,4 @@ function logout() {
   document.cookie =
     'refreshToken' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
   window.location.href = '/';
-}
-
-function restoreAccessToken() {
-  const Token = getCookie('refreshToken');
-  const expires = accessTokenExpires();
-
-  const refreshToken = Token.replace('Bearer ', '');
-  axios
-    .post('/api/auth/restoreAccessToken', {
-      refreshToken: refreshToken,
-    })
-    .then((res) => {
-      document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${expires}`;
-      window.location.reload();
-    });
 }
