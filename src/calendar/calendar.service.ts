@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
 import { UserEventDto } from './dto/userEvent.dto';
 import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
@@ -126,7 +126,9 @@ export class CalendarService {
     const checkMember = await this.userGroupRepository.findOneBy({
       userId,
       groupId,
+      role : Not('가입대기')
     });
+    console.log(checkMember)
     if (!checkMember) {
       throw new ForbiddenException('일정을 확인하려면 그룹에 가입하세요.');
     }

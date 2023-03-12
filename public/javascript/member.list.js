@@ -7,12 +7,7 @@ function managementMemberList() {
   let query = window.location.search;
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
-
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
+  
   axios({
     url: `/api/groups/${groupId}/members/list`,
     method: 'get',
