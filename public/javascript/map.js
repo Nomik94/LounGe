@@ -105,40 +105,80 @@ function createEventMap() {
 function checkDayEvent() {
   const allDay = document.getElementById('event-add-end-time').checked;
   if (allDay) {
-    document.getElementById('event-enddate').value = localStorage.getItem('start');
+    document.getElementById('event-enddate').value =
+      localStorage.getItem('start');
     document.getElementById('event-time-end').disabled = false;
   } else {
-    document.getElementById('event-enddate').value = localStorage.getItem('end');
+    document.getElementById('event-enddate').value =
+      localStorage.getItem('end');
     document.getElementById('event-time-end').disabled = true;
-    document.getElementById('event-time-end').value = '00:00'
+    document.getElementById('event-time-end').value = '00:00';
   }
 }
 
 function createUserEvent() {
-  const eventName = document.getElementById('event-name').value;
-  const description = document.getElementById('event-description').value;
+  const eventName = document.getElementById('event-name').value || undefined;
+  const eventContent =
+    document.getElementById('event-description').value || undefined;
   const allDay = document.getElementById('event-add-end-time').checked;
-  const start = document.getElementById('event-startdate').value;
-  const end = document.getElementById('event-enddate').value;
-  const timeStart = document.getElementById('event-time-start').value;
-  const timeEnd = document.getElementById('event-time-end').value;
-  const location = document.getElementById('event-location').value;
-  const latlng = document.getElementById('event-latlng').value;
+  const start = document.getElementById('event-startdate').value || undefined;
+  const end = document.getElementById('event-enddate').value || undefined;
+  const timeStart =
+    document.getElementById('event-time-start').value || undefined;
+  const timeEnd = document.getElementById('event-time-end').value || undefined;
+  const location = document.getElementById('event-location').value || undefined;
+  const latlngStr = document.getElementById('event-latlng').value || undefined;
 
-  const startStr = `${start} ${timeStart}`
-  const endStr = `${end} ${timeEnd}`
+  let latlng = [];
+  if (latlngStr) {
+    latlng = latlngStr.split(',');
+  }
+  const startStr = `${start} ${timeStart}`;
+  const endStr = `${end} ${timeEnd}`;
+  const lat = latlng[0];
+  const lng = latlng[1];
 
-  console.log({
-    eventName,
-    description,
-    allDay,
-    start,
-    end,
-    timeStart,
-    timeEnd,
-    location,
-    latlng,
-    startStr,
-    endStr
-  });
+  axios({
+    url: `/api/calendar/users`,
+    method: 'post',
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
+    data: {
+      eventName,
+      eventContent,
+      start: startStr,
+      end: endStr,
+      location,
+      lat,
+      lng,
+    },
+  })
+    .then(async function (res) {
+      await Swal.fire({
+        icon: 'success',
+        text: `${eventName} 일정이 추가되었습니다.`,
+      });
+      window.location.reload();
+    })
+    .catch(async function (error) {
+      if (error.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+        });
+        window.location.replace('/');
+      }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
+    });
 }
