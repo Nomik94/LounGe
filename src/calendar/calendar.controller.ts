@@ -20,14 +20,12 @@ import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
-
   @Get('/uevents')
   @UseGuards(JwtAuthGuard)
   async getUserEvent(@GetUser() user) {
     const userId: number = user.id;
-    return await this.calendarService.getUserEvent()
+    return await this.calendarService.getUserEvent();
   }
-
 
   @Get('/uevents/:id')
   @UseGuards(JwtAuthGuard)
@@ -38,28 +36,36 @@ export class CalendarController {
   // 유저 이벤트 생성 API
   @Post('/users')
   @UseGuards(JwtAuthGuard)
-  async createUserEvent(@GetUser() user,@Body() data: UserEventDto) {
-    const userId = user.id
+  async createUserEvent(@GetUser() user, @Body() data: UserEventDto) {
+    const userId = user.id;
     return await this.calendarService.createUserEvent(userId, data);
+  }
+
+  // 그룹 이벤트 생성 API
+  @Post('/groups/:groupId')
+  @UseGuards(JwtAuthGuard)
+  async createGroupEvent(
+    @GetUser() user,
+    @Param('groupId') groupId: number,
+    @Body() data: GroupEventDto,
+  ) {
+    const userId = user.id;
+    return await this.calendarService.createGroupEvent(userId, groupId, data);
   }
 
   @Put('/uevents/:id')
   updateUserEvent(
     @Param('id') eventId: number,
-    @Body() data: UpdateUserEventDto
+    @Body() data: UpdateUserEventDto,
   ) {
-    const userId = 1
-    return this.calendarService.updateUserEvent(userId,eventId,data);
+    const userId = 1;
+    return this.calendarService.updateUserEvent(userId, eventId, data);
   }
 
   @Delete('/uevents/:id')
-  deleteUserEvent(
-    @Param('id') eventId: number,
-    @Body() data,
-  ) {
+  deleteUserEvent(@Param('id') eventId: number, @Body() data) {
     return this.calendarService.deleteUserEvent(eventId, data.userId);
   }
-
 
   // groupEvents
   @Get('/gevents')
@@ -68,34 +74,24 @@ export class CalendarController {
     const GroupId: number = user.id;
     return await this.calendarService.getGroupEvent();
   }
-  
+
   @Get('/gevents/:id')
-    // @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   getGroupEventById(@Param('id') eventId: number) {
     return this.calendarService.getGroupEventById(eventId);
-  }
-
-  @Post('/gevents')
-  async createGroupEvent(@Body() data: GroupEventDto) {
-    const groupId = 1
-    return this.calendarService.createGroupEvent(groupId,data
-    );
   }
 
   @Put('/gevents/:id')
   updateGroupEvent(
     @Param('id') eventId: number,
-    @Body() data: UpdateGroupEventDto
+    @Body() data: UpdateGroupEventDto,
   ) {
-    const groupId = 1
-    return this.calendarService.updateGroupEvent(groupId,eventId,data)
+    const groupId = 1;
+    return this.calendarService.updateGroupEvent(groupId, eventId, data);
   }
 
   @Delete('/gevents/:id')
-  deleteGroupEvent(
-    @Param('id') eventId: number,
-    @Body() data
-  ) {
+  deleteGroupEvent(@Param('id') eventId: number, @Body() data) {
     return this.calendarService.deleteGroupEvent(eventId, data.groupId);
   }
 }
