@@ -44,6 +44,16 @@ export class UserService {
     }
     return user;
   }
+  async getUserImageAndUsername(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['username', 'image'],
+    });
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return user;
+  }
 
   async updateUserName({ user, data }): Promise<void> {
     const userId = user.id;
