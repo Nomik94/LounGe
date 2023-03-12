@@ -45,7 +45,7 @@ function groupEventList() {
               <!-- /DATE STICKER -->
         
               <!-- EVENT PREVIEW TITLE -->
-              <p class="event-preview-title popup-event-information-trigger">${data.eventName}</p>
+              <p class="event-preview-title popup-event-information-trigger-1" onclick="popupData('${data.id}')">${data.eventName}</p>
               <!-- /EVENT PREVIEW TITLE -->
         
               <!-- EVENT PREVIEW TIMESTAMP -->
@@ -87,7 +87,8 @@ function groupEventList() {
       });
       const js = `
       <script src="/js/global/global.hexagons.js"></script>
-      <script src="/js/utils/liquidify.js"></script>`;
+      <script src="/js/utils/liquidify.js"></script>
+      <script src="/js/global/global.popups.js"></script>`;
       $('#groupeventjs').append(js);
     })
     .catch(async function (error) {
@@ -110,4 +111,8 @@ function groupEventList() {
         text: `${error.response.data.message}`,
       });
     });
+}
+
+function popupdata(groupId){
+  
 }

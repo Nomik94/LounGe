@@ -123,16 +123,13 @@ export class CalendarService {
 
   // groupEvents
   async getGroupEvent(userId, groupId) {
-    const checkMember = await this.userGroupRepository.findOneBy({
-      userId,
-      groupId,
-      role : Not('가입대기')
-    });
-    console.log(checkMember)
-    if (!checkMember) {
-      throw new ForbiddenException('일정을 확인하려면 그룹에 가입하세요.');
-    }
+    await this.memberCheck(userId, groupId);
     return await this.groupEventRepository.findBy({ group: { id: groupId } });
+  }
+
+  async getGroupEventList(userId, groupId, eventId) {
+    await this.memberCheck(userId, groupId);
+    return await this.groupEventRepository.findOneBy({ id : eventId});
   }
 
   async getGroupEventById(eventId: number) {
@@ -182,6 +179,17 @@ export class CalendarService {
       throw new UnauthorizedException(
         `이 이벤트를 게시한 유저가 아닙니다. id: ${groupId}`,
       );
+    }
+  }
+
+  async memberCheck(userId, groupId) {
+    const memberCheck = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId,
+      role: Not('가입대기'),
+    });
+    if (!memberCheck) {
+      throw new ForbiddenException('그룹에 가입해야만 확인할 수 있습니다.');
     }
   }
 }
