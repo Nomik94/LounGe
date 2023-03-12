@@ -49,7 +49,7 @@ export class NewsfeedService {
     async postnewsfeed(file,data,userId:number,groupId:number): Promise<void> {
 
         const content = data.content;
-        const tag = data.newsfeedTags
+        const tag = data.newsfeedTags.split(',')
 
         const checkJoinGroup = await this.userGroupRepository.find({
             where: {userId: userId, groupId:groupId}

@@ -256,12 +256,13 @@ async function postnewsfeed() {
   const content = document.getElementById("quick-post-text").value;
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
-
   const formData = new FormData();
   // formData.append('newsfeedImages',selectedImages)
   formData.append('newsfeedTags', selectedTags)
   formData.append('content', content)
-
+    for(let i = 0; i < selectedImages.length; i++) {
+      formData.append('newsfeedImages',selectedImages[i])
+    }
   axios({
     url: `/api/newsfeed/newsfeed/${groupId}`,
     method: 'post',
@@ -276,17 +277,24 @@ async function postnewsfeed() {
       title: '뉴스피드 작성 완료!',
       text: '잠시 후 새로고침 됩니다.',
     });
-    // window.location.reload()
+    window.location.reload()
   })
   .catch((err) => {
     console.log(err);
-    Swal.fire({
-      icon: 'error',
-      title: '알수없는 이유로 실행되지 않았습니다.',
-      text: "관리자에게 문의해 주세요.",
-    })
+    if(err.response.data.statusCode === 400) {
+      Swal.fire({
+        icon: 'error',
+        title: '사진은 최대 5장까지만 등록 가능합니다.',
+        text: "죄송합니다.",
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: '알수없는 이유로 실행되지 않았습니다.',
+        text: "관리자에게 문의해 주세요.",
+      })
+    }
   })
-
 }
 
 async function getTags() {
@@ -326,8 +334,9 @@ async function getImages() {
   imageSelcet.onchange = function(event) {
     
   const files = event.target.files;
-  console.log(files);
   selectedImages = files
+  console.log("selectedImages!!",selectedImages);
+
   if(files.length === 1){
     let imageHtml = `
     ${files[0].name}
