@@ -6,8 +6,8 @@
     let calendar = new FullCalendar.Calendar(calendarEl, {
       height: '700px', // calendar 높이 설정
       expandRows: true, // 화면에 맞게 높이 재설정
-      slotMinTime: '08:00', // Day 캘린더에서 시작 시간
-      slotMaxTime: '20:00', // Day 캘린더에서 종료 시간
+      slotMinTime: '00:00', // Day 캘린더에서 시작 시간
+      slotMaxTime: '23:59', // Day 캘린더에서 종료 시간
       headers: {},
       // 해더에 표시할 툴바
       headerToolbar: {
@@ -23,7 +23,7 @@
       nowIndicator: true, // 현재 시간 마크
       dayMaxEvents: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
       locale: 'ko', // 한국어 설정
-      timeZone: 'local', // 시간설정 'local' 가능!
+      timeZone: 'UTC', // 시간설정 'local' 가능!
       eventAdd: function (obj) {
         // 이벤트가 추가되면 발생하는 이벤트
         const title = obj.event.title;
@@ -39,43 +39,27 @@
         console.log(obj);
       },
       select: function (arg) {
-        // prompt
-        (async () => {
-          const { value: title } = await Swal.fire({
-            title: '무엇을 하시나요?',
-            input: 'text',
-            inputPlaceholder: 'ex) 일본 여행',
-          });
-          // prompt
+        document.getElementById('event-name').value = ''
+        document.getElementById('event-description').value = ''
+        document.getElementById('event-add-end-time').checked = false
+        document.getElementById('event-startdate').value = ''
+        document.getElementById('event-enddate').value = ''
+        document.getElementById('event-time-start').value = '00:00'
+        document.getElementById('event-time-end').value = '00:00'
+        document.getElementById('event-location').value = ''
+        document.getElementById('event-latlng').value = ''
+        localStorage.clear();
 
-          // 이후 처리되는 내용.
-          // confirm
-          Swal.fire({
-            title: `${title}을 일정에 추가하시겠습니까?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: '승인',
-            cancelButtonText: '취소',
-            reverseButtons: false, // 버튼 순서 거꾸로
-          }).then((result) => {
-            if (result.isConfirmed) {
-              if (title) {
-                if (title) {
-                  calendar.addEvent({
-                    title: title,
-                    start: arg.start,
-                    end: arg.end,
-                    allDay: arg.allDay,
-                    color: 'purple',
-                  });
-                }
-              }
-              Swal.fire(`${title}을 일정에 추가하였습니다.`);
-            }
-          });
-        })();
+        const createEventButton = document.getElementById("createEventButton");
+        createEventButton.click()
+        const start = arg.startStr
+        const end = arg.endStr
+        localStorage.setItem('start', arg.startStr);
+        localStorage.setItem('end', arg.endStr);
+
+        document.getElementById('event-startdate').value = start
+        document.getElementById('event-enddate').value = end
+        
         // 캘린더에서 드래그로 이벤트를 생성할 수 있다.
         calendar.unselect();
       },
@@ -83,8 +67,8 @@
       events: [
         {
           title: 'title',
-          start: '2023-01-05',
-          end: '2023-01-01',
+          start: '2023-01-05 01:00',
+          end: '2023-01-05 04:00',
           color: 'red',
         },
         {

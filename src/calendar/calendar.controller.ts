@@ -16,28 +16,30 @@ import { GetUser } from 'src/common/decorator/get-user.decorator';
 import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
 import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 
-@Controller('calendar')
+@Controller('/api/calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
-  // userEvents
+
   @Get('/uevents')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async getUserEvent(@GetUser() user) {
     const userId: number = user.id;
     return await this.calendarService.getUserEvent()
   }
 
-  //이벤트 상세보기
+
   @Get('/uevents/:id')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async getUserEventById(@Param('id') eventId: number) {
     return await this.calendarService.getUserEventById(eventId);
   }
 
-  @Post('/uevents')
-  async createUserEvent(@Body() data: UserEventDto) {
-    const userId = 2
+  // 유저 이벤트 생성 API
+  @Post('/users/')
+  @UseGuards(JwtAuthGuard)
+  async createUserEvent(@GetUser() user,@Body() data: UserEventDto) {
+    const userId = user.id
     return await this.calendarService.createUserEvent(userId, data);
   }
 
