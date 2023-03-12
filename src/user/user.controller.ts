@@ -27,6 +27,13 @@ export class UserController {
     return await this.userService.getById(userId);
   }
 
+  @Get('select')
+  @UseGuards(JwtAuthGuard)
+  async getUserImageAndUsername(@GetUser() user) {
+    const userId = user.id;
+    return await this.userService.getUserImageAndUsername(userId);
+  }
+
   @Put('username')
   @UseGuards(JwtAuthGuard)
   async updateUserName(

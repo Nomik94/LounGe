@@ -8,21 +8,27 @@ function managementMemberList() {
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
 
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
   axios({
     url: `/api/groups/${groupId}/members/list`,
     method: 'get',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
+      console.log(res)
       $('#groupTitle').empty();
       $('#groupTitle').append(`${res.data.group.groupName}`);
+      // const avatarPopup = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.group.groupImage}"></div>`
+      // const backPopup = `<img src="/backgroundImage/${res.data.group.backgroundImage}" alt="backgroundImg">`
+      // $('#avatarImg').append(avatarPopup);
+      // $('#backImg').append(backPopup)
+      document.getElementById('popupButton').innerHTML = `<p class="button secondary full popup-manage-group-trigger-1" onclick="modifyGroup('${res.data.group.groupImage}','${res.data.group.backgroundImage}')">그룹 수정하기</p>`
+      document.getElementById('avatarImg').innerHTML = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.group.groupImage}"></div>`
+      document.getElementById('backImg').innerHTML = `<img src="/backgroundImage/${res.data.group.backgroundImage}" alt="backgroundImg">`
+      document.getElementById('groupName').value = `${res.data.group.groupName}`
+      document.getElementById('groupDescription').value = `${res.data.group.description}`
+      document.getElementById('groupTags').value = `${res.data.tags.join(',')}`
 
       res.data.members.forEach((data) => {
         if (data.userRole === '회원') {
@@ -66,7 +72,7 @@ function managementMemberList() {
             <p class="user-status-title"><a class="bold">${data.userName}</a></p>
             <!-- /USER STATUS TITLE -->
             <!-- USER STATUS TEXT -->
-            <p class="user-status-text small-space">${data.userEmail}</p>
+            <p class="user-status-text small-space">${data.userRole}</p>
             <!-- /USER STATUS TEXT -->
 
             <!-- ACTION REQUEST LIST -->
@@ -107,7 +113,9 @@ function managementMemberList() {
       });
       const js = `
       <script src="/js/global/global.hexagons.js"></script>
-      <script src="/js/utils/liquidify.js"></script>`;
+      <script src="/js/utils/liquidify.js"></script>
+      <script src="/js/global/global.popups.js"></script>
+      `;
       $('#managementjs').append(js);
     })
     .catch(async function (error) {
@@ -126,7 +134,7 @@ function managementMemberList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -139,15 +147,11 @@ function managementApplyList() {
   let groupId = param.get('groupId');
 
   const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
   axios({
     url: `/api/groups/${groupId}/applicant/list`,
     method: 'get',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
@@ -254,7 +258,7 @@ function managementApplyList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -275,16 +279,11 @@ function applyJoin(groupId, memberId, userName) {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie
-        .split(';')
-        .filter((token) => token.includes('accessToken'))[0]
-        .split('=')[1];
-
       axios({
         url: `/api/groups/${groupId}/members/${memberId}`,
         method: 'put',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
@@ -306,7 +305,7 @@ function applyJoin(groupId, memberId, userName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -329,16 +328,11 @@ function groupTransfer(groupId, memberId, userName) {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie
-        .split(';')
-        .filter((token) => token.includes('accessToken'))[0]
-        .split('=')[1];
-
       axios({
         url: `/api/groups/${groupId}/leaders/transfer/${memberId}`,
         method: 'put',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
@@ -360,7 +354,7 @@ function groupTransfer(groupId, memberId, userName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -383,16 +377,11 @@ function kickOutGroup(groupId, memberId, userName) {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie
-        .split(';')
-        .filter((token) => token.includes('accessToken'))[0]
-        .split('=')[1];
-
       axios({
         url: `/api/groups/${groupId}/kickout/${memberId}`,
         method: 'delete',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
@@ -414,7 +403,7 @@ function kickOutGroup(groupId, memberId, userName) {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
@@ -439,16 +428,11 @@ function deleteGroup() {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie
-        .split(';')
-        .filter((token) => token.includes('accessToken'))[0]
-        .split('=')[1];
-
       axios({
         url: `/api/groups/${groupId}`,
         method: 'delete',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
@@ -470,10 +454,83 @@ function deleteGroup() {
             window.location.replace('/');
           }
           Swal.fire({
-            icon: 'false',
+            icon: 'error',
             text: `${error.response.data.message}`,
           });
         });
     }
   });
+}
+
+function modifyGroup(groupImg,backImg) {
+  let query = window.location.search;
+  let param = new URLSearchParams(query);
+  let groupId = param.get('groupId');
+  
+  const groupName = document.getElementById('groupName').value;
+  const groupDescription = document.getElementById('groupDescription').value;
+  const groupTags = document.getElementById('groupTags').value;
+  let groupImage = document.getElementById('groupImage').files[0];
+  let backgroundImage = document.getElementById('backgroundImage').files[0];
+  if(!groupImage){
+    groupImage = groupImg
+  }
+
+  if(!backgroundImage) {
+    backgroundImage = backImg
+  }
+
+  const formData = new FormData();
+  formData.append('groupName', groupName);
+  formData.append('description', groupDescription);
+  formData.append('tag', groupTags);
+  formData.append('groupImage', groupImage);
+  formData.append('backgroundImage', backgroundImage);
+
+  axios({
+    url: `/api/groups/${groupId}`,
+    method: 'put',
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
+    data: formData,
+  })
+    .then(async function (res) {
+      await Swal.fire({
+        icon: 'success',
+        text: `그룹이 수정되었습니다.`,
+      });
+      window.location.reload()
+    })
+    .catch(async function (error) {
+      if (error.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+        });
+        window.location.replace('/');
+      }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
+    });
+}
+
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
 }

@@ -88,6 +88,21 @@ app.plugins.createPopup({
 });
 
 app.plugins.createPopup({
+  container: '.popup-manage-group-1',
+  trigger: '.popup-manage-group-trigger-1',
+  overlay: {
+    color: '21, 21, 31',
+    opacity: .96
+  },
+  animation: {
+    type: 'translate-in-fade',
+    speed: .3,
+    translateOffset: 40
+  }
+});
+
+
+app.plugins.createPopup({
   container: '.popup-manage-item',
   trigger: '.popup-manage-item-trigger',
   overlay: {

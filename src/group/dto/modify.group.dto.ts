@@ -1,25 +1,23 @@
-import { IsString, MaxLength, MinLength, IsOptional, IsArray } from 'class-validator';
+import { IsString, MaxLength, IsOptional } from 'class-validator';
 
 export class ModifyGroupDto {
   @IsOptional()
   @IsString()
-  @MaxLength(10)
-  @MinLength(1)
+  @MaxLength(15)
   groupName: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(50)
   description: string;
 
   @IsOptional()
   @IsString()
-  groupImage: string;
+  tag: string | null;
 
   @IsOptional()
-  @IsString()
-  backgroundImage: string;
+  groupImage: string | null;
 
   @IsOptional()
-  @IsArray()
-  tag: string[];
+  backgroundImage: string | null;
 }

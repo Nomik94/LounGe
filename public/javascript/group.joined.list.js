@@ -1,18 +1,23 @@
 $(document).ready(function () {
   joinedGroupList();
 });
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
 function joinedGroupList() {
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
-
   axios({
     url: '/api/groups/joined/list',
     method: 'get',
     headers: {
-      Authorization: `${accessToken}`,
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
@@ -128,7 +133,7 @@ function joinedGroupList() {
         window.location.replace('/');
       }
       Swal.fire({
-        icon: 'false',
+        icon: 'error',
         text: `${error.response.data.message}`,
       });
     });
@@ -146,13 +151,11 @@ function withdrawalGroup(groupId, groupName) {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
-
       axios({
         url: `/api/groups/${groupId}/withdraw`,
         method: 'delete',
         headers: {
-          Authorization: `${accessToken}`,
+          Authorization: `${getCookie('accessToken')}`,
         },
       })
         .then(function (res) {
