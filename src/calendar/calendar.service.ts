@@ -14,6 +14,7 @@ import { GroupEventDto } from './dto/groupEvent.dto';
 import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 import { Group } from 'src/database/entities/group.entity';
 import { ForbiddenException } from '@nestjs/common/exceptions';
+import { UserGroup } from 'src/database/entities/user-group.entity';
 
 @Injectable()
 export class CalendarService {
@@ -24,6 +25,8 @@ export class CalendarService {
     private readonly groupEventRepository: Repository<GroupEvent>,
     @InjectRepository(Group)
     private readonly groupRepository: Repository<Group>,
+    @InjectRepository(UserGroup)
+    private readonly userGroupRepository: Repository<UserGroup>,
   ) {}
 
   // userEvents
@@ -55,9 +58,12 @@ export class CalendarService {
   }
 
   async createGroupEvent(userId: number, groupId: number, data: GroupEventDto) {
-    const checkLeader = await this.groupRepository.findOneBy({ user: { id: userId }, id: groupId });
-    if(!checkLeader) {
-      throw new ForbiddenException('권한이 존재하지 않습니다.')
+    const checkLeader = await this.groupRepository.findOneBy({
+      user: { id: userId },
+      id: groupId,
+    });
+    if (!checkLeader) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
     await this.groupEventRepository.insert({
       eventName: data.eventName,
@@ -116,11 +122,15 @@ export class CalendarService {
   }
 
   // groupEvents
-  async getGroupEvent() {
-    return await this.groupEventRepository.find({
-      where: { deletedAt: null },
-      select: ['eventName', 'createdAt'],
+  async getGroupEvent(userId, groupId) {
+    const checkMember = await this.userGroupRepository.findOneBy({
+      userId,
+      groupId,
     });
+    if (!checkMember) {
+      throw new ForbiddenException('일정을 확인하려면 그룹에 가입하세요.');
+    }
+    return await this.groupEventRepository.findBy({ group: { id: groupId } });
   }
 
   async getGroupEventById(eventId: number) {

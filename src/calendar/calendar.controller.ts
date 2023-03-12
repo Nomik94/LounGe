@@ -53,6 +53,14 @@ export class CalendarController {
     return await this.calendarService.createGroupEvent(userId, groupId, data);
   }
 
+  // 그룹 이벤트 리스트 API
+  @Get('/groups/:groupId/events')
+  @UseGuards(JwtAuthGuard)
+  async getGroupEvent(@GetUser() user, @Param('groupId') groupId : number) {
+    const userId : number = user.id;
+    return await this.calendarService.getGroupEvent(userId, groupId);
+  }
+
   @Put('/uevents/:id')
   updateUserEvent(
     @Param('id') eventId: number,
@@ -65,14 +73,6 @@ export class CalendarController {
   @Delete('/uevents/:id')
   deleteUserEvent(@Param('id') eventId: number, @Body() data) {
     return this.calendarService.deleteUserEvent(eventId, data.userId);
-  }
-
-  // groupEvents
-  @Get('/gevents')
-  // @UseGuards(JwtAuthGuard)
-  async getGroupEvent(@GetUser() user) {
-    const GroupId: number = user.id;
-    return await this.calendarService.getGroupEvent();
   }
 
   @Get('/gevents/:id')
