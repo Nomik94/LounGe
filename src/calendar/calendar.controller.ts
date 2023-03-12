@@ -60,16 +60,16 @@ export class CalendarController {
     const userId: number = user.id;
     return await this.calendarService.getGroupEvent(userId, groupId);
   }
-
+  // 그룹 이벤트 상세 보기 API
   @Get('/groups/:groupId/events/:eventId')
   @UseGuards(JwtAuthGuard)
-  async getGroupEventList(
+  async getGroupEventDetail(
     @GetUser() user,
     @Param('eventId') eventId: number,
     @Param('groupId') groupId: number,
   ) {
     const userId: number = user.id;
-    return await this.calendarService.getGroupEventList(
+    return await this.calendarService.getGroupEventDetail(
       userId,
       groupId,
       eventId,

@@ -127,7 +127,7 @@ export class CalendarService {
     return await this.groupEventRepository.findBy({ group: { id: groupId } });
   }
 
-  async getGroupEventList(userId, groupId, eventId) {
+  async getGroupEventDetail(userId, groupId, eventId) {
     await this.memberCheck(userId, groupId);
     return await this.groupEventRepository.findOneBy({ id : eventId});
   }
