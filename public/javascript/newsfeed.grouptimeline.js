@@ -135,6 +135,12 @@ function newsfeedlist(data) {
         <!-- WIDGET BOX STATUS TEXT -->
         <p class="widget-box-status-text">${data.content}</p>
         <!-- /WIDGET BOX STATUS TEXT -->
+        
+        <div class="hexagon-image-90-110-container">
+        ${data.newsfeedImage.map(image => `
+          <div class="hexagon-image-90-110" data-src="/newsfeedImages/${image}"></div>
+        `).join('')}
+      </div>
 
         <!-- TAG LIST -->
           <div class="tag-list">

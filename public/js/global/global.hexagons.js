@@ -334,3 +334,10 @@ app.plugins.createHexagon({
   lineColor: 'rgba(97, 93, 250, .9)',
   fill: true
 });
+
+app.plugins.createHexagon({
+  container: '.hexagon-image-90-110',
+  width: 90,
+  height: 110,
+  clip: true,
+})
