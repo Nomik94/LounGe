@@ -16,10 +16,9 @@ function groupEventList() {
     },
   })
     .then(function (res) {
-      console.log(res.data);
       res.data.forEach((data) => {
-        const getDate = data.start.split(' ')[0].split('-')
-        console.log(getDate[0])
+        const getDate = data.start.split(' ')[0].split('-');
+        console.log(getDate[0]);
         let temp_html = `      <!-- EVENT PREVIEW -->
         <div class="event-preview">
           <!-- EVENT PREVIEW COVER -->
@@ -45,7 +44,7 @@ function groupEventList() {
               <!-- /DATE STICKER -->
         
               <!-- EVENT PREVIEW TITLE -->
-              <p class="event-preview-title popup-event-information-trigger-1" onclick="popupData('${data.id}')">${data.eventName}</p>
+              <p class="event-preview-title popup-event-information-trigger-1" onclick="popupdata('${data.id}')">${data.eventName}</p>
               <!-- /EVENT PREVIEW TITLE -->
         
               <!-- EVENT PREVIEW TIMESTAMP -->
@@ -113,6 +112,73 @@ function groupEventList() {
     });
 }
 
-function popupdata(groupId){
-  
+function popupdata(eventId) {
+  let query = window.location.search;
+  let param = new URLSearchParams(query);
+  let groupId = param.get('groupId');
+
+  axios({
+    url: `/api/calendar/groups/${groupId}/events/${eventId}`,
+    method: 'get',
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
+  })
+    .then(function (res) {
+      let mapContainer = document.getElementById('leadMap'), // 지도를 표시할 div
+        mapOption = {
+          center: new kakao.maps.LatLng(res.data.lat, res.data.lng), // 지도의 중심좌표
+          level: 3, // 지도의 확대 레벨
+        };
+
+      let map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+      // 마커가 표시될 위치입니다
+      let markerPosition = new kakao.maps.LatLng(res.data.lat, res.data.lng);
+
+      // 마커를 생성합니다
+      let marker = new kakao.maps.Marker({
+        position: markerPosition,
+      });
+
+      // 마커가 지도 위에 표시되도록 설정합니다
+      marker.setMap(map);
+      document.getElementById('uptitle').innerHTML = res.data.eventName;
+      document.getElementById(
+        'uptime',
+      ).innerHTML = `${res.data.start}<br>${res.data.end}`;
+      document.getElementById('upaddress').innerHTML = res.data.location;
+      document.getElementById(
+        'upxy',
+      ).innerHTML = `위도 : ${res.data.lat}<br>경도 : ${res.data.lng}`;
+      document.getElementById('updesc').innerHTML = res.data.eventContent;
+
+      // $('#groupEventList').append(temp_html);
+
+      // const js = `
+      // <script src="/js/global/global.hexagons.js"></script>
+      // <script src="/js/utils/liquidify.js"></script>
+      // <script src="/js/global/global.popups.js"></script>`;
+      // $('#groupeventjs').append(js);
+    })
+    .catch(async function (error) {
+      if (error.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+        });
+        window.location.replace('/');
+      }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
+    });
 }
