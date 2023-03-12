@@ -257,8 +257,9 @@ async function postnewsfeed() {
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
   const formData = new FormData();
-  // formData.append('newsfeedImages',selectedImages)
-  formData.append('newsfeedTags', selectedTags)
+  if(selectedTags.length !== 0) {
+    formData.append('newsfeedTags', selectedTags)
+  }
   formData.append('content', content)
     for(let i = 0; i < selectedImages.length; i++) {
       formData.append('newsfeedImages',selectedImages[i])
@@ -271,8 +272,8 @@ async function postnewsfeed() {
     },
     data: formData
   })
-  .then((res) => {
-    Swal.fire({
+  .then(async (res) => {
+    await Swal.fire({
       icon: 'success',
       title: '뉴스피드 작성 완료!',
       text: '잠시 후 새로고침 됩니다.',
@@ -297,6 +298,7 @@ async function postnewsfeed() {
   })
 }
 
+// 뉴스피드 작성할때 태그 입력
 async function getTags() {
   const tags = await Swal.fire({
     title: '태그는 최대 3개까지 가능합니다.',
@@ -326,6 +328,7 @@ async function getTags() {
    $('#tag_box').append(tagHtml)
 }
 
+// 뉴스피드 작성할때 이미지 입력
 async function getImages() {
   const imageSelcet = document.createElement("input");
   imageSelcet.type = "file";

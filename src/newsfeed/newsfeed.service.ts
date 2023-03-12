@@ -49,8 +49,6 @@ export class NewsfeedService {
     async postnewsfeed(file,data,userId:number,groupId:number): Promise<void> {
 
         const content = data.content;
-        const tag = data.newsfeedTags.split(',')
-
         const checkJoinGroup = await this.userGroupRepository.find({
             where: {userId: userId, groupId:groupId}
         })
@@ -66,7 +64,8 @@ export class NewsfeedService {
             content:content,
             user: {id : userId},
         })
-        if (tag){
+        if (data.newsfeedTags){
+            const tag = data.newsfeedTags.split(',')
             for(const i of tag) {
                 if (!await this.tagRepository.findOneBy({tagName:i})) {
                     await this.tagRepository.insert({
