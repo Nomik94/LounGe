@@ -1,9 +1,11 @@
 $(document).ready(function(){
-  // readnewsfeedmy() // 내가 쓴 뉴스피드만 보기
-  readnewsfeedmygroup() // 내가 가입한 모든 그룹의 뉴스피드 보기
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const groupId = urlParams.get('groupId');
+
+  readnewsfeedmylist()
 });
 
-// 유저 쿠키 
+// 유저 쿠키 가져오기
 function getCookie(name) {
   let matches = document.cookie.match(
     new RegExp(
@@ -15,38 +17,12 @@ function getCookie(name) {
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-// 내가 쓴 뉴스피드만 보기
-async function readnewsfeedmy() {
+// 내가 쓴 뉴스피드만 불러오기
+async function readnewsfeedmylist() {
 
   axios({
     method: 'get',
     url: '/api/newsfeed/newsfeed',
-    headers: {
-      Authorization: `${getCookie('accessToken')}`,
-    },
-  })
-  .then((res) => {
-    console.log(res.data);
-    // clearnewsfeed();
-    newsfeedlist(res.data);
-  })
-  .catch((err) => {
-    console.log("알 수 없는 이유로 실행되지 않았습니다.",err);
-    Swal.fire({
-      icon: 'error',
-      title: '알수없는 이유로 실행되지 않았습니다.',
-      text: "관리자에게 문의해 주세요.",
-    })
-
-  })
-}
-
-// 내가 가입한 모든 그룹의 뉴스피드 보기
-async function readnewsfeedmygroup() {
-
-  axios({
-    method: 'get',
-    url: '/api/newsfeed/newsfeed/mygroup',
     headers: {
       Authorization: `${getCookie('accessToken')}`,
     },
@@ -208,83 +184,100 @@ async function newsfeedlist(data) {
 }
 
 // 뉴스피드 삭제하기
-async function deletenewsfeed(newsfeedId){
-              await Swal.fire({
-                title: '해당 뉴스피드를 지울까요?',
-                text: "삭제된 뉴스피드는 복구되지 않습니다.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: '삭제',
-                cancelButtonText: '취소'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                 
-                  axios({
-                    method: 'Delete',
-                    url: `/api/newsfeed/newsfeed/${newsfeedId}`,
-                    headers: {
-                      Authorization: `${getCookie('accessToken')}`,
-                    },
-                  })
-                  .then(async (res) => {
-                    await Swal.fire({
-                      icon: 'success',
-                      title: '삭제되었습니다.',
-                      text: '태그 및 이미지도 삭제되었습니다.'
-                    })
-                    window.location.reload()
-                  })
-                  .catch(async (err) => {
-                    if(err.response.data.statusCode === 403) {
-                      const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'center-center',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true,
-                      });
-                      await Toast.fire({
-                        icon: 'error',
-                        title: '로그인 정보가 일치하지 않습니다.',
-                      });
-                    }
-                    else {
-                      Swal.fire({
-                        icon: 'error',
-                        title: '알수없는 이유로 실행되지 않았습니다.',
-                        text: "관리자에게 문의해 주세요.",
-                      })
-                    }
-                  })
-                }
-              })
+function deletenewsfeed(newsfeedId) {
+  
+  Swal.fire({
+    title: '해당 뉴스피드를 지울까요?',
+    text: "삭제된 뉴스피드는 복구되지 않습니다.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '삭제',
+    cancelButtonText: '취소'
+}).then((result) => {
+    if (result.isConfirmed) {
+        axios({
+        method: 'Delete',
+        url: `/api/newsfeed/newsfeed/${newsfeedId}`,
+        headers: {
+          Authorization: `${getCookie('accessToken')}`,
+        },
+      })
+      .then(async (res) => {
+        await Swal.fire({
+          icon: 'success',
+          title: '삭제되었습니다.',
+          text: '태그 및 이미지도 삭제되었습니다.'
+        })
+        window.location.reload()
+      })
+      .catch(async (err) => {
+        if(err.response.data.statusCode === 403) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'center-center',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+          await Toast.fire({
+            icon: 'error',
+            title: '로그인 정보가 일치하지 않습니다.',
+          });
+        }
+        else {
+          Swal.fire({
+            icon: 'error',
+            title: '알수없는 이유로 실행되지 않았습니다.',
+            text: "관리자에게 문의해 주세요.",
+          })
+        }
+      })
+    }
+  })
+
 }
 
-// 태그 클릭 시 해당 태그로 작성된 뉴스피드 검색
+// 내 뉴스피드에서 태그 정렬
 async function serchtag(tag) {
   const test = tag
-    axios({
-      method: 'Get',
-      url: '/api/newsfeed/tag/newsfeed',
-      params: {
-        tag:test
-      },
-    })
-    .then(async (res) => {
-      // console.log(res.data);
-      clearnewsfeed();
-      newsfeedlist(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
+  axios({
+    method: 'get',
+    url: '/api/newsfeed/tagmylist',
+    params: {
+      tag: test
+    },
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
+  })
+  .then((res) => {
+    clearnewsfeed();
+    newsfeedlist(res.data);
+  })
+  .catch(async (err) => {
+    if(err.response.data.statusCode === 403) {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center-center',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+      await Toast.fire({
+        icon: 'error',
+        title: '로그인 정보가 일치하지 않습니다.',
+      });
+    }
+    else {
       Swal.fire({
         icon: 'error',
         title: '알수없는 이유로 실행되지 않았습니다.',
         text: "관리자에게 문의해 주세요.",
       })
-    })
+    }
+  })
 }
 
 // 리스트 비우기
@@ -292,34 +285,3 @@ function clearnewsfeed(){
   $('#newsfeedbox').empty();
 }
 
-
-const contents = document.querySelector('#newsfeedbox')
-let paraIndex = 1
-
-async function limitscroll() {
-    for(let i = 0; i < 6; i++) {
-        const $tr = document.createElement("tr")
-        $tr.innerHTML = `
-        <td width='50' align='center'>${paraIndex++}</td>
-                            <td>a번문항<br>b번문항<br>C번문항</td>
-                            `
-        contents.appendChild($tr)
-    }
-}
-
-function debounce(callback, limit = 500) {
-  let timeout
-  return function(...args) {
-      clearTimeout(timeout)
-      timeout = setTimeout(() => {
-          callback.apply(this, args)
-      }, limit)
-  }
-}
-
-document.addEventListener("scroll", debounce(e => {
-  const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement
-  if(clientHeight + scrollTop >= scrollHeight) {
-      limitscroll()
-  }
-}, 500))
