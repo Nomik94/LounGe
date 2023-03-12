@@ -40,6 +40,9 @@ export class CalendarService {
         eventContent : data.eventContent, 
         start : data.start,
         end : data.end,
+        lat : data.lat,
+        lng : data.lng,
+        location : data.location,
         user:{id:userId}
       })
     };

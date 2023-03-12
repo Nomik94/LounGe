@@ -36,7 +36,7 @@ export class CalendarController {
   }
 
   // 유저 이벤트 생성 API
-  @Post('/users/')
+  @Post('/users')
   @UseGuards(JwtAuthGuard)
   async createUserEvent(@GetUser() user,@Body() data: UserEventDto) {
     const userId = user.id
