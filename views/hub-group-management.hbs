@@ -25,10 +25,22 @@
       {{>hubsidebar}}
       </div>
       <!-- /GRID COLUMN -->
+      
 
       <!-- GRID COLUMN -->
       <div class="account-hub-content">
+         <!-- SECTION HEADER -->
+        <div class="section-header">
+          <!-- SECTION HEADER INFO -->
+          <div class="section-header-info">
 
+            <!-- SECTION TITLE -->
+            <h2 class="section-title">그룹 관리</h2>
+            <!-- /SECTION TITLE -->
+          </div>
+          <!-- /SECTION HEADER INFO -->
+        </div>
+        <!-- /SECTION HEADER -->
         <!-- GRID -->
         <div class="grid grid-3-3-3 centered-on-mobile leader">
           <!-- CREATE ENTITY BOX -->
@@ -85,16 +97,94 @@
     </div>
     <!-- /POPUP CLOSE BUTTON -->
 
-    <!-- POPUP BOX BODY -->
+     <!-- POPUP BOX BODY -->
     <div class="popup-box-body">
       <!-- POPUP BOX SIDEBAR -->
       <div class="popup-box-sidebar">
+        <!-- USER PREVIEW -->
+        <div class="user-preview small">
+          <!-- USER PREVIEW COVER -->
+          <figure class="user-preview-cover liquid">
+            <img src="/backgroundImage/1.png" alt="backgroundImg">
+          </figure>
+          <!-- /USER PREVIEW COVER -->
+
+          <!-- USER PREVIEW INFO -->
+          <div class="user-preview-info">
+            <!-- USER SHORT DESCRIPTION -->
+            <div class="user-short-description small">
+              <!-- USER SHORT DESCRIPTION AVATAR -->
+              <a class="user-short-description-avatar user-avatar no-stats">
+                <!-- USER AVATAR BORDER -->
+                <div class="user-avatar-border">
+                  <!-- HEXAGON -->
+                  <div class="hexagon-100-108"></div>
+                  <!-- /HEXAGON -->
+                </div>
+                <!-- /USER AVATAR BORDER -->
+            
+                <!-- USER AVATAR CONTENT -->
+                <div class="user-avatar-content">
+                  <!-- HEXAGON -->
+                  <div class="hexagon-image-84-92" data-src="/groupImage/1.png"></div>
+                  <!-- /HEXAGON -->
+                </div>
+                <!-- /USER AVATAR CONTENT -->
+              </a>
+              <!-- /USER SHORT DESCRIPTION AVATAR -->
+        
+              <!-- USER SHORT DESCRIPTION TITLE -->
+              <p class="user-short-description-title small">기본 이미지</p>
+              <!-- /USER SHORT DESCRIPTION TITLE -->
+        
+              <!-- USER SHORT DESCRIPTION TEXT -->
+              <p class="user-short-description-text regular">이미지는 선택 사항 입니다.<br> 미선택 시 위의 기본 이미지가 들어갑니다.</p>
+              <!-- /USER SHORT DESCRIPTION TEXT -->
+            </div>
+            <!-- /USER SHORT DESCRIPTION -->
+          </div>
+          <!-- /USER PREVIEW INFO -->
+        </div>
+        <!-- /USER PREVIEW -->
+
+        <!-- SIDEBAR MENU ITEM -->
+        <div class="sidebar-menu-item">
+          <!-- SIDEBAR MENU BODY -->
+          <div class="sidebar-menu-body secondary">
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link active">예시</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 이름 : LounGe</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 태그 : 노드,개발자,내배캠</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 설명 : 개발자 모임</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 대표 이미지 : 선택</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 배경 이미지 : 선택</p>
+            <!-- /SIDEBAR MENU LINK -->
+          </div>
+          <!-- /SIDEBAR MENU BODY -->
+        </div>
+        <!-- /SIDEBAR MENU ITEM -->
 
         <!-- POPUP BOX SIDEBAR FOOTER -->
         <div class="popup-box-sidebar-footer">
           <!-- BUTTON -->
-          <p class="button secondary full popup-manage-group-trigger" onclick="createGroup()">그룹 생성</p>
+          <p class="button secondary full popup-manage-group-trigger" onclick="createGroup()">그룹 생성하기</p>
           <!-- /BUTTON -->
+
         </div>
         <!-- /POPUP BOX SIDEBAR FOOTER -->
       </div>
@@ -119,7 +209,7 @@
                   <!-- FORM INPUT -->
                   <div class="form-input small active">
                     <label for="groupName">그룹 이름</label>
-                    <input type="text" id="groupName" name="groupName" >
+                    <input type="text" id="groupName" name="groupName" placeholder="최대 제한 15글자">
                   </div>
                   <!-- /FORM INPUT -->
                 </div>
@@ -134,7 +224,7 @@
                   <!-- FORM INPUT -->
                   <div class="form-input small active">
                     <label for="groupTags">태그</label>
-                    <input type="text" id="groupTags" name="groupTags" placeholder="그룹 태그는 3개까지 등록 가능 합니다. ex) 치킨,피자,사람">
+                    <input type="text" id="groupTags" name="groupTags" placeholder="하나의 태그당 10글자 제한, 최대 3개">
                   </div>
                   <!-- /FORM INPUT -->
                 </div>
@@ -148,7 +238,7 @@
                 <div class="form-item">
                   <!-- FORM INPUT -->
                   <div class="form-input small mid-textarea">
-                    <textarea id="groupDescription" name="groupDescription" placeholder="그룹에 대한 설명을 입력해주세요. 제한 40글자"></textarea>
+                    <textarea id="groupDescription" name="groupDescription" placeholder="그룹에 대한 설명을 입력해주세요. 최대 제한 50글자"></textarea>
                   </div>
                   <!-- /FORM INPUT -->
                 </div>

@@ -48,13 +48,20 @@ export class GroupController {
   // 그룹 수정 API
   @Put('/:groupId')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'groupImage', maxCount: 1 },
+      { name: 'backgroundImage', maxCount: 1 },
+    ]),
+  )
   async modifyGruop(
     @GetUser() user,
     @Body() data: ModifyGroupDto,
+    @UploadedFiles() file,
     @Param('groupId') groupId: number,
   ) {
     const userId: number = user.id;
-    await this.groupService.modifyGruop(data, userId, groupId);
+    await this.groupService.modifyGruop(data, file, userId, groupId);
   }
 
   // 그룹 삭제 API
