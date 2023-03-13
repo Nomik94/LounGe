@@ -64,7 +64,7 @@ function newsfeedlist(data) {
         <!-- SIMPLE DROPDOWN -->
         <div class="simple-dropdown widget-box-post-settings-dropdown" style="width:60px">
           <!-- SIMPLE DROPDOWN LINK -->
-          <p class="simple-dropdown-link" onclick="modinewsfeed(${data.id})">수정</p>
+          <p class="simple-dropdown-link popup-modi-newsfeed-trigger" onclick="modinewsfeed(${data.id})">수정</p>
           <!-- /SIMPLE DROPDOWN LINK -->
 
           <!-- SIMPLE DROPDOWN LINK -->
@@ -161,7 +161,12 @@ function newsfeedlist(data) {
   const asd = `
   <script src="/js/global/global.hexagons.js"></script>
   <script src="/js/utils/liquidify.js"></script>
-  `;
+  <script src="
+  https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js
+  "></script>
+  <link href="
+  https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css
+  " rel="stylesheet"> `;
   $('#ddd').append(asd);
 }
 
@@ -270,38 +275,46 @@ async function postnewsfeed() {
     for(let i = 0; i < selectedImages.length; i++) {
       formData.append('newsfeedImages',selectedImages[i])
     }
-  axios({
-    url: `/api/newsfeed/newsfeed/${groupId}`,
-    method: 'post',
-    headers : {
-      Authorization: `${getCookie('accessToken')}`,
-    },
-    data: formData
-  })
-  .then(async (res) => {
-    await Swal.fire({
-      icon: 'success',
-      title: '뉴스피드 작성 완료!',
-      text: '잠시 후 새로고침 됩니다.',
-    });
-    window.location.reload()
-  })
-  .catch((err) => {
-    console.log(err);
-    if(err.response.data.statusCode === 400) {
-      Swal.fire({
+    if (!content) {
+      await Swal.fire({
         icon: 'error',
-        title: '사진은 최대 5장까지만 등록 가능합니다.',
-        text: "죄송합니다.",
+        title: '빈 내용은 작성할 수 없습니다!',
+        text: '뭐라도 좋으니 내용을 입력해주세요 T^T',
       });
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: '알수없는 이유로 실행되지 않았습니다.',
-        text: "관리자에게 문의해 주세요.",
+    } else{
+      axios({
+        url: `/api/newsfeed/newsfeed/${groupId}`,
+        method: 'post',
+        headers : {
+          Authorization: `${getCookie('accessToken')}`,
+        },
+        data: formData
+      })
+      .then(async (res) => {
+        await Swal.fire({
+          icon: 'success',
+          title: '뉴스피드 작성 완료!',
+          text: '잠시 후 새로고침 됩니다.',
+        });
+        window.location.reload()
+      })
+      .catch((err) => {
+        console.log(err);
+        if(err.response.data.statusCode === 400) {
+          Swal.fire({
+            icon: 'error',
+            title: '사진은 최대 5장까지만 등록 가능합니다.',
+            text: "죄송합니다.",
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: '알수없는 이유로 실행되지 않았습니다.',
+            text: "관리자에게 문의해 주세요.",
+          })
+        }
       })
     }
-  })
 }
 
 // 뉴스피드 작성할때 태그 입력
@@ -363,4 +376,29 @@ async function getImages() {
   imageSelcet.click();
 
 
+}
+
+async function modinewsfeed(id){
+  Swal.mixin({
+    input: 'file',
+    confirmButtonText: '다음',
+    showCancelButton: true,
+    progressSteps: ['1', '2']
+  }).queue([
+    {
+      title: '이미지 선택',
+      text: '업로드할 이미지를 선택해주세요'
+    },
+    {
+      title: '글 내용 입력',
+      text: '작성할 글 내용을 입력해주세요'
+    }
+  ]).then((result) => {
+    if (result.value) {
+      const file = result.value[0];
+      const text = result.value[1];
+      // 파일 업로드와 글 작성 처리
+    }
+  })
+  
 }
