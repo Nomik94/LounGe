@@ -29,7 +29,7 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async register(authDTO: AuthDTO, file): Promise<void> {
+  async register({ authDTO, file }): Promise<void> {
     let filename = 'userImage_logo.png';
     if (file) {
       filename = file.filename;

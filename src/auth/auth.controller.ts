@@ -24,7 +24,7 @@ export class AuthController {
     @Body() authDTO: AuthDTO,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
-    return this.authService.register(authDTO, file);
+    return this.authService.register({ authDTO, file });
   }
 
   @Post('login')
@@ -54,6 +54,7 @@ export class AuthController {
     accessToken: string;
   }> {
     const refreshToken = body.refreshToken;
+    console.log(refreshToken);
 
     return await this.authService.restoreAccessToken(refreshToken);
   }
