@@ -140,8 +140,8 @@ export class NewsfeedService {
         }
     }
 
-    async modinewsfeed(file,id:number,data: modiNewsfeedCheckDto,userId:number) : Promise<void>{
-        const { content,tag } = data
+    async modinewsfeed(file,id:number,data,userId:number) : Promise<void>{
+        const { content } = data
 
         const checknewsfeed = await this.newsfeedRepository.findOne({
             relations: ['user'],
@@ -163,7 +163,8 @@ export class NewsfeedService {
                 {content:content}
             );
 
-            if (tag) {
+            if (data.newsfeedTags) {
+                const tag = data.newsfeedTags.split(',')
                 await this.newsfeedTagRepository.delete({
                     newsFeedId:id
                 })
