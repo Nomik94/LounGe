@@ -1,4 +1,5 @@
-$(document).ready(function () {
+$(document).ready(async function () {
+  await restoreToken();
   joinedGroupList();
 });
 function getCookie(name) {
@@ -163,7 +164,7 @@ function withdrawalGroup(groupId, groupName) {
             icon: 'success',
             text: `${groupName}을 탈퇴하였습니다.`,
           });
-          window.location.reload()
+          window.location.reload();
         })
         .catch(async function (error) {
           if (error.response.data.statusCode === 401) {
