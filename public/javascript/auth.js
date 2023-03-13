@@ -1,7 +1,9 @@
-$(document).ready(function () {
+$(document).ready(async function () {
   const refreshToken = getCookie('refreshToken');
-
-  if (refreshToken) {
+  const accessToken = getCookie('accessToken');
+  if (!accessToken) {
+    await restoreToken();
+  } else if (refreshToken) {
     window.location.href = '/newsfeed';
   }
 });

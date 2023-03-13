@@ -1,4 +1,5 @@
-$(document).ready(function () {
+$(document).ready(async function () {
+  await restoreToken();
   managementMemberList();
 });
 
@@ -7,11 +8,6 @@ function managementMemberList() {
   let query = window.location.search;
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
-
-  const accessToken = document.cookie
-    .split(';')
-    .filter((token) => token.includes('accessToken'))[0]
-    .split('=')[1];
 
   axios({
     url: `/api/groups/${groupId}/members/list`,
@@ -123,4 +119,3 @@ function getCookie(name) {
   );
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
-

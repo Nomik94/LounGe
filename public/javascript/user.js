@@ -1,9 +1,6 @@
-$(document).ready(function () {
-  const accessToken = getCookie('accessToken');
-
-  if (accessToken) {
-    getUser();
-  }
+$(document).ready(async function () {
+  await restoreToken();
+  getUser();
 });
 
 function getCookie(name) {

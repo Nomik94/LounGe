@@ -1,22 +1,9 @@
-$(document).ready(async function () {
-  const refreshToken = getCookie('refreshToken');
-  if (!refreshToken) {
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'center-center',
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true,
-    });
-    await Toast.fire({
-      icon: 'error',
-      title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
-    });
-    window.location.href = '/';
-  } else {
+async function restoreToken() {
+  const accessToken = getCookie('accessToken');
+  if (!accessToken) {
     restoreAccessToken();
   }
-});
+}
 
 function getCookie(name) {
   let matches = document.cookie.match(
@@ -36,14 +23,13 @@ function accessTokenExpires() {
   return accessExpires;
 }
 
-function restoreAccessToken() {
-  const accessToken = getCookie('accessToken');
+async function restoreAccessToken() {
   const token = getCookie('refreshToken');
   const expires = accessTokenExpires();
 
-  const refreshToken = token.replace('Bearer ', '');
+  if (token) {
+    const refreshToken = token.replace('Bearer ', '');
 
-  if (!accessToken) {
     axios
       .post('/api/auth/restoreAccessToken', {
         refreshToken: refreshToken,
@@ -55,5 +41,18 @@ function restoreAccessToken() {
       .catch((error) => {
         console.log(error);
       });
+  } else if (!token) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-center',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+    await Toast.fire({
+      icon: 'error',
+      title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+    });
+    window.location.href = '/';
   }
 }
