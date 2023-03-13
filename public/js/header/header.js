@@ -87,15 +87,13 @@ app.plugins.createDropdown({
 app.plugins.createProgressBar({
   container: '#logged-user-level',
   height: 4,
-  lineColor: '#5538b5'
+  lineColor: '#4a46c8'
 });
 
 app.plugins.createProgressBar({
   container: '#logged-user-level',
   height: 4,
-  gradient: {
-    colors: ['#40d04f', '#d9ff65']
-  },
+  lineColor: '#41efff',
   scale: {
     start: 0,
     end: 100,
@@ -109,15 +107,13 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#logged-user-level-cp',
   height: 4,
-  lineColor: '#5538b5'
+  lineColor: '#4a46c8'
 });
 
 app.plugins.createProgressBar({
   container: '#logged-user-level-cp',
   height: 4,
-  gradient: {
-    colors: ['#40d04f', '#d9ff65']
-  },
+  lineColor: '#41efff',
   scale: {
     start: 0,
     end: 100,

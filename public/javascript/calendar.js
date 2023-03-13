@@ -1,4 +1,5 @@
-(function () {
+(async function () {
+  await restoreToken()
   $(function () {
     // calendar element 취득
     let calendarEl = $('#calendar')[0];
@@ -84,6 +85,9 @@
                 color : `${event.color}`
               })
             })
+            let calendarjs = `<script src="/js/utils/liquidify.js"></script>
+            <script src="/js/global/global.hexagons.js"></script>`
+            $('#calendarjs').append(calendarjs);
             success(events);
             // await Swal.fire({
             //   icon: 'success',

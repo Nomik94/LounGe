@@ -1,6 +1,6 @@
 .fc {
   border-radius: 12px;
-  background-color: white;
+  background-color: #1d2333;
   box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.06);
 }
 
@@ -31,11 +31,11 @@
 .fc .fc-scroller-harness{
   display: -ms-flexbox;
   display: flex;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid #2f3749;
 }
 
 .fc .fc-daygrid-day {
-  background-color: white;
+  background-color: #21283b;
 }
 
 .fc .fc-daygrid-day .fc-daygrid-day-number {
@@ -65,8 +65,8 @@
 }
 
 .fc .fc-event-time {
-  color: black;
+  color: white;
 }
 .fc .fc-event-title {
-  color: black;
+  color: white;
 }
