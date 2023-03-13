@@ -24,14 +24,12 @@ function readnewsfeedgrouptimeline(id) {
     method: 'get',
     url: `/api/newsfeed/group/${id}`,
   })
-  .then((res) => {
-    // console.log(res.data);
-    // clearnewsfeed();
-    newsfeedlist(res.data);
+  .then(async(res) => {
+   await newsfeedlist(res.data);
   })
-  .catch((err) => {
+  .catch(async(err) => {
     console.log(err);
-    Swal.fire({
+    await Swal.fire({
       icon: 'error',
       title: '알수없는 이유로 실행되지 않았습니다.',
       text: "관리자에게 문의해 주세요.",
@@ -403,7 +401,7 @@ async function modinewsfeed(id){
   popupHtml += '<textarea id="newsfeedcontent" name="newsfeedcontent" rows="4" cols="50"></textarea><br><br>';
   popupHtml += '<label for="tag">태그(태그는 ,로 구분합니다.)</label><br>';
   popupHtml += '<input type="text" id="tag" name="tag"><br><br>';
-  popupHtml += '<label for="image">이미지:</label><br>';
+  popupHtml += '<label for="image">이미지(최대 5장):</label><br>';
   popupHtml += '<input type="file" id="imageUpload" name="imageUpload" multiple>';
   popupHtml += '<input type="submit" value="수정">';
   popupHtml += '<button type="button" class="cancel">취소</button>'
@@ -463,7 +461,7 @@ async function modinewsfeed(id){
             title: '사진은 최대 5장까지만 등록 가능합니다.',
             text: "죄송합니다.",
           });
-        } else if (err.response.data.statusCode === 401){
+        } else if (err.response.data.statusCode === 403){
           Swal.fire({
             icon: 'error',
             title: '로그인 정보가 일치하지 않습니다.',
@@ -481,7 +479,8 @@ async function modinewsfeed(id){
     document.body.removeChild(popup);
   });
 
-  popup.querySelector('form').addEventListener('cancel', function(e) {
-    document.body.removeChild(popup);
+  const cancelButton = popup.querySelector('.cancel')
+  cancelButton.addEventListener('click',() => {
+   document.body.removeChild(popup)
   })
 }
