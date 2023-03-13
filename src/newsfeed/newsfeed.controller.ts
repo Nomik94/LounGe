@@ -25,9 +25,6 @@ export class NewsfeedController {
     @Body() data: newsfeedCheckDto
     ) {
       const userId = user.id
-      console.log("정민님 확인 데이타",data);
-      console.log("정민님 확인 파일",file);
-
     await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
   }
 
@@ -45,14 +42,15 @@ export class NewsfeedController {
   // 뉴스피드 수정
   @Put('newsfeed/:newsfeedid')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
+  @UseInterceptors(FilesInterceptor('newsfeedImages', 5)) 
   async modinewsfeed(
       @GetUser() user,
       @UploadedFiles() file: Array<Express.Multer.File>,
       @Param('newsfeedid') newsfeedid:number,
       @Body() data: modiNewsfeedCheckDto
-  ): Promise<void> {
+  ) {
       const userId = user.id
+ 
       await this.newsfeedService.modinewsfeed(file,newsfeedid,data,userId)
   }
 

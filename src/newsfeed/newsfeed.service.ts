@@ -49,8 +49,6 @@ export class NewsfeedService {
     async postnewsfeed(file,data,userId:number,groupId:number): Promise<void> {
 
         const content = data.content;
-        const tag = data.newsfeedTags.split(',')
-
         const checkJoinGroup = await this.userGroupRepository.find({
             where: {userId: userId, groupId:groupId}
         })
@@ -66,7 +64,8 @@ export class NewsfeedService {
             content:content,
             user: {id : userId},
         })
-        if (tag){
+        if (data.newsfeedTags){
+            const tag = data.newsfeedTags.split(',')
             for(const i of tag) {
                 if (!await this.tagRepository.findOneBy({tagName:i})) {
                     await this.tagRepository.insert({
@@ -141,8 +140,8 @@ export class NewsfeedService {
         }
     }
 
-    async modinewsfeed(file,id:number,data: modiNewsfeedCheckDto,userId:number) : Promise<void>{
-        const { content,tag } = data
+    async modinewsfeed(file,id:number,data,userId:number) : Promise<void>{
+        const { content } = data
 
         const checknewsfeed = await this.newsfeedRepository.findOne({
             relations: ['user'],
@@ -164,7 +163,8 @@ export class NewsfeedService {
                 {content:content}
             );
 
-            if (tag) {
+            if (data.newsfeedTags) {
+                const tag = data.newsfeedTags.split(',')
                 await this.newsfeedTagRepository.delete({
                     newsFeedId:id
                 })
