@@ -1,4 +1,5 @@
-$(document).ready(function () {
+$(document).ready(async function () {
+  await restoreToken();
   leaderGroupList();
 });
 function createGroup() {
@@ -28,7 +29,7 @@ function createGroup() {
         icon: 'success',
         text: `그룹이 생성되었습니다.`,
       });
-      window.location.reload()
+      window.location.reload();
     })
     .catch(async function (error) {
       if (error.response.data.statusCode === 401) {
@@ -111,9 +112,9 @@ function leaderGroupList() {
           </div>
           <!-- /USER PREVIEW INFO -->
         </div>
-        <!-- /USER PREVIEW -->`
+        <!-- /USER PREVIEW -->`;
         $('.leader').append(temp_html);
-      })
+      });
       const js = `
       <script src="/js/global/global.hexagons.js"></script>
       <script src="/js/utils/liquidify.js"></script>`;
