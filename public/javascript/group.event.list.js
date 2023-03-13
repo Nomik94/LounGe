@@ -1,4 +1,5 @@
-$(document).ready(function () {
+$(document).ready(async function () {
+  await restoreToken();
   groupEventList();
 });
 

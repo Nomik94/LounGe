@@ -1,4 +1,5 @@
-$(document).ready(function () {
+$(document).ready(async function () {
+  await restoreToken();
   managementMemberList();
 });
 
@@ -16,19 +17,29 @@ function managementMemberList() {
     },
   })
     .then(function (res) {
-      console.log(res)
+      console.log(res);
       $('#groupTitle').empty();
       $('#groupTitle').append(`${res.data.group.groupName}`);
       // const avatarPopup = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.group.groupImage}"></div>`
       // const backPopup = `<img src="/backgroundImage/${res.data.group.backgroundImage}" alt="backgroundImg">`
       // $('#avatarImg').append(avatarPopup);
       // $('#backImg').append(backPopup)
-      document.getElementById('popupButton').innerHTML = `<p class="button secondary full popup-manage-group-trigger-1" onclick="modifyGroup('${res.data.group.groupImage}','${res.data.group.backgroundImage}')">그룹 수정하기</p>`
-      document.getElementById('avatarImg').innerHTML = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.group.groupImage}"></div>`
-      document.getElementById('backImg').innerHTML = `<img src="/backgroundImage/${res.data.group.backgroundImage}" alt="backgroundImg">`
-      document.getElementById('groupName').value = `${res.data.group.groupName}`
-      document.getElementById('groupDescription').value = `${res.data.group.description}`
-      document.getElementById('groupTags').value = `${res.data.tags.join(',')}`
+      document.getElementById(
+        'popupButton',
+      ).innerHTML = `<p class="button secondary full popup-manage-group-trigger-1" onclick="modifyGroup('${res.data.group.groupImage}','${res.data.group.backgroundImage}')">그룹 수정하기</p>`;
+      document.getElementById(
+        'avatarImg',
+      ).innerHTML = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.group.groupImage}"></div>`;
+      document.getElementById(
+        'backImg',
+      ).innerHTML = `<img src="/backgroundImage/${res.data.group.backgroundImage}" alt="backgroundImg">`;
+      document.getElementById(
+        'groupName',
+      ).value = `${res.data.group.groupName}`;
+      document.getElementById(
+        'groupDescription',
+      ).value = `${res.data.group.description}`;
+      document.getElementById('groupTags').value = `${res.data.tags.join(',')}`;
 
       res.data.members.forEach((data) => {
         if (data.userRole === '회원') {
@@ -146,7 +157,7 @@ function managementApplyList() {
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
 
-  const accessToken = document.cookie
+  const accessToken = document.cookie;
   axios({
     url: `/api/groups/${groupId}/applicant/list`,
     method: 'get',
@@ -287,7 +298,7 @@ function applyJoin(groupId, memberId, userName) {
         },
       })
         .then(function (res) {
-          managementApplyList()
+          managementApplyList();
         })
         .catch(async function (error) {
           if (error.response.data.statusCode === 401) {
@@ -336,7 +347,7 @@ function groupTransfer(groupId, memberId, userName) {
         },
       })
         .then(function (res) {
-          managementMemberList()
+          managementMemberList();
         })
         .catch(async function (error) {
           if (error.response.data.statusCode === 401) {
@@ -385,7 +396,7 @@ function kickOutGroup(groupId, memberId, userName) {
         },
       })
         .then(function (res) {
-          managementMemberList()
+          managementMemberList();
         })
         .catch(async function (error) {
           if (error.response.data.statusCode === 401) {
@@ -436,7 +447,7 @@ function deleteGroup() {
         },
       })
         .then(function (res) {
-          window.location.replace('/group/management')
+          window.location.replace('/group/management');
         })
         .catch(async function (error) {
           if (error.response.data.statusCode === 401) {
@@ -462,22 +473,22 @@ function deleteGroup() {
   });
 }
 
-function modifyGroup(groupImg,backImg) {
+function modifyGroup(groupImg, backImg) {
   let query = window.location.search;
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
-  
+
   const groupName = document.getElementById('groupName').value;
   const groupDescription = document.getElementById('groupDescription').value;
   const groupTags = document.getElementById('groupTags').value;
   let groupImage = document.getElementById('groupImage').files[0];
   let backgroundImage = document.getElementById('backgroundImage').files[0];
-  if(!groupImage){
-    groupImage = groupImg
+  if (!groupImage) {
+    groupImage = groupImg;
   }
 
-  if(!backgroundImage) {
-    backgroundImage = backImg
+  if (!backgroundImage) {
+    backgroundImage = backImg;
   }
 
   const formData = new FormData();
@@ -500,7 +511,7 @@ function modifyGroup(groupImg,backImg) {
         icon: 'success',
         text: `그룹이 수정되었습니다.`,
       });
-      window.location.reload()
+      window.location.reload();
     })
     .catch(async function (error) {
       if (error.response.data.statusCode === 401) {

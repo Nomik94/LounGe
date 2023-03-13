@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, Length } from 'class-validator';
 
 export class modiNewsfeedCheckDto {
     @IsString()
@@ -9,6 +9,7 @@ export class modiNewsfeedCheckDto {
 
     @IsOptional()
     @IsArray()
+    @Length(1, 5, { each: true })
     tag: Array<string> | null | string;
 
     // @IsOptional()
