@@ -17,10 +17,75 @@ function groupEventList() {
     },
   })
     .then(function (res) {
-      console.log(res.data)
-      res.data.forEach((data) => {
+      res.data.groupInfo.forEach((data) => {
         const getDate = data.start.split(' ')[0].split('-');
-        let temp_html = `      <!-- EVENT PREVIEW -->
+        if (res.data.role) {
+          let temp_html = `      <!-- EVENT PREVIEW -->
+          <div class="event-preview">
+            <!-- EVENT PREVIEW COVER -->
+            <figure class="event-preview-cover liquid">
+              <img src="/backgroundImage/1.png" alt="cover-33">
+            </figure>
+            <!-- /EVENT PREVIEW COVER -->
+    
+            <!-- EVENT PREVIEW INFO -->
+            <div class="event-preview-info">
+              <!-- EVENT PREVIEW INFO TOP -->
+              <div class="event-preview-info-top">
+                <!-- DATE STICKER -->
+                <div class="date-sticker">
+                  <!-- DATE STICKER DAY -->
+                  <p class="date-sticker-day">${getDate[2]}</p>
+                  <!-- /DATE STICKER DAY -->
+          
+                  <!-- DATE STICKER MONTH -->
+                  <p class="date-sticker-month">${getDate[1]}</p>
+                  <!-- /DATE STICKER MONTH -->
+                </div>
+                <!-- /DATE STICKER -->
+          
+                <!-- EVENT PREVIEW TITLE -->
+                <p class="event-preview-title popup-event-information-trigger-1" onclick="popupdata('${data.id}')">${data.eventName}</p>
+                <!-- /EVENT PREVIEW TITLE -->
+          
+                <!-- EVENT PREVIEW TIMESTAMP -->
+                <p class="event-preview-timestamp"><span class="bold">${data.start} ~ ${data.end}</p>
+                <!-- /EVENT PREVIEW TIMESTAMP -->
+          
+                <!-- EVENT PREVIEW TEXT -->
+                <p class="event-preview-text">${data.eventContent}</p>
+                <!-- /EVENT PREVIEW TEXT -->
+              </div>
+              <!-- /EVENT PREVIEW INFO TOP -->
+    
+              <!-- EVENT PREVIEW INFO BOTTOM -->
+              <div class="event-preview-info-bottom">
+                <!-- DECORATED TEXT -->
+                <div class="decorated-text">
+                  <!-- DECORATED TEXT ICON -->
+                  <svg class="decorated-text-icon icon-pin">
+                    <use xlink:href="#svg-pin"></use>
+                  </svg>
+                  <!-- /DECORATED TEXT ICON -->
+          
+                  <!-- DECORATED TEXT CONTENT -->
+                  <p class="decorated-text-content">${data.location}</p>
+                  <!-- /DECORATED TEXT CONTENT -->
+                </div>
+                <!-- /DECORATED TEXT -->
+          
+                <!-- BUTTON -->
+                <p class="button white white-tertiary" onclick="deleteGroupEvent(${data.id},'${data.eventName}')">일정 삭제</p>
+                <!-- /BUTTON -->
+              </div>
+              <!-- /EVENT PREVIEW INFO BOTTOM -->
+            </div>
+            <!-- /EVENT PREVIEW INFO -->
+          </div>
+          <!-- /EVENT PREVIEW -->`;
+          $('#groupEventList').append(temp_html);
+        } else {
+          let temp_html = `      <!-- EVENT PREVIEW -->
         <div class="event-preview">
           <!-- EVENT PREVIEW COVER -->
           <figure class="event-preview-cover liquid">
@@ -74,16 +139,14 @@ function groupEventList() {
               </div>
               <!-- /DECORATED TEXT -->
         
-              <!-- BUTTON -->
-              <p class="button white white-tertiary" onclick="deleteGroupEvent(${data.id},'${data.eventName}')">일정 삭제</p>
-              <!-- /BUTTON -->
             </div>
             <!-- /EVENT PREVIEW INFO BOTTOM -->
           </div>
           <!-- /EVENT PREVIEW INFO -->
         </div>
         <!-- /EVENT PREVIEW -->`;
-        $('#groupEventList').append(temp_html);
+          $('#groupEventList').append(temp_html);
+        }
       });
       const js = `
       <script src="/js/global/global.hexagons.js"></script>

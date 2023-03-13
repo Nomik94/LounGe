@@ -126,7 +126,15 @@ export class CalendarService {
   // 그룹 이벤트 리스트 API
   async getGroupEvent(userId, groupId) {
     await this.memberCheck(userId, groupId);
-    return await this.groupEventRepository.findBy({ group: { id: groupId } });
+    const checkRole = await this.groupRepository.findOne({where : { id: groupId , user : {id : userId}}})
+    let role = false
+    console.log(checkRole)
+    if(checkRole) {
+      role = true
+    }
+
+    const groupInfo = await this.groupEventRepository.findBy({ group: { id: groupId } });
+    return {groupInfo, role}
   }
 
   // 그룹 이벤트 상세 보기 API
