@@ -1,5 +1,5 @@
 $(document).ready(async function(){
-  await resotreToken()
+  await restoreToken()
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
 
@@ -330,11 +330,14 @@ async function getTags() {
     }
   });
    let tagHtml = `
+   </div>
+   <svg class="quick-post-footer-action-icon icon-tags">
+   <use xlink:href="#svg-tags"></use>
+    </svg>
    <div class="tag-list">
     ${tags.value.map(tag => `
     <a class="tag-item secondary">${tag}</a>
    `).join("")}
-   </div>
    `
    selectedTags = tags.value;
    $('#tag_box').empty();
@@ -354,12 +357,18 @@ async function getImages() {
 
   if(files.length === 1){
     let imageHtml = `
+    <svg class="quick-post-footer-action-icon icon-camera">
+    <use xlink:href="#svg-camera"></use>
+    </svg>
     ${files[0].name}
     `
     $('#image_box').empty();
     $('#image_box').append(imageHtml)
   } else if(files.length !== 1) {
     let imageHtml = `
+    <svg class="quick-post-footer-action-icon icon-camera">
+    <use xlink:href="#svg-camera"></use>
+    </svg>
     ${files[0].name} 외 ${files.length - 1}장
     `
     $('#image_box').empty();
