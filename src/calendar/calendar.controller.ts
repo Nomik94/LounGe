@@ -97,6 +97,15 @@ export class CalendarController {
     await this.calendarService.deleteUserEvent(userId, eventId);
   }
 
+  // 그룹 이벤트 삭제 API
+  @Delete('/groups/events/:eventId')
+  @UseGuards(JwtAuthGuard)
+  async deleteGroupEvent(@GetUser() user, @Param('eventId') eventId: number) {
+    const userId = user.id;
+    console.log(userId, eventId);
+    await this.calendarService.deleteGroupEvent(userId, eventId);
+  }
+
   // @Put('/uevents/:id')
   // updateUserEvent(
   //   @Param('id') eventId: number,
@@ -104,10 +113,5 @@ export class CalendarController {
   // ) {
   //   const userId = 1;
   //   return this.calendarService.updateUserEvent(userId, eventId, data);
-  // }
-
-  // @Delete('/gevents/:id')
-  // deleteGroupEvent(@Param('id') eventId: number, @Body() data) {
-  //   return this.calendarService.deleteGroupEvent(eventId, data.groupId);
   // }
 }

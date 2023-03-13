@@ -85,7 +85,7 @@ export class CalendarService {
 
     const joinEvents = mapGroupEvents.concat(mapUserEvents);
     await joinEvents.sort((a, b) => a.start - b.start);
-    return joinEvents
+    return joinEvents;
   }
 
   // 유저 이벤트 생성 API
@@ -152,6 +152,17 @@ export class CalendarService {
     await this.userEventRepository.softDelete(eventId);
   }
 
+  // 그룹 이벤트 삭제 API
+  async deleteGroupEvent(userId: number, eventId: number) {
+    const checkGroupLeader = await this.groupEventRepository.findOne({
+      where: { group: { user: { id: userId } } ,id : eventId},
+    });
+    if(!checkGroupLeader) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.')
+    }
+    await this.groupEventRepository.softDelete(eventId);
+  }
+
   // async updateUserEvent(
   //   userId: number,
   //   eventId: number,
@@ -200,28 +211,6 @@ export class CalendarService {
   //     );
   //   }
   //   this.groupEventRepository.update(groupEvent.id, data);
-  // }
-
-  // async deleteGroupEvent(eventId: number, groupId: number) {
-  //   await this.checkGroup(eventId, groupId);
-  //   this.groupEventRepository.softDelete(eventId);
-  // }
-  // private async checkGroup(eventId: number, groupId: number) {
-  //   const groupEvent = await this.groupEventRepository.findOne({
-  //     where: { id: eventId },
-  //     select: ['group'],
-  //     relations: ['group'],
-  //   });
-  //   if (_.isNil(groupEvent)) {
-  //     throw new NotFoundException(
-  //       `groupEvent를 찾을 수 없습니다. id: ${eventId}`,
-  //     );
-  //   }
-  //   if (groupEvent.group.id !== groupId) {
-  //     throw new UnauthorizedException(
-  //       `이 이벤트를 게시한 유저가 아닙니다. id: ${groupId}`,
-  //     );
-  //   }
   // }
 
   async memberCheck(userId, groupId) {
