@@ -17,6 +17,7 @@ function groupEventList() {
     },
   })
     .then(function (res) {
+      console.log(res.data)
       res.data.forEach((data) => {
         const getDate = data.start.split(' ')[0].split('-');
         let temp_html = `      <!-- EVENT PREVIEW -->
@@ -74,7 +75,7 @@ function groupEventList() {
               <!-- /DECORATED TEXT -->
         
               <!-- BUTTON -->
-              <p class="button white white-tertiary">일정 삭제</p>
+              <p class="button white white-tertiary" onclick="deleteGroupEvent(${data.id},'${data.eventName}')">일정 삭제</p>
               <!-- /BUTTON -->
             </div>
             <!-- /EVENT PREVIEW INFO BOTTOM -->
