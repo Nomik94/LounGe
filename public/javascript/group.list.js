@@ -48,11 +48,6 @@ function joinGroup(groupId, groupName) {
     reverseButtons: false, // 버튼 순서 거꾸로
   }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie
-        .split(';')
-        .filter((token) => token.includes('accessToken'))[0]
-        .split('=')[1];
-
       axios({
         url: `/api/groups/${groupId}/join`,
         method: 'post',
