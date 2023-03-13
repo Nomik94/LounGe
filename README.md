@@ -26,6 +26,8 @@
 
 2023.02.28 ~ 2023.04.03
 
+---
+
 <div align='center'>
 <h3>📚 Tech Stack 📚</h3>
 </div>
