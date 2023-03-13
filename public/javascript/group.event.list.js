@@ -19,7 +19,6 @@ function groupEventList() {
     .then(function (res) {
       res.data.forEach((data) => {
         const getDate = data.start.split(' ')[0].split('-');
-        console.log(getDate[0]);
         let temp_html = `      <!-- EVENT PREVIEW -->
         <div class="event-preview">
           <!-- EVENT PREVIEW COVER -->

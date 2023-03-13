@@ -75,6 +75,23 @@ export class CalendarController {
     );
   }
 
+  // 유저 이벤트 상세 보기 API
+  @Get('/users/:currId/events/:eventId')
+  @UseGuards(JwtAuthGuard)
+  async getUserEventDetail(
+    @GetUser() user,
+    @Param('eventId') eventId: number,
+    @Param('currId') currId : number
+  ) {
+    const userId: number = user.id;
+    console.log(userId, currId)
+    return await this.calendarService.getUserEventDetail(
+      userId,
+      currId,
+      eventId
+    );
+  }
+
   @Put('/uevents/:id')
   updateUserEvent(
     @Param('id') eventId: number,

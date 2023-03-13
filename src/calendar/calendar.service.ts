@@ -30,41 +30,59 @@ export class CalendarService {
   ) {}
   async getAllEvent(userId) {
     const myGroupList = await this.userGroupRepository.find({
-      where : { userId , role : Not("가입대기")},
-      select : ['groupId','userId']
-    })
-    const myGroupIds = myGroupList.map((ids)=> ({group : {id : ids.groupId}}))
-    const groupEvents = await this.groupEventRepository.find({
-      where : myGroupIds
-    })
-    const myUserEvents = await this.userEventRepository.find({
-      where : {user : {id : userId}}
-    })
-    const mapGroupEvents = groupEvents.map((event)=> ({
-      id : 'groupId'+event.id,
-      eventName: event.eventName,
-      eventContent: event.eventContent,
-      start: event.start,
-      end: event.end,
-      lat: event.lat,
-      lng: event.lng,
-      location: event.location,
-      color : '#FFC8A2'
-    }))
-    const mapUserEvents = myUserEvents.map((event)=>({
-      id : 'userId'+event.id,
-      eventName: event.eventName,
-      eventContent: event.eventContent,
-      start: event.start,
-      end: event.end,
-      lat: event.lat,
-      lng: event.lng,
-      location: event.location,
-      color : '#D4F0F0'
-    }))
+      where: { userId, role: Not('가입대기') },
+      select: ['groupId', 'userId'],
+    });
+    const myGroupIds = myGroupList.map((ids) => ({
+      group: { id: ids.groupId },
+    }));
+    let groupEvents = [];
+    let mapGroupEvents = [];
+    if (myGroupIds.length > 0) {
+      groupEvents = await this.groupEventRepository.find({
+        where: myGroupIds,
+        relations: ['group'],
+      });
+      mapGroupEvents = groupEvents.map((event) => ({
+        id: event.id,
+        where: 'group',
+        name: event.group.groupName,
+        tableId: event.group.id,
+        eventName: event.eventName,
+        eventContent: event.eventContent,
+        start: event.start,
+        end: event.end,
+        lat: event.lat,
+        lng: event.lng,
+        location: event.location,
+        color: '#FFC8A2',
+        backgroundImage: event.group.backgroundImage,
+      }));
+    }
 
-    const joinEvents = mapGroupEvents.concat(mapUserEvents)
-    return joinEvents
+    const myUserEvents = await this.userEventRepository.find({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+
+    const mapUserEvents = myUserEvents.map((event) => ({
+      id: event.id,
+      where: 'user',
+      name: '개인',
+      tableId: event.user.id,
+      eventName: event.eventName,
+      eventContent: event.eventContent,
+      start: event.start,
+      end: event.end,
+      lat: event.lat,
+      lng: event.lng,
+      location: event.location,
+      color: '#D4F0F0',
+      backgroundImage: '1.png',
+    }));
+
+    const joinEvents = mapGroupEvents.concat(mapUserEvents);
+    return joinEvents;
   }
 
   async getUserEventById(eventId: number) {
@@ -117,7 +135,6 @@ export class CalendarService {
       select: ['user', 'id', 'eventName', 'eventContent', 'start', 'end'],
       relations: ['user'],
     });
-    console.log(userEvent);
     if (_.isNil(userEvent)) {
       throw new NotFoundException(`event를 찾을 수 없습니다. id:${userId}`);
     }
@@ -159,7 +176,17 @@ export class CalendarService {
 
   async getGroupEventDetail(userId, groupId, eventId) {
     await this.memberCheck(userId, groupId);
-    return await this.groupEventRepository.findOneBy({ id : eventId});
+    return await this.groupEventRepository.findOne({ 
+      where: { id: eventId },
+      relations : ['group']
+    });
+  }
+
+  async getUserEventDetail(userId, currId, eventId) {
+    if (!currId === userId) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
+    }
+    return await this.userEventRepository.findOneBy({ id: eventId });
   }
 
   async getGroupEventById(eventId: number) {
