@@ -20,13 +20,6 @@ import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
-  @Get('/uevents')
-  @UseGuards(JwtAuthGuard)
-  async getUserEvent(@GetUser() user) {
-    const userId: number = user.id;
-    return await this.calendarService.getUserEvent();
-  }
-
   @Get('/uevents/:id')
   @UseGuards(JwtAuthGuard)
   async getUserEventById(@Param('id') eventId: number) {
@@ -90,14 +83,6 @@ export class CalendarController {
     return this.calendarService.deleteUserEvent(eventId, data.userId);
   }
 
-  @Put('/gevents/:id')
-  updateGroupEvent(
-    @Param('id') eventId: number,
-    @Body() data: UpdateGroupEventDto,
-  ) {
-    const groupId = 1;
-    return this.calendarService.updateGroupEvent(groupId, eventId, data);
-  }
 
   @Delete('/gevents/:id')
   deleteGroupEvent(@Param('id') eventId: number, @Body() data) {

@@ -29,14 +29,6 @@ export class CalendarService {
     private readonly userGroupRepository: Repository<UserGroup>,
   ) {}
 
-  // userEvents
-  async getUserEvent() {
-    return await this.userEventRepository.find({
-      where: { deletedAt: null },
-      select: ['eventName', 'createdAt'],
-    });
-  }
-
   async getUserEventById(eventId: number) {
     return this.userEventRepository.findOne({
       where: { id: eventId, deletedAt: null },
