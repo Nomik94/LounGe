@@ -26,6 +26,15 @@ export class UserEvent extends BaseEntity {
   @Column()
   end: string;
 
+  @Column()
+  lat: string;
+
+  @Column()
+  lng: string;
+
+  @Column()
+  location: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
