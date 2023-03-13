@@ -39,45 +39,79 @@
         console.log(obj);
       },
       select: function (arg) {
-        document.getElementById('event-name').value = ''
-        document.getElementById('event-description').value = ''
-        document.getElementById('event-add-end-time').checked = false
-        document.getElementById('event-startdate').value = ''
-        document.getElementById('event-enddate').value = ''
-        document.getElementById('event-time-start').value = '00:00'
-        document.getElementById('event-time-end').value = '00:00'
-        document.getElementById('event-location').value = ''
-        document.getElementById('event-latlng').value = ''
+        document.getElementById('event-name').value = '';
+        document.getElementById('event-description').value = '';
+        document.getElementById('event-add-end-time').checked = false;
+        document.getElementById('event-startdate').value = '';
+        document.getElementById('event-enddate').value = '';
+        document.getElementById('event-time-start').value = '00:00';
+        document.getElementById('event-time-end').value = '00:00';
+        document.getElementById('event-location').value = '';
+        document.getElementById('event-latlng').value = '';
         localStorage.clear();
 
-        const createEventButton = document.getElementById("createEventButton");
-        createEventButton.click()
-        const start = arg.startStr
-        const end = arg.endStr
+        const createEventButton = document.getElementById('createEventButton');
+        createEventButton.click();
+        const start = arg.startStr;
+        const end = arg.endStr;
         localStorage.setItem('start', arg.startStr);
         localStorage.setItem('end', arg.endStr);
 
-        document.getElementById('event-startdate').value = start
-        document.getElementById('event-enddate').value = end
-        
+        document.getElementById('event-startdate').value = start;
+        document.getElementById('event-enddate').value = end;
+
         // 캘린더에서 드래그로 이벤트를 생성할 수 있다.
         calendar.unselect();
       },
       // 이벤트
-      events: [
-        {
-          title: 'title',
-          start: '2023-01-05 01:00',
-          end: '2023-01-05 04:00',
-          color: 'red',
-        },
-        {
-          title: 'title1',
-          start: '2023-01-05',
-          end: '2023-01-05',
-          color: 'purple',
-        },
-      ],
+      events: function (info, success, fail) {
+        axios({
+          url: `/api/calendar/events`,
+          method: 'get',
+          headers: {
+            Authorization: `${getCookie('accessToken')}`,
+          },
+          data: {},
+        })
+          .then(async function (res) {
+            console.log(res.data)
+            const events = []
+            res.data.forEach((event) =>  {
+              events.push({
+                title : `${event.eventName}`,
+                start: `${event.start}`,
+                end : `${event.end}`,
+                color : `${event.color}`
+              })
+            })
+            success(events);
+            // await Swal.fire({
+            //   icon: 'success',
+            //   text: `${eventName} 일정이 추가되었습니다.`,
+            // });
+            // window.location.reload();
+          })
+          .catch(async function (error) {
+            // if (error.response.data.statusCode === 401) {
+            //   const Toast = Swal.mixin({
+            //     toast: true,
+            //     position: 'center-center',
+            //     showConfirmButton: false,
+            //     timer: 2000,
+            //     timerProgressBar: true,
+            //   });
+            //   await Toast.fire({
+            //     icon: 'error',
+            //     title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+            //   });
+            //   window.location.replace('/');
+            // }
+            // Swal.fire({
+            //   icon: 'error',
+            //   text: `${error.response.data.message}`,
+            // });
+          });
+      },
     });
     // 캘린더 랜더링
     calendar.render();
