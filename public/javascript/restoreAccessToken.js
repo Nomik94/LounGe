@@ -1,10 +1,19 @@
-$(document).ready(function () {
-  const accessToken = getCookie('accessToken');
+$(document).ready(async function () {
   const refreshToken = getCookie('refreshToken');
   if (!refreshToken) {
-    alert('로그인을 다시 해주세요.');
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-center',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+    await Toast.fire({
+      icon: 'error',
+      title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+    });
     window.location.href = '/';
-  } else if (!accessToken) {
+  } else {
     restoreAccessToken();
   }
 });
@@ -28,16 +37,23 @@ function accessTokenExpires() {
 }
 
 function restoreAccessToken() {
-  const Token = getCookie('refreshToken');
+  const accessToken = getCookie('accessToken');
+  const token = getCookie('refreshToken');
   const expires = accessTokenExpires();
 
-  const refreshToken = Token.replace('Bearer ', '');
-  axios
-    .post('/api/auth/restoreAccessToken', {
-      refreshToken: refreshToken,
-    })
-    .then((res) => {
-      document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${expires}`;
-      window.location.reload();
-    });
+  const refreshToken = token.replace('Bearer ', '');
+
+  if (!accessToken) {
+    axios
+      .post('/api/auth/restoreAccessToken', {
+        refreshToken: refreshToken,
+      })
+      .then((res) => {
+        document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${expires}`;
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 }

@@ -1,12 +1,10 @@
 <!-- 풀화면 사이드바 NAVIGATION WIDGET -->
 <nav id="navigation-widget-small" class="navigation-widget navigation-widget-desktop closed sidebar left delayed">
   <!-- USER AVATAR -->
-  <a class="user-avatar small no-outline online">
+  <a class="user-avatar small no-outline">
     <!-- USER AVATAR CONTENT -->
-    <div class="user-avatar-content">
-      <!-- HEXAGON -->
-      <div class="hexagon-image-30-32" data-src="/img/avatar/61.jpg"></div> <!--유저 이미지 뿌려주기-->
-      <!-- /HEXAGON -->
+    <div class="user-avatar-content" id="fullSideBar">
+    
     </div>
     <!-- /USER AVATAR CONTENT -->
 
@@ -89,10 +87,8 @@
       <!-- /USER AVATAR BORDER -->
   
       <!-- USER AVATAR CONTENT -->
-      <div class="user-avatar-content">
-        <!-- HEXAGON -->
-        <div class="hexagon-image-82-90" data-src="/img/avatar/61.jpg"></div><!--유저 이미지 뿌려주기-->
-        <!-- /HEXAGON -->
+      <div class="user-avatar-content" id="buttonSideBar">
+        
       </div>
       <!-- /USER AVATAR CONTENT -->
   
@@ -182,47 +178,16 @@
   <!-- NAVIGATION WIDGET INFO WRAP -->
   <div class="navigation-widget-info-wrap">
     <!-- NAVIGATION WIDGET INFO -->
-    <div class="navigation-widget-info">
-      <!-- USER AVATAR -->
-      <a class="user-avatar small no-outline">
-        <!-- USER AVATAR CONTENT -->
-        <div class="user-avatar-content">
-          <!-- HEXAGON -->
-          <div class="hexagon-image-30-32" data-src="/img/avatar/61.jpg"></div>
-          <!-- /HEXAGON -->
-        </div>
-        <!-- /USER AVATAR CONTENT -->
+    <div class="navigation-widget-info" id="mobileSideBar">
     
-        <!-- USER AVATAR PROGRESS -->
-        <div class="user-avatar-progress">
-          <!-- HEXAGON -->
-          <div class="hexagon-progress-40-44"></div>
-          <!-- /HEXAGON -->
-        </div>
-        <!-- /USER AVATAR PROGRESS -->
-    
-      </a>
-      <!-- /USER AVATAR -->
-
-      <!-- NAVIGATION WIDGET INFO TITLE -->
-      <p class="navigation-widget-info-title">Welcome</p>
-      <!-- /NAVIGATION WIDGET INFO TITLE -->
-
-      <!-- NAVIGATION WIDGET INFO TEXT -->
-      <p class="navigation-widget-info-text">LounGe</p>
-      <!-- /NAVIGATION WIDGET INFO TEXT -->
     </div>
     <!-- /NAVIGATION WIDGET INFO -->
 
     <!-- NAVIGATION WIDGET BUTTON -->
-    <p class="navigation-widget-info-button button small secondary">Logout</p>
+    <p class="navigation-widget-info-button button small secondary" onclick="logout()">로그아웃</p>
     <!-- /NAVIGATION WIDGET BUTTON -->
   </div>
   <!-- /NAVIGATION WIDGET INFO WRAP -->
-
-  <!-- NAVIGATION WIDGET SECTION TITLE -->
-  <p class="navigation-widget-section-title">Sections</p>
-  <!-- /NAVIGATION WIDGET SECTION TITLE -->
 
   <!-- MENU -->
   <ul class="menu">
@@ -387,40 +352,8 @@
         <!-- DROPDOWN NAVIGATION HEADER -->
         <div class="dropdown-navigation-header">
           <!-- USER STATUS -->
-          <div class="user-status">
-            <!-- USER STATUS AVATAR -->
-            <a class="user-status-avatar" href="profile-timeline.html">
-              <!-- USER AVATAR -->
-              <div class="user-avatar small no-outline">
-                <!-- USER AVATAR CONTENT -->
-                <div class="user-avatar-content">
-                  <!-- HEXAGON -->
-                  <div class="hexagon-image-30-32" data-src="/img/avatar/61.jpg"></div><!-- 유저 이미지 뿌리기-->
-                  <!-- /HEXAGON -->
-                </div>
-                <!-- /USER AVATAR CONTENT -->
+          <div class="user-status" id="dropDownBar">
             
-                <!-- USER AVATAR PROGRESS -->
-                <div class="user-avatar-progress">
-                  <!-- HEXAGON -->
-                  <div class="hexagon-progress-40-44"></div>
-                  <!-- /HEXAGON -->
-                </div>
-                <!-- /USER AVATAR PROGRESS -->
-            
-                <!-- USER AVATAR PROGRESS BORDER -->
-                <div class="user-avatar-progress-border">
-                  <!-- HEXAGON -->
-                  <div class="hexagon-border-40-44"></div>
-                  <!-- /HEXAGON -->
-                </div>
-                <!-- /USER AVATAR PROGRESS BORDER -->
-
-              </div>
-              <!-- /USER AVATAR -->
-            </a>
-            <!-- /USER STATUS AVATAR -->
-
           </div>
           <!-- /USER STATUS -->
         </div>
@@ -429,10 +362,10 @@
         <p class="dropdown-navigation-category">내 정보</p>
         <!-- /DROPDOWN NAVIGATION CATEGORY -->
         <!-- DROPDOWN NAVIGATION LINK -->
-        <a class="dropdown-navigation-link" href="hub-account-info.html">프로필</a>
+        <a class="dropdown-navigation-link" href="/profile/info">프로필</a>
         <!-- /DROPDOWN NAVIGATION LINK -->
         <!-- DROPDOWN NAVIGATION LINK -->
-        <a class="dropdown-navigation-link" href="hub-account-info.html">게시물</a>
+        <a class="dropdown-navigation-link" href="/newsfeed/mylist">뉴스피드</a>
         <!-- /DROPDOWN NAVIGATION LINK -->
     
         <!-- DROPDOWN NAVIGATION CATEGORY -->
@@ -440,11 +373,7 @@
         <!-- /DROPDOWN NAVIGATION CATEGORY -->
     
         <!-- DROPDOWN NAVIGATION LINK -->
-        <a class="dropdown-navigation-link" href="hub-account-info.html">계정 정보</a>
-        <!-- /DROPDOWN NAVIGATION LINK -->
-    
-        <!-- DROPDOWN NAVIGATION LINK -->
-        <a class="dropdown-navigation-link" href="hub-account-password.html">비밀번호 변경</a>
+        <a class="dropdown-navigation-link" href="/account/password">비밀번호 변경</a>
         <!-- /DROPDOWN NAVIGATION LINK -->
     
         <!-- DROPDOWN NAVIGATION CATEGORY -->
@@ -475,5 +404,6 @@
 <!-- GH script-->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/javascript/header.js"></script>
 <script src="/javascript/logout.js"></script>
 <script src="/javascript/restoreAccessToken.js"></script>

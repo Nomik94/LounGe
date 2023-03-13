@@ -18,7 +18,7 @@ const mkdir = (directory:string) => {
   } 
 }
 
-mkdir('newsfeedImage')
+mkdir('newsfeedImages')
 
 export const newsfeedImageFactory = (): MulterOptions => {
   return {
@@ -26,7 +26,7 @@ export const newsfeedImageFactory = (): MulterOptions => {
       // destination 경로라는 뜻
       destination(req,file,done) {
         // 만약 뉴스피드 이미지란 폴더가 존재하지 않을 경우 해당 이름으로 폴더 생성
-        const newsfeedImagePath = 'newsfeedImage'
+        const newsfeedImagePath = 'newsfeedImages'
         // if(!newsfeedImagePath) {
         //   mkdirSync(newsfeedImagePath)
         // } 

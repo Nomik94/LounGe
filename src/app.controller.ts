@@ -73,4 +73,9 @@ export class AppController {
     }
     return await this.appService.groupInfo(groupId);
   }
+
+  @Get('/newsfeed/mylist')
+  @Render('newsfeed-mylist')
+  mylist(){}
+
 }

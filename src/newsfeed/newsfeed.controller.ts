@@ -17,8 +17,7 @@ export class NewsfeedController {
 // 뉴스피드 작성
   @Post('/newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
-
+  @UseInterceptors(FilesInterceptor('newsfeedImages', 5)) 
   async postnewsfeed(
     @Param('groupId') groupId:number ,
     @GetUser() user,
@@ -26,9 +25,9 @@ export class NewsfeedController {
     @Body() data: newsfeedCheckDto
     ) {
       const userId = user.id
-      console.log(userId);
-      console.log(groupId);
-      
+      console.log("정민님 확인 데이타",data);
+      console.log("정민님 확인 파일",file);
+
     await this.newsfeedService.postnewsfeed(file,data,userId,groupId);
   }
 
@@ -57,7 +56,7 @@ export class NewsfeedController {
       await this.newsfeedService.modinewsfeed(file,newsfeedid,data,userId)
   }
 
-  // 태그로 뉴스피드 검색
+  // 태그로 내가 소속된 모든 뉴스피드 검색
   @Get('tag/newsfeed')
   async serchtagnewsfeed(
     @Query() data
@@ -72,8 +71,19 @@ export class NewsfeedController {
     @Query() data,
     @Param('groupId') groupId:number
   ){
-
     return await this.newsfeedService.serchtagnewsfeedgroup(data,groupId)
+  }
+
+  // 태그로 내가 쓴 뉴스피드 검색
+  @Get('tagmylist')
+  @UseGuards(JwtAuthGuard)
+  async serchtagmynewsfeed(
+    @Query('tag') data:string,
+    @GetUser() user,
+  ) {
+    const userId = user.id
+    
+    return await this.newsfeedService.serchtagmynewsfeed(data,userId)
   }
 
   // 뉴스피드 읽기 (특정 그룹에 소속된 모든 뉴스피드)

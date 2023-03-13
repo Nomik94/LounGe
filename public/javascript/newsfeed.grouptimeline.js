@@ -5,6 +5,19 @@ $(document).ready(function(){
   readnewsfeedgrouptimeline(groupId)
 });
 
+// 유저 쿠키 가져오기
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      '(?:^|; )' +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+        '=([^;]*)',
+    ),
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+// 특정 그룹의 뉴스피드 가져오기
 function readnewsfeedgrouptimeline(id) {
   axios({
     method: 'get',
@@ -25,6 +38,7 @@ function readnewsfeedgrouptimeline(id) {
   })
 }
 
+// 뉴스피드 불러오기
 function newsfeedlist(data) {
 
   data.reverse().forEach((data) => {
@@ -145,10 +159,12 @@ function newsfeedlist(data) {
   $('#ddd').append(asd);
 }
 
+// 뉴스피드 목록 비우기
 function clearnewsfeed(){
   $('#newsfeedbox').empty();
 }
 
+// 특정 그룹에서 뉴스피드 태그로 검색하기
 function serchtag(tag) {
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
@@ -162,7 +178,6 @@ function serchtag(tag) {
       },
     })
     .then(async (res) => {
-      // console.log(res.data);
       clearnewsfeed();
       newsfeedlist(res.data);
     })
@@ -177,6 +192,7 @@ function serchtag(tag) {
 
 }
 
+// 뉴스피드 삭제하기
 async function deletenewsfeed(newsfeedId) {
   await Swal.fire({
     title: '해당 뉴스피드를 지울까요?',
@@ -189,13 +205,13 @@ async function deletenewsfeed(newsfeedId) {
     cancelButtonText: '취소'
 }).then((result) => {
     if (result.isConfirmed) {
-      const accessToken = document.cookie.split(';').filter((token)=> token.includes('accessToken'))[0].split('=')[1]
+      
       axios({
         method: 'Delete',
         url: `/api/newsfeed/newsfeed/${newsfeedId}`,
         headers: {
-          Authorization: `${accessToken}` // 엑세스 토큰
-        }
+          Authorization: `${getCookie('accessToken')}`,
+        },
       })
       .then(async (res) => {
         await Swal.fire({
@@ -230,4 +246,112 @@ async function deletenewsfeed(newsfeedId) {
       })
     }
   })
+}
+
+let selectedTags = [];
+let selectedImages =[];
+
+// 뉴스피드 작성하기
+async function postnewsfeed() {
+  const content = document.getElementById("quick-post-text").value;
+  const urlParams = new URLSearchParams(window.location.search);
+  const groupId = urlParams.get('groupId');
+  const formData = new FormData();
+  // formData.append('newsfeedImages',selectedImages)
+  formData.append('newsfeedTags', selectedTags)
+  formData.append('content', content)
+    for(let i = 0; i < selectedImages.length; i++) {
+      formData.append('newsfeedImages',selectedImages[i])
+    }
+  axios({
+    url: `/api/newsfeed/newsfeed/${groupId}`,
+    method: 'post',
+    headers : {
+      Authorization: `${getCookie('accessToken')}`,
+    },
+    data: formData
+  })
+  .then((res) => {
+    Swal.fire({
+      icon: 'success',
+      title: '뉴스피드 작성 완료!',
+      text: '잠시 후 새로고침 됩니다.',
+    });
+    window.location.reload()
+  })
+  .catch((err) => {
+    console.log(err);
+    if(err.response.data.statusCode === 400) {
+      Swal.fire({
+        icon: 'error',
+        title: '사진은 최대 5장까지만 등록 가능합니다.',
+        text: "죄송합니다.",
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: '알수없는 이유로 실행되지 않았습니다.',
+        text: "관리자에게 문의해 주세요.",
+      })
+    }
+  })
+}
+
+async function getTags() {
+  const tags = await Swal.fire({
+    title: '태그는 최대 3개까지 가능합니다.',
+    html:
+      '<input id="swal-input1" class="swal2-input">' +
+      '<input id="swal-input2" class="swal2-input">' +
+      '<input id="swal-input3" class="swal2-input">' ,
+    focusConfirm: false,
+    preConfirm: () => {
+      const values = [
+        document.getElementById('swal-input1').value,
+        document.getElementById('swal-input2').value,
+        document.getElementById('swal-input3').value
+      ]
+      return values.filter(value => value !== '');
+    }
+  });
+   let tagHtml = `
+   <div class="tag-list">
+    ${tags.value.map(tag => `
+    <a class="tag-item secondary">${tag}</a>
+   `).join("")}
+   </div>
+   `
+   selectedTags = tags.value;
+   $('#tag_box').empty();
+   $('#tag_box').append(tagHtml)
+}
+
+async function getImages() {
+  const imageSelcet = document.createElement("input");
+  imageSelcet.type = "file";
+  imageSelcet.multiple = true;
+  imageSelcet.accept = "image/*";
+  imageSelcet.onchange = function(event) {
+    
+  const files = event.target.files;
+  selectedImages = files
+  console.log("selectedImages!!",selectedImages);
+
+  if(files.length === 1){
+    let imageHtml = `
+    ${files[0].name}
+    `
+    $('#image_box').empty();
+    $('#image_box').append(imageHtml)
+  } else if(files.length !== 1) {
+    let imageHtml = `
+    ${files[0].name} 외 ${files.length - 1}장
+    `
+    $('#image_box').empty();
+    $('#image_box').append(imageHtml)
+  }
+  };
+  imageSelcet.click();
+
+
 }

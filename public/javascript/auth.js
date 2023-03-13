@@ -31,29 +31,35 @@ function refreshTokenExpires() {
   return refreshExpires;
 }
 
-function login() {
+async function login() {
   const email = $('#login-username').val();
   const password = $('#login-password').val();
 
   if (!email || !password) {
-    alert('이메일 또는 비밀번호가 입력되지 않았습니다.');
-  }
-  axios
-    .post('/api/auth/login', {
-      email: email,
-      password: password,
-    })
-    .then((res) => {
-      const accessExpires = accessTokenExpires();
-      const refreshExpires = refreshTokenExpires();
-      document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${accessExpires}`;
-      document.cookie = `refreshToken=Bearer ${res.data.refreshToken}; path=/; expires=${refreshExpires}`;
-      window.location.href = 'http://localhost:3000/newsfeed';
-    })
-    .catch(async (error) => {
-      console.log(error);
-      alert(error.response.data.message);
+    await Swal.fire({
+      icon: 'error',
+      text: `이메일 또는 비밀번호가 입력되지 않았습니다.`,
     });
+  } else {
+    axios
+      .post('/api/auth/login', {
+        email: email,
+        password: password,
+      })
+      .then((res) => {
+        const accessExpires = accessTokenExpires();
+        const refreshExpires = refreshTokenExpires();
+        document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${accessExpires}`;
+        document.cookie = `refreshToken=Bearer ${res.data.refreshToken}; path=/; expires=${refreshExpires}`;
+        window.location.href = 'http://localhost:3000/newsfeed';
+      })
+      .catch(async (error) => {
+        Swal.fire({
+          icon: 'error',
+          text: `${error.response.data.message}`,
+        });
+      });
+  }
 }
 
 function kakaoLogin() {
@@ -76,46 +82,61 @@ function kakaoLogin() {
 function emailVerify() {
   const email = $('#register-email').val();
   if (!email) {
-    alert('이메일을 입력해주세요.');
-  }
-
-  axios
-    .post('/api/emailVerify', {
-      email: email,
-    })
-    .then((res) => {
-      alert('인증번호가 발송되었습니다.');
-    })
-    .catch(async (error) => {
-      if (error.response.data.statusCode === 500) {
-        alert('이메일 형식이 아닙니다.');
-      } else {
-        alert(error.response.data.message);
-      }
+    Swal.fire({
+      icon: 'false',
+      text: `이메일을 입력해주세요.`,
     });
+  } else {
+    axios
+      .post('/api/emailVerify', {
+        email: email,
+      })
+      .then((res) => {
+        Swal.fire({
+          icon: 'success',
+          text: `인증번호가 발송되었습니다.`,
+        });
+      })
+      .catch(async (error) => {
+        Swal.fire({
+          icon: 'error',
+          text: `${error.response.data.message}`,
+        });
+      });
+  }
 }
 
 function emailCheck() {
   const email = $('#register-email').val();
   const checkNumber = $('#certification_number').val();
   if (!checkNumber) {
-    alert('번호를 입력해주세요.');
-  }
-  axios
-    .post('/api/emailVerify/check', {
-      email: email,
-      checkNumber: checkNumber,
-    })
-    .then((res) => {
-      document.querySelector('.checkNumber').id = 'check';
-      alert('인증이 완료되었습니다.');
-    })
-    .catch(async (error) => {
-      alert(error.response.data.message);
+    Swal.fire({
+      icon: 'false',
+      text: `번호를 입력해주세요.`,
     });
+  } else {
+    axios
+      .post('/api/emailVerify/check', {
+        email: email,
+        checkNumber: checkNumber,
+      })
+      .then((res) => {
+        document.querySelector('.checkNumber').id = 'check';
+        Swal.fire({
+          icon: 'success',
+          text: `인증이 완료되었습니다.`,
+        });
+      })
+      .catch(async (error) => {
+        Swal.fire({
+          icon: 'error',
+          text: `${error.response.data.message}`,
+        });
+      });
+  }
 }
 
-function register() {
+async function register() {
   const email = $('#register-email').val();
   const username = $('#register-username').val();
   const password = $('#register-password').val();
@@ -129,11 +150,41 @@ function register() {
   formData.append('username', username);
 
   if (!check) {
-    alert('이메일 인증을 해주세요.');
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-center',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+    await Toast.fire({
+      icon: 'error',
+      text: '이메일 인증이 필요합니다.',
+    });
   } else if (!email || !username || !password || !passwordRepeat) {
-    alert('모든 정보를 입력해주세요.');
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-center',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+    await Toast.fire({
+      icon: 'error',
+      text: '모든 정보를 입력해주세요.',
+    });
   } else if (password !== passwordRepeat) {
-    alert('비밀번호를 확인해주세요.');
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-center',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+    await Toast.fire({
+      icon: 'error',
+      text: '비밀번호를 확인해주세요.',
+    });
   } else {
     axios({
       method: 'post',
@@ -141,11 +192,17 @@ function register() {
       data: formData,
     })
       .then((res) => {
-        alert('회원가입이 완료되었습니다.');
+        Swal.fire({
+          icon: 'success',
+          text: '회원가입이 완료되었습니다.',
+        });
         window.location.reload();
       })
       .catch(async (error) => {
-        alert(error.response.data.message);
+        Swal.fire({
+          icon: 'error',
+          text: `${error.response.data.message}`,
+        });
       });
   }
 }

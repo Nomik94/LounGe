@@ -46,10 +46,11 @@ export class NewsfeedService {
         private readonly groupRepository: Repository<Group>,
     ) {}
 
-    async postnewsfeed(file,data: newsfeedCheckDto,userId:number,groupId:number): Promise<void> {
+    async postnewsfeed(file,data,userId:number,groupId:number): Promise<void> {
 
         const content = data.content;
-        const tag = data.tag;
+        const tag = data.newsfeedTags.split(',')
+
         const checkJoinGroup = await this.userGroupRepository.find({
             where: {userId: userId, groupId:groupId}
         })
@@ -104,7 +105,6 @@ export class NewsfeedService {
             newsFeedId: newsfeedId.id,
             groupId: groupId
         })
-        
         
         return
         }
@@ -307,13 +307,13 @@ export class NewsfeedService {
                         userEmail: feed.user.email,
                         tagsName: feed.newsFeedTags.map(tag => tag.tag.tagName),
                         newsfeedImage : feed.newsImages.map(image => image.image),
-                        groupid: feed.groupNewsFeeds.map(group => group.group.id),
-                        groupname: feed.groupNewsFeeds.map(group => group.group.groupName)
+                        groupId: feed.groupNewsFeeds.map(group => group.group.id),
+                        groupName: feed.groupNewsFeeds.map(group => group.group.groupName)
                     }
                     result.push(obj)
                 }
             }
-            const filteredResult = result.filter(obj => obj.groupid.includes(groupId));
+            const filteredResult = result.filter(obj => obj.groupId.includes(groupId));
     
             return filteredResult
 
@@ -321,6 +321,64 @@ export class NewsfeedService {
             console.log("알 수 없는 에러가 발생했습니다.", err);
             throw new Error(err)
         }
+    }
+
+    async serchtagmynewsfeed(data,userId) {
+        
+        try {
+            const tag = data
+            
+            const serchtag = await this.tagRepository.find({
+                where: { tagName: Like(`%${tag}%`) },
+                select: ['id']
+            })
+            
+            const wherenewsfeedid = serchtag.map((tag) => ({ tagId : tag.id }))
+            
+            const newsfeedTag = await this.newsfeedTagRepository.find({
+                where: wherenewsfeedid,
+                select: ['newsFeedId']
+            })   
+            
+            const newsfeedserchid = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
+            
+            const numberingid = newsfeedserchid.map(id => ({id}))
+            
+            const findnewsfeed = await this.newsfeedRepository.find({
+                relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
+                where: numberingid
+            })
+            
+            const result = [];
+            for (const id of newsfeedserchid) {
+                const feed = findnewsfeed.find(item => item.id ===id);
+                if (feed) {
+                    const obj = {
+                        id: feed.id,
+                        content: feed.content,
+                        createAt: feed.createdAt,
+                        updateAt: feed.updatedAt,
+                        userId: feed.user.id,
+                        userName: feed.user.username,
+                        userImage: feed.user.image,
+                        userEmail: feed.user.email,
+                        tagsName: feed.newsFeedTags.map(tag => tag.tag.tagName),
+                        newsfeedImage : feed.newsImages.map(image => image.image),
+                        groupId: feed.groupNewsFeeds.map(group => group.group.id),
+                        groupName: feed.groupNewsFeeds.map(group => group.group.groupName)
+                    }
+                    result.push(obj)
+                }
+            }
+            const filteredResult = result.filter(obj => obj.userId === userId);
+
+            return filteredResult
+
+        } catch(err){
+            console.log("알 수 없는 에러가 발생했습니다.", err);
+            throw new Error(err)
+        }
+
     }
 
     async readnewsfeedgroup(groupId:number) {
@@ -365,7 +423,7 @@ export class NewsfeedService {
     async readnewsfeedmy(userId:number) {
 
         const newsfeeds = await this.newsfeedRepository.find({
-            relations: ['newsFeedTags.tag','newsImages','user'],
+            relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds','groupNewsFeeds.group'],
             select: ['id','content','createdAt','updatedAt'],
             where:{'user' : {id:userId},'deletedAt': null}
             });
@@ -376,6 +434,8 @@ export class NewsfeedService {
                 const userEmail = feed.user.email;
                 const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
                 const newsfeedImage = feed.newsImages.map(image => image.image);
+                const groupName = feed.groupNewsFeeds.map(group => group.group.groupName)
+                const groupId = feed.groupNewsFeeds.map(group => group.groupId)
 
                 return {
                     id: feed.id,
@@ -386,7 +446,9 @@ export class NewsfeedService {
                     userEmail: userEmail,
                     userImage: userImage,
                     tagsName: tagsName,
-                    newsfeedImage: newsfeedImage
+                    newsfeedImage: newsfeedImage,
+                    groupName: groupName,
+                    groupId: groupId
                 }
             })
 
@@ -444,7 +506,5 @@ export class NewsfeedService {
           
         
     }
-    
-
 }
 
