@@ -2,6 +2,8 @@
   <img src="https://capsule-render.vercel.app/api?type=transparent&color=auto&height=200&section=header&text=LounGe&fontSize=90" />
 </div>
 
+---
+
 <div align='center'><h2>소모임 커뮤니티 with 캘린더</h2>
 </div>
 <div align='center'>같은 취미를 가진 사람을 찾고 싶으신가요?<br>
