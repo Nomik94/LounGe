@@ -28,6 +28,42 @@ export class CalendarService {
     @InjectRepository(UserGroup)
     private readonly userGroupRepository: Repository<UserGroup>,
   ) {}
+  async getAllEvent(userId) {
+    const myGroupList = await this.userGroupRepository.find({
+      where : { userId , role : Not("가입대기")},
+      select : ['groupId','userId']
+    })
+    const myGroupIds = myGroupList.map((ids)=> ({group : {id : ids.groupId}}))
+    const groupEvents = await this.groupEventRepository.find({
+      where : myGroupIds
+    })
+    const myUserEvents = await this.userEventRepository.find({
+      where : {user : {id : userId}}
+    })
+    const mapGroupEvents = groupEvents.map((event)=> ({
+      id : 'groupId'+event.id,
+      eventName: event.eventName,
+      eventContent: event.eventContent,
+      start: event.start,
+      end: event.end,
+      lat: event.lat,
+      lng: event.lng,
+      location: event.location
+    }))
+    const mapUserEvents = myUserEvents.map((event)=>({
+      id : 'userId'+event.id,
+      eventName: event.eventName,
+      eventContent: event.eventContent,
+      start: event.start,
+      end: event.end,
+      lat: event.lat,
+      lng: event.lng,
+      location: event.location
+    }))
+
+    const joinEvents = mapGroupEvents.concat(mapUserEvents)
+    return joinEvents
+  }
 
   async getUserEventById(eventId: number) {
     return this.userEventRepository.findOne({

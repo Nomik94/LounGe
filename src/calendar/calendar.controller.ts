@@ -19,6 +19,12 @@ import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 @Controller('/api/calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
+  @Get('/events')
+  @UseGuards(JwtAuthGuard)
+  async getAllEvent(@GetUser() user) {
+    const userId = user.id
+    return await this.calendarService.getAllEvent(userId)
+  }
 
   @Get('/uevents/:id')
   @UseGuards(JwtAuthGuard)
