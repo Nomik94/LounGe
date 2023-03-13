@@ -1,10 +1,12 @@
+/*---------------------------
+    USER AVATAR HEXAGONS
+---------------------------*/
 app.plugins.createHexagon({
   container: '.hexagon-148-164',
   width: 148,
   height: 164,
   roundedCorners: true,
-  fill: true,
-  lineColor: '#1d2333'
+  fill: true
 });
 
 app.plugins.createHexagon({
@@ -14,7 +16,7 @@ app.plugins.createHexagon({
   lineWidth: 8,
   roundedCorners: true,
   gradient: {
-    colors: ['#d9ff65', '#40d04f']
+    colors: ['#41efff', '#615dfa']
   },
   scale: {
     start: 0,
@@ -29,7 +31,7 @@ app.plugins.createHexagon({
   height: 136,
   lineWidth: 8,
   roundedCorners: true,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createHexagon({
@@ -45,8 +47,7 @@ app.plugins.createHexagon({
   width: 120,
   height: 132,
   roundedCorners: true,
-  fill: true,
-  lineColor: '#1d2333'
+  fill: true
 });
 
 app.plugins.createHexagon({
@@ -56,7 +57,7 @@ app.plugins.createHexagon({
   lineWidth: 6,
   roundedCorners: true,
   gradient: {
-    colors: ['#d9ff65', '#40d04f']
+    colors: ['#41efff', '#615dfa']
   },
   scale: {
     start: 0,
@@ -71,7 +72,7 @@ app.plugins.createHexagon({
   height: 110,
   lineWidth: 6,
   roundedCorners: true,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createHexagon({
@@ -88,8 +89,7 @@ app.plugins.createHexagon({
   width: 100,
   height: 110,
   roundedCorners: true,
-  fill: true,
-  lineColor: '#1d2333'
+  fill: true
 });
 
 app.plugins.createHexagon({
@@ -100,7 +100,7 @@ app.plugins.createHexagon({
   roundedCorners: true,
   roundedCornerRadius: 3,
   gradient: {
-    colors: ['#d9ff65', '#40d04f']
+    colors: ['#41efff', '#615dfa']
   },
   scale: {
     start: 0,
@@ -116,7 +116,7 @@ app.plugins.createHexagon({
   lineWidth: 5,
   roundedCorners: true,
   roundedCornerRadius: 3,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createHexagon({
@@ -134,8 +134,7 @@ app.plugins.createHexagon({
   height: 56,
   roundedCorners: true,
   roundedCornerRadius: 2,
-  fill: true,
-  lineColor: '#1d2333'
+  fill: true
 });
 
 app.plugins.createHexagon({
@@ -146,7 +145,7 @@ app.plugins.createHexagon({
   roundedCorners: true,
   roundedCornerRadius: 1,
   gradient: {
-    colors: ['#d9ff65', '#40d04f']
+    colors: ['#41efff', '#615dfa']
   },
   scale: {
     start: 0,
@@ -162,7 +161,7 @@ app.plugins.createHexagon({
   lineWidth: 3,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createHexagon({
@@ -180,8 +179,7 @@ app.plugins.createHexagon({
   height: 44,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  fill: true,
-  lineColor: '#1d2333'
+  fill: true
 });
 
 app.plugins.createHexagon({
@@ -190,7 +188,7 @@ app.plugins.createHexagon({
   height: 34,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  lineColor: '#7750f8',
+  lineColor: '#45437f',
   fill: true
 });
 
@@ -200,7 +198,7 @@ app.plugins.createHexagon({
   height: 36,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  lineColor: '#1d2333',
+  lineColor: '#fff',
   fill: true
 });
 
@@ -210,7 +208,7 @@ app.plugins.createHexagon({
   height: 28,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  lineColor: '#7750f8',
+  lineColor: '#45437f',
   fill: true
 });
 
@@ -220,7 +218,7 @@ app.plugins.createHexagon({
   height: 32,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  lineColor: '#1d2333',
+  lineColor: '#fff',
   fill: true
 });
 
@@ -230,7 +228,7 @@ app.plugins.createHexagon({
   height: 24,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  lineColor: '#7750f8',
+  lineColor: '#45437f',
   fill: true
 });
 
@@ -240,7 +238,7 @@ app.plugins.createHexagon({
   height: 24,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  lineColor: '#1d2333',
+  lineColor: '#fff',
   fill: true
 });
 
@@ -250,7 +248,7 @@ app.plugins.createHexagon({
   height: 18,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  lineColor: '#7750f8',
+  lineColor: '#45437f',
   fill: true
 });
 
@@ -259,8 +257,7 @@ app.plugins.createHexagon({
   width: 120,
   height: 130,
   roundedCorners: true,
-  fill: true,
-  lineColor: '#1d2333'
+  fill: true
 });
 
 app.plugins.createHexagon({
@@ -268,8 +265,7 @@ app.plugins.createHexagon({
   width: 100,
   height: 108,
   roundedCorners: true,
-  fill: true,
-  lineColor: '#1d2333'
+  fill: true
 });
 
 app.plugins.createHexagon({
@@ -294,8 +290,7 @@ app.plugins.createHexagon({
   height: 36,
   roundedCorners: true,
   roundedCornerRadius: 1,
-  fill: true,
-  lineColor: '#1d2333'
+  fill: true
 });
 
 app.plugins.createHexagon({
@@ -334,10 +329,3 @@ app.plugins.createHexagon({
   lineColor: 'rgba(97, 93, 250, .9)',
   fill: true
 });
-
-app.plugins.createHexagon({
-  container: '.hexagon-image-90-110',
-  width: 90,
-  height: 110,
-  clip: true,
-})

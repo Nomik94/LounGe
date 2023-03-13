@@ -103,14 +103,14 @@ app.plugins.createDropdown({
 app.plugins.createProgressBar({
   container: '#exp-to-next-level',
   height: 6,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#exp-to-next-level',
   height: 6,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -129,14 +129,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-bronze',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-bronze',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -152,14 +152,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-silver',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-silver',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -175,14 +175,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-gold',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-gold',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -198,14 +198,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-platinum',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-platinum',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -221,14 +221,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-traveller',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-traveller',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -245,14 +245,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-caffeinated',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-caffeinated',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -268,14 +268,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-upowered',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-upowered',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -291,14 +291,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-scientist',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-scientist',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -314,14 +314,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-ncreature',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-ncreature',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -337,14 +337,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-warrior',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-warrior',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -360,14 +360,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-liked',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-liked',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -383,14 +383,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-sloved',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-sloved',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -406,14 +406,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-qconq',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-qconq',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -429,14 +429,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-villain',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-villain',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -452,14 +452,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-age',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-age',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -476,14 +476,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-tstruck',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-tstruck',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -499,14 +499,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-uexp',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-uexp',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -522,14 +522,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-globet',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-globet',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -545,14 +545,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-verifieds',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-verifieds',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -568,14 +568,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-gempost',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-gempost',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -591,14 +591,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-peoplesp',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-peoplesp',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -614,14 +614,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-rulerm',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-rulerm',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -637,14 +637,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-marketeer',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-marketeer',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -661,14 +661,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-tycoon',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-tycoon',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -684,14 +684,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-mightiers',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-mightiers',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -707,14 +707,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-phantom',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-phantom',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -730,14 +730,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-forumsf',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-forumsf',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -753,14 +753,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-fcultivator',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-fcultivator',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -776,14 +776,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-splanner',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-splanner',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -799,14 +799,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-collector',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-collector',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -822,14 +822,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-prophoto',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-prophoto',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -845,14 +845,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-rmachine',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-rmachine',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -868,14 +868,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-bronzec',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-bronzec',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -891,14 +891,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-silverc',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-silverc',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -914,14 +914,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-goldc',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-goldc',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -937,14 +937,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#badge-platinumc',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#badge-platinumc',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -963,14 +963,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-preview-nth',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-preview-nth',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -983,14 +983,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-preview-sk',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-preview-sk',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1003,14 +1003,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-preview-bp',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-preview-bp',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1023,14 +1023,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-preview-htp',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-preview-htp',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1043,14 +1043,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-preview-sm',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-preview-sm',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1063,14 +1063,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-sk',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-sk',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1084,14 +1084,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-fu',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-fu',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1105,14 +1105,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-nth',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-nth',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1126,14 +1126,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-sm',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-sm',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1147,14 +1147,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-line-ps',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-line-ps',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1169,14 +1169,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-line-nth',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-line-nth',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1191,14 +1191,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-line-fu',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-line-fu',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1213,14 +1213,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-line-ph',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-line-ph',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1235,14 +1235,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-line-tr',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-line-tr',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1257,14 +1257,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-line-sk',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-line-sk',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1279,14 +1279,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-line-bp',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-line-bp',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1301,14 +1301,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-line-htp',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-line-htp',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1323,14 +1323,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#quest-line-sm',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#quest-line-sm',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1348,14 +1348,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#poll-result-1',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#poll-result-1',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1369,14 +1369,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#poll-result-2',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#poll-result-2',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1390,14 +1390,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#poll-result-3',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#poll-result-3',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1415,14 +1415,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#post-engagement-1',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#post-engagement-1',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1437,14 +1437,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#post-engagement-2',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#post-engagement-2',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1459,14 +1459,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#post-engagement-3',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#post-engagement-3',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1481,14 +1481,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#post-engagement-4',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#post-engagement-4',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1503,14 +1503,14 @@ app.plugins.createProgressBar({
 app.plugins.createProgressBar({
   container: '#post-engagement-5',
   height: 4,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
   container: '#post-engagement-5',
   height: 4,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1529,7 +1529,7 @@ app.plugins.createProgressBar({
   container: '#top-country-1',
   width: 178,
   height: 6,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
@@ -1537,7 +1537,7 @@ app.plugins.createProgressBar({
   width: 178,
   height: 6,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1547,7 +1547,7 @@ app.plugins.createProgressBar({
   split: {
     parts: 30,
     gap: 2,
-    color: '#1d2333'
+    color: '#fff'
   },
   linkText: true,
   linkUnits: false,
@@ -1558,7 +1558,7 @@ app.plugins.createProgressBar({
   container: '#top-country-2',
   width: 178,
   height: 6,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
@@ -1566,7 +1566,7 @@ app.plugins.createProgressBar({
   width: 178,
   height: 6,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1576,7 +1576,7 @@ app.plugins.createProgressBar({
   split: {
     parts: 30,
     gap: 2,
-    color: '#1d2333'
+    color: '#fff'
   },
   linkText: true,
   linkUnits: false,
@@ -1587,7 +1587,7 @@ app.plugins.createProgressBar({
   container: '#top-country-3',
   width: 178,
   height: 6,
-  lineColor: '#293249'
+  lineColor: '#e7e8ee'
 });
 
 app.plugins.createProgressBar({
@@ -1595,7 +1595,7 @@ app.plugins.createProgressBar({
   width: 178,
   height: 6,
   gradient: {
-    colors: ['#40d04f', '#d9ff65']
+    colors: ['#615dfa', '#41efff']
   },
   scale: {
     start: 0,
@@ -1605,7 +1605,7 @@ app.plugins.createProgressBar({
   split: {
     parts: 30,
     gap: 2,
-    color: '#1d2333'
+    color: '#fff'
   },
   linkText: true,
   linkUnits: false,
