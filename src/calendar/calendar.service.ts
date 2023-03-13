@@ -48,7 +48,8 @@ export class CalendarService {
       end: event.end,
       lat: event.lat,
       lng: event.lng,
-      location: event.location
+      location: event.location,
+      color : '#FFC8A2'
     }))
     const mapUserEvents = myUserEvents.map((event)=>({
       id : 'userId'+event.id,
@@ -58,7 +59,8 @@ export class CalendarService {
       end: event.end,
       lat: event.lat,
       lng: event.lng,
-      location: event.location
+      location: event.location,
+      color : '#D4F0F0'
     }))
 
     const joinEvents = mapGroupEvents.concat(mapUserEvents)

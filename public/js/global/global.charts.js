@@ -30,16 +30,16 @@ app.querySelector('#engagements-chart', function (el) {
           datasets: [{
             data: [18.3, 5.2, 1.4, 3.9],
             backgroundColor: [
-              '#7750f8',
-              '#4ff461',
-              '#08b8f1',
-              '#00e2cb'
+              '#615dfa',
+              '#23d2e2',
+              '#4f91ff',
+              '#3ad2fe'
             ],
             hoverBackgroundColor: [
-              '#7750f8',
-              '#4ff461',
-              '#08b8f1',
-              '#00e2cb'
+              '#615dfa',
+              '#23d2e2',
+              '#4f91ff',
+              '#3ad2fe'
             ],
             borderWidth: 0
           }],
@@ -86,12 +86,12 @@ app.querySelector('#ve-monthly-report-ratio-chart', function (el) {
           datasets: [{
             data: [12.5, 87.5],
             backgroundColor: [
-              '#7750f8',
-              '#4ff461'
+              '#615dfa',
+              '#23d2e2'
             ],
             hoverBackgroundColor: [
-              '#7750f8',
-              '#4ff461'
+              '#615dfa',
+              '#23d2e2'
             ],
             borderWidth: 0
           }],
@@ -134,19 +134,19 @@ app.querySelector('#profile-completion-chart', function (el) {
         ctx = canvas.getContext('2d'),
         gradient = ctx.createLinearGradient(0, 70, 140, 70);
 
-  gradient.addColorStop(0, '#d9ff65');
-  gradient.addColorStop(1, '#40d04f');
+  gradient.addColorStop(0, '#41efff');
+  gradient.addColorStop(1, '#615dfa');
 
   const chartData = {
           datasets: [{
             data: [59, 41],
             backgroundColor: [
               gradient,
-              '#293249'
+              '#e8e8ef'
             ],
             hoverBackgroundColor: [
               gradient,
-              '#293249'
+              '#e8e8ef'
             ],
             borderWidth: 0
           }]
@@ -282,18 +282,18 @@ app.querySelector('#ve-monthly-report-chart', function (el) {
               label: 'Engagements',
               data: datasetData1,
               maxBarThickness: 16,
-              backgroundColor: '#7750f8'
+              backgroundColor: '#615dfa'
             },
             {
               label: 'Visits',
               data: datasetData2,
               maxBarThickness: 16,
-              backgroundColor: '#4ff461'
+              backgroundColor: '#3ad2fe'
             },
             {
               data: getCompleterData([datasetData1, datasetData2], 55),
               maxBarThickness: 16,
-              backgroundColor: '#2f3749'
+              backgroundColor: '#e8e8ef'
             }
           ]
         },
@@ -319,7 +319,7 @@ app.querySelector('#ve-monthly-report-chart', function (el) {
                 },
                 ticks: {
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontColor: '#9aa4bf',
+                  fontColor: '#8f91ac',
                   fontSize: 12,
                   fontStyle: 500
                 }
@@ -329,15 +329,15 @@ app.querySelector('#ve-monthly-report-chart', function (el) {
               {
                 stacked: true,
                 gridLines: {
-                  color: "rgba(47, 55, 73, 1)",
-                  zeroLineColor: "rgba(47, 55, 73, 1)",
+                  color: "rgba(234, 234, 245, 1)",
+                  zeroLineColor: "rgba(234, 234, 245, 1)",
                   drawBorder: false,
                   drawTicks: false
                 },
                 ticks: {
                   padding: 20,
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontColor: '#9aa4bf',
+                  fontColor: '#8f91ac',
                   fontSize: 12,
                   fontStyle: 500,
                   max: 55,
@@ -372,17 +372,17 @@ app.querySelector('#rc-yearly-report-chart', function (el) {
               fill: false,
               lineTension: 0,
               borderWidth: 4,
-              borderColor: "#4ff461",
+              borderColor: "#23d2e2",
               borderCapStyle: 'butt',
               borderDash: [],
               borderDashOffset: 0,
               borderJoinStyle: 'bevel',
-              pointBorderColor: "#4ff461",
-              pointBackgroundColor: "#1d2333",
+              pointBorderColor: "#23d2e2",
+              pointBackgroundColor: "#fff",
               pointBorderWidth: 4,
               pointHoverRadius: 5,
-              pointHoverBackgroundColor: "#1d2333",
-              pointHoverBorderColor: "#4ff461",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "#23d2e2",
               pointHoverBorderWidth: 4,
               pointRadius: 5,
               pointHitRadius: 10
@@ -393,17 +393,17 @@ app.querySelector('#rc-yearly-report-chart', function (el) {
               fill: false,
               lineTension: 0,
               borderWidth: 4,
-              borderColor: "#08b8f1",
+              borderColor: "#4f91ff",
               borderCapStyle: 'bevel',
               borderDash: [],
               borderDashOffset: 0,
               borderJoinStyle: 'bevel',
-              pointBorderColor: "#08b8f1",
-              pointBackgroundColor: "#1d2333",
+              pointBorderColor: "#4f91ff",
+              pointBackgroundColor: "#fff",
               pointBorderWidth: 4,
               pointHoverRadius: 5,
-              pointHoverBackgroundColor: "#1d2333",
-              pointHoverBorderColor: "#08b8f1",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "#4f91ff",
               pointHoverBorderWidth: 4,
               pointRadius: 5,
               pointHitRadius: 10
@@ -427,15 +427,15 @@ app.querySelector('#rc-yearly-report-chart', function (el) {
             xAxes: [
               {
                 gridLines: {
-                  color: "rgba(47, 55, 73, 1)",
-                  zeroLineColor: "rgba(47, 55, 73, 1)",
+                  color: "rgba(234, 234, 245, 1)",
+                  zeroLineColor: "rgba(234, 234, 245, 1)",
                   drawBorder: false,
                   drawTicks: false
                 },
                 ticks: {
                   padding: 14,
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontColor: '#9aa4bf',
+                  fontColor: '#8f91ac',
                   fontSize: 12,
                   fontStyle: 500
                 }
@@ -444,14 +444,14 @@ app.querySelector('#rc-yearly-report-chart', function (el) {
             yAxes: [
               {
                 gridLines: {
-                  color: "rgba(47, 55, 73, 1)",
-                  zeroLineColor: "rgba(47, 55, 73, 1)",
+                  color: "rgba(234, 234, 245, 1)",
+                  zeroLineColor: "rgba(234, 234, 245, 1)",
                   drawBorder: false
                 },
                 ticks: {
                   padding: 20,
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontColor: '#9aa4bf',
+                  fontColor: '#8f91ac',
                   fontSize: 12,
                   fontStyle: 500,
                   min: 20,
@@ -485,13 +485,13 @@ app.querySelector('#vs-performance-chart', function (el) {
               label: 'Views',
               data: datasetData1,
               maxBarThickness: 16,
-              backgroundColor: '#7750f8'
+              backgroundColor: '#615dfa'
             },
             {
               label: 'Sales',
               data: datasetData2,
               maxBarThickness: 16,
-              backgroundColor: '#4ff461'
+              backgroundColor: '#3ad2fe'
             }
           ]
         },
@@ -516,7 +516,7 @@ app.querySelector('#vs-performance-chart', function (el) {
                 },
                 ticks: {
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontColor: '#9aa4bf',
+                  fontColor: '#8f91ac',
                   fontSize: 12,
                   fontStyle: 500
                 }
@@ -557,18 +557,18 @@ app.querySelector('#earnings-report-chart', function (el) {
               data: datasetData,
               lineTension: .5,
               borderWidth: 2,
-              backgroundColor: 'rgba(79, 244, 97, .2)',
-              borderColor: "#4ff461",
+              backgroundColor: 'rgba(35, 210, 226, .2)',
+              borderColor: "#23d2e2",
               borderCapStyle: 'butt',
               borderDash: [],
               borderDashOffset: 0,
               borderJoinStyle: 'bevel',
-              pointBorderColor: "#1d2333",
-              pointBackgroundColor: "#4ff461",
+              pointBorderColor: "#fff",
+              pointBackgroundColor: "#23d2e2",
               pointBorderWidth: 2,
               pointHoverRadius: 4,
-              pointHoverBorderColor: "#1d2333",
-              pointHoverBackgroundColor: "#4ff461",
+              pointHoverBorderColor: "#fff",
+              pointHoverBackgroundColor: "#23d2e2",
               pointHoverBorderWidth: 2,
               pointRadius: 4,
               pointHitRadius: 5
@@ -592,15 +592,15 @@ app.querySelector('#earnings-report-chart', function (el) {
             xAxes: [
               {
                 gridLines: {
-                  color: "rgba(47, 55, 73, 1)",
-                  zeroLineColor: "rgba(47, 55, 73, 1)",
+                  color: "rgba(234, 234, 245, 1)",
+                  zeroLineColor: "rgba(234, 234, 245, 1)",
                   drawBorder: false,
                   drawTicks: false
                 },
                 ticks: {
                   padding: 14,
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontColor: '#9aa4bf',
+                  fontColor: '#8f91ac',
                   fontSize: 12,
                   fontStyle: 500
                 }
@@ -609,14 +609,14 @@ app.querySelector('#earnings-report-chart', function (el) {
             yAxes: [
               {
                 gridLines: {
-                  color: "rgba(47, 55, 73, 1)",
-                  zeroLineColor: "rgba(47, 55, 73, 1)",
+                  color: "rgba(234, 234, 245, 1)",
+                  zeroLineColor: "rgba(234, 234, 245, 1)",
                   drawBorder: false
                 },
                 ticks: {
                   padding: 20,
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontColor: '#9aa4bf',
+                  fontColor: '#8f91ac',
                   fontSize: 12,
                   fontStyle: 500,
                   max: 55,
@@ -652,18 +652,18 @@ app.querySelector('#members-report-chart', function (el) {
               data: datasetData,
               lineTension: 0,
               borderWidth: 2,
-              backgroundColor: 'rgba(119, 80, 248, .1)',
-              borderColor: "#7750f8",
+              backgroundColor: 'rgba(97, 93, 250, .1)',
+              borderColor: "#615dfa",
               borderCapStyle: 'butt',
               borderDash: [],
               borderDashOffset: 0,
               borderJoinStyle: 'bevel',
-              pointBorderColor: "#7750f8",
-              pointBackgroundColor: "#1d2333",
+              pointBorderColor: "#615dfa",
+              pointBackgroundColor: "#fff",
               pointBorderWidth: 2,
               pointHoverRadius: 4,
-              pointHoverBorderColor: "#7750f8",
-              pointHoverBackgroundColor: "#1d2333",
+              pointHoverBorderColor: "#615dfa",
+              pointHoverBackgroundColor: "#fff",
               pointHoverBorderWidth: 2,
               pointRadius: 4,
               pointHitRadius: 5
@@ -687,15 +687,15 @@ app.querySelector('#members-report-chart', function (el) {
             xAxes: [
               {
                 gridLines: {
-                  color: "rgba(47, 55, 73, 1)",
-                  zeroLineColor: "rgba(47, 55, 73, 1)",
+                  color: "rgba(234, 234, 245, 1)",
+                  zeroLineColor: "rgba(234, 234, 245, 1)",
                   drawBorder: false,
                   drawTicks: false
                 },
                 ticks: {
                   padding: 14,
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontColor: '#9aa4bf',
+                  fontColor: '#8f91ac',
                   fontSize: 12,
                   fontStyle: 500
                 }
@@ -704,14 +704,14 @@ app.querySelector('#members-report-chart', function (el) {
             yAxes: [
               {
                 gridLines: {
-                  color: "rgba(47, 55, 73, 1)",
-                  zeroLineColor: "rgba(47, 55, 73, 1)",
+                  color: "rgba(234, 234, 245, 1)",
+                  zeroLineColor: "rgba(234, 234, 245, 1)",
                   drawBorder: false
                 },
                 ticks: {
                   padding: 20,
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontColor: '#9aa4bf',
+                  fontColor: '#8f91ac',
                   fontSize: 12,
                   fontStyle: 500,
                   max: 20,
