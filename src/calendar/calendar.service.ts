@@ -84,7 +84,8 @@ export class CalendarService {
     }));
 
     const joinEvents = mapGroupEvents.concat(mapUserEvents);
-    return joinEvents;
+    await joinEvents.sort((a, b) => a.start - b.start);
+    return joinEvents
   }
 
   // 유저 이벤트 생성 API
@@ -146,8 +147,8 @@ export class CalendarService {
   }
 
   // 유저 이벤트 삭제 API
-  async deleteUserEvent(eventId: number, userId: number) {
-    await this.checkUser(eventId, userId);
+  async deleteUserEvent(userId: number, eventId: number) {
+    await this.checkUser(userId, eventId);
     await this.userEventRepository.softDelete(eventId);
   }
 
@@ -172,11 +173,11 @@ export class CalendarService {
   //   this.userEventRepository.update(userEvent.id, data);
   // }
 
-  async checkUser(eventId: number, userId: number) {
+  async checkUser(userId: number, eventId: number) {
     const userEvent = await this.userEventRepository.findOne({
       where: { id: eventId, user: { id: userId } },
     });
-    if (userEvent.user.id !== userId) {
+    if (!userEvent) {
       throw new ForbiddenException(`권한이 존재하지 않습니다.`);
     }
   }

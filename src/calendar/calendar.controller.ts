@@ -19,13 +19,13 @@ import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 @Controller('/api/calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
- 
+
   // 전체 이벤트 리스트 API
   @Get('/events')
   @UseGuards(JwtAuthGuard)
   async getAllEvent(@GetUser() user) {
-    const userId = user.id
-    return await this.calendarService.getAllEvent(userId)
+    const userId = user.id;
+    return await this.calendarService.getAllEvent(userId);
   }
 
   // 유저 이벤트 생성 API
@@ -77,23 +77,24 @@ export class CalendarController {
   async getUserEventDetail(
     @GetUser() user,
     @Param('eventId') eventId: number,
-    @Param('currId') currId : number
+    @Param('currId') currId: number,
   ) {
     const userId: number = user.id;
-    console.log(userId, currId)
+    console.log(userId, currId);
     return await this.calendarService.getUserEventDetail(
       userId,
       currId,
-      eventId
+      eventId,
     );
   }
 
   // 유저 이벤트 삭제 API
   @Delete('/users/events/:eventId')
   @UseGuards(JwtAuthGuard)
-  async deleteUserEvent(@GetUser() user,@Param('id') eventId: number, @Body() data) {
-    const userId = user.id
-    await this.calendarService.deleteUserEvent(userId, eventId)
+  async deleteUserEvent(@GetUser() user, @Param('eventId') eventId: number) {
+    const userId = user.id;
+    console.log(userId, eventId);
+    await this.calendarService.deleteUserEvent(userId, eventId);
   }
 
   // @Put('/uevents/:id')
@@ -104,9 +105,6 @@ export class CalendarController {
   //   const userId = 1;
   //   return this.calendarService.updateUserEvent(userId, eventId, data);
   // }
-
- 
-
 
   // @Delete('/gevents/:id')
   // deleteGroupEvent(@Param('id') eventId: number, @Body() data) {

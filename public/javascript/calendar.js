@@ -115,9 +115,12 @@
 })();
 
 function listRender(data) {
+  console.log(data);
   data.forEach((event) => {
     const getDate = event.start.split(' ')[0].split('-');
-    let temp_html = `      <!-- EVENT PREVIEW -->
+    let temp_html
+    if (event.where === 'group') {
+     temp_html = `      <!-- EVENT PREVIEW -->
     <div class="event-preview">
       <!-- EVENT PREVIEW COVER -->
       <figure class="event-preview-cover liquid">
@@ -174,16 +177,83 @@ function listRender(data) {
             <!-- /DECORATED TEXT CONTENT -->
           </div>
           <!-- /DECORATED TEXT -->
-    
-          <!-- BUTTON -->
-          <p class="button white white-tertiary">일정 삭제</p>
-          <!-- /BUTTON -->
+
         </div>
         <!-- /EVENT PREVIEW INFO BOTTOM -->
       </div>
       <!-- /EVENT PREVIEW INFO -->
     </div>
     <!-- /EVENT PREVIEW -->`;
+    } else {
+      temp_html = `      <!-- EVENT PREVIEW -->
+      <div class="event-preview">
+        <!-- EVENT PREVIEW COVER -->
+        <figure class="event-preview-cover liquid">
+          <img src="/backgroundImage/${event.backgroundImage}" alt="cover-33">
+        </figure>
+        <!-- /EVENT PREVIEW COVER -->
+  
+        <!-- EVENT PREVIEW INFO -->
+        <div class="event-preview-info">
+          <!-- EVENT PREVIEW INFO TOP -->
+          <div class="event-preview-info-top">
+            <!-- DATE STICKER -->
+            <div class="date-sticker">
+              <!-- DATE STICKER DAY -->
+              <p class="date-sticker-day">${getDate[2]}</p>
+              <!-- /DATE STICKER DAY -->
+      
+              <!-- DATE STICKER MONTH -->
+              <p class="date-sticker-month">${getDate[1]}</p>
+              <!-- /DATE STICKER MONTH -->
+            </div>
+            <!-- /DATE STICKER -->
+            
+            <!-- EVENT PREVIEW TITLE -->
+            <p class="event-preview-title popup-event-information-trigger-1" onclick="popupdata('${event.where}','${event.id}','${event.tableId}')">${event.name}</p>
+            <!-- /EVENT PREVIEW TITLE -->
+            <br>
+            <!-- EVENT PREVIEW TITLE -->
+            <p class="event-preview-title popup-event-information-trigger-1" onclick="popupdata('${event.where}','${event.id}','${event.tableId}')">${event.eventName}</p>
+            <!-- /EVENT PREVIEW TITLE -->
+      
+            <!-- EVENT PREVIEW TIMESTAMP -->
+            <p class="event-preview-timestamp"><span class="bold">${event.start} ~ ${event.end}</p>
+            <!-- /EVENT PREVIEW TIMESTAMP -->
+      
+            <!-- EVENT PREVIEW TEXT -->
+            <p class="event-preview-text">${event.eventContent}</p>
+            <!-- /EVENT PREVIEW TEXT -->
+          </div>
+          <!-- /EVENT PREVIEW INFO TOP -->
+  
+          <!-- EVENT PREVIEW INFO BOTTOM -->
+          <div class="event-preview-info-bottom">
+            <!-- DECORATED TEXT -->
+            <div class="decorated-text">
+              <!-- DECORATED TEXT ICON -->
+              <svg class="decorated-text-icon icon-pin">
+                <use xlink:href="#svg-pin"></use>
+              </svg>
+              <!-- /DECORATED TEXT ICON -->
+      
+              <!-- DECORATED TEXT CONTENT -->
+              <p class="decorated-text-content">${event.location}</p>
+              <!-- /DECORATED TEXT CONTENT -->
+            </div>
+            <!-- /DECORATED TEXT -->
+      
+            <!-- BUTTON -->
+            <p class="button white white-tertiary" onclick="deleteUserEvent(${event.id},'${event.eventName}')">일정 삭제</p>
+            <!-- /BUTTON -->
+          </div>
+          <!-- /EVENT PREVIEW INFO BOTTOM -->
+        </div>
+        <!-- /EVENT PREVIEW INFO -->
+      </div>
+      <!-- /EVENT PREVIEW -->`;
+    }
+
     $('#eventList').append(temp_html);
   });
 
@@ -225,11 +295,17 @@ async function popupdata(where, eventId, tableId) {
 
       // 마커가 지도 위에 표시되도록 설정합니다
       marker.setMap(map);
-      document.getElementById('imgurl').style.backgroundImage = `url("/backgroundImage/1.png")`
-      document.getElementById('backImg').src = `/backgroundImage/1.png`
-      if(Object.keys(res.data).includes('group')){
-        document.getElementById('imgurl').style.backgroundImage = `url("/backgroundImage/${res.data.group.backgroundImage}")`
-        document.getElementById('backImg').src = `/backgroundImage/${res.data.group.backgroundImage}`
+      document.getElementById(
+        'imgurl',
+      ).style.backgroundImage = `url("/backgroundImage/1.png")`;
+      document.getElementById('backImg').src = `/backgroundImage/1.png`;
+      if (Object.keys(res.data).includes('group')) {
+        document.getElementById(
+          'imgurl',
+        ).style.backgroundImage = `url("/backgroundImage/${res.data.group.backgroundImage}")`;
+        document.getElementById(
+          'backImg',
+        ).src = `/backgroundImage/${res.data.group.backgroundImage}`;
       }
       document.getElementById('uptitle').innerHTML = res.data.eventName;
       document.getElementById(
