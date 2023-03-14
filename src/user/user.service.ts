@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ModifyUserDTO } from './dto/modifyUser.dto';
 import { ModifyPasswordDTO } from './dto/modifyPassword.dto';
+import { FindPasswordDTO } from './dto/findPassword.dto';
 
 @Injectable()
 export class UserService {
@@ -19,7 +20,10 @@ export class UserService {
 
   // 유저 검증
   async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'username', 'password'],
+    });
 
     const isRegister = await bcrypt.compare(password, user.password);
 
@@ -43,7 +47,10 @@ export class UserService {
 
   // 유저아이디로 유저 조회
   async getById(userId: number): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'username', 'password', 'email'],
+    });
     if (!user) {
       throw new NotFoundException('유저가 존재하지 않습니다.');
     }
@@ -63,14 +70,14 @@ export class UserService {
   }
 
   // 유저네임 수정
-  async ModifyUserName(user, data: ModifyUserDTO): Promise<void> {
+  async ModifyUserName(user: IUser, data: ModifyUserDTO): Promise<void> {
     const userId = user.id;
     await this.getById(userId);
     await this.userRepository.update(userId, { username: data.username });
   }
 
   // 유저이미지 수정
-  async ModifyUserImage(user, file: Express.Multer.File): Promise<void> {
+  async ModifyUserImage(user: IUser, file: Express.Multer.File): Promise<void> {
     const userId = user.id;
     await this.getById(userId);
 
@@ -94,21 +101,8 @@ export class UserService {
     await this.userRepository.update(userId, { password });
   }
 
-  // 패스워드가 같은지 체크
-  async checkPassword(data): Promise<User> {
-    const user = await this.getByEmail(data.email);
-    const password = data.password;
-
-    const isRegister = await bcrypt.compare(password, user.password);
-
-    if (!user || !isRegister) {
-      throw new UnauthorizedException('패스워드가 일치하지 않습니다.');
-    }
-    return user;
-  }
-
   // 패스워드 찾기
-  async findPassword(data): Promise<void> {
+  async findPassword(data: FindPasswordDTO): Promise<void> {
     const user = await this.getByEmail(data.email);
     const pass = data.password;
 

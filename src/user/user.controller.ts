@@ -40,7 +40,7 @@ export class UserController {
   @Put('modify/name')
   @UseGuards(JwtAuthGuard)
   async ModifyUserName(
-    @GetUser() user,
+    @GetUser() user: IUser,
     @Body() data: ModifyUserDTO,
   ): Promise<void> {
     return await this.userService.ModifyUserName(user, data);
@@ -51,7 +51,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('userImage'))
   async ModifyUserImage(
-    @GetUser() user,
+    @GetUser() user: IUser,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
     return await this.userService.ModifyUserImage(user, file);
@@ -61,7 +61,7 @@ export class UserController {
   @Put('modify/password')
   @UseGuards(JwtAuthGuard)
   async ModifyPassword(
-    @GetUser() user,
+    @GetUser() user: IUser,
     @Body() data: ModifyPasswordDTO,
   ): Promise<void> {
     const userId = user.id;
