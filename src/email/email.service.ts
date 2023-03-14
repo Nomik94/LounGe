@@ -63,7 +63,7 @@ export class EmailService {
     } else if (cacheVerifyToken !== verifyToken) {
       throw new UnauthorizedException('인증번호가 일치하지 않습니다.');
     } else {
-      await this.cacheManager.del(email); // 인증이 완료되면 del을 통해 삭제
+      await this.cacheManager.del(email);
     }
   }
 
