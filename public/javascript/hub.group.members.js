@@ -157,7 +157,6 @@ function managementApplyList() {
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
 
-  const accessToken = document.cookie;
   axios({
     url: `/api/groups/${groupId}/applicant/list`,
     method: 'get',
@@ -229,14 +228,14 @@ function managementApplyList() {
               <!-- /ACTION REQUEST -->
 
               <!-- ACTION REQUEST -->
-              <div class="action-request decline with-text">
+              <div class="action-request decline with-text" onclick="rejectGroup(${groupId},${data.userId},'${data.userName}')">
                 <!-- ACTION REQUEST ICON -->
                 <svg class="action-request-icon icon-remove-friend">
                   <use xlink:href="#svg-remove-friend"></use>
                 </svg>
                 <!-- /ACTION REQUEST ICON -->
                 <!-- ACTION REQUEST TEXT -->
-                <span class="action-request-text">거절</span>
+                <span class="action-request-text" >거절</span>
                 <!-- /ACTION REQUEST TEXT -->
               </div>
               <!-- /ACTION REQUEST -->
@@ -539,6 +538,52 @@ async function modifyGroup(groupImg, backImg) {
         });
       });
   }
+}
+
+function rejectGroup(groupId, memberId, userName) {
+  Swal.fire({
+    text: `${userName}님의 가입신청을 거절하시겠습니까?`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '승인',
+    cancelButtonText: '취소',
+    reverseButtons: false, // 버튼 순서 거꾸로
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios({
+        url: `/api/groups/${groupId}/reject/${memberId}`,
+        method: 'delete',
+        headers: {
+          Authorization: `${getCookie('accessToken')}`,
+        },
+      })
+        .then(function (res) {
+          managementApplyList()
+        })
+        .catch(async function (error) {
+          if (error.response.data.statusCode === 401) {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'center-center',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
+            await Toast.fire({
+              icon: 'error',
+              title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+            });
+            window.location.replace('/');
+          }
+          Swal.fire({
+            icon: 'error',
+            text: `${error.response.data.message}`,
+          });
+        });
+    }
+  });
 }
 
 function getCookie(name) {
