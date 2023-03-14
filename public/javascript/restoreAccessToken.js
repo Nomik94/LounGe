@@ -31,7 +31,7 @@ async function restoreAccessToken() {
     const refreshToken = token.replace('Bearer ', '');
 
     axios
-      .post('/api/auth/restoreAccessToken', {
+      .post('/api/auth/restore/accessToken', {
         refreshToken: refreshToken,
       })
       .then((res) => {

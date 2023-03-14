@@ -14,7 +14,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(email: string, password: string) {
-    const user = await this.userService.validateUser({ email, password });
+    const user = await this.userService.validateUser(email, password);
 
     if (!user) {
       throw new UnauthorizedException('이메일 또는 비밀번호가 다릅니다.');
