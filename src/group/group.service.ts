@@ -128,7 +128,6 @@ export class GroupService {
   }
 
   async deletedGroup(userId: number, groupId: number) {
-    
     const deletedGroup = await this.groupRepository.softDelete({
       id: groupId,
       user: { id: userId },
@@ -406,5 +405,16 @@ export class GroupService {
 
     if (LeaderCheckResult.user.id !== userId)
       throw new ForbiddenException('권한이 존재하지 않습니다.');
+  }
+
+  async rejectGroup(userId: number, ids: GroupTransfer) {
+    const groupId = Number(ids.groupId);
+    const memberId = Number(ids.memberId);
+    await this.groupLeaderCheck(userId, groupId);
+    this.userGroupRepository.delete({
+      userId: memberId,
+      groupId,
+      role: '가입대기',
+    });
   }
 }
