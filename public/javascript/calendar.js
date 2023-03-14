@@ -118,9 +118,9 @@ function listRender(data) {
   console.log(data);
   data.forEach((event) => {
     const getDate = event.start.split(' ')[0].split('-');
-    let temp_html
+    let temp_html;
     if (event.where === 'group') {
-     temp_html = `      <!-- EVENT PREVIEW -->
+      temp_html = `      <!-- EVENT PREVIEW -->
     <div class="event-preview">
       <!-- EVENT PREVIEW COVER -->
       <figure class="event-preview-cover liquid">
@@ -285,12 +285,23 @@ async function popupdata(where, eventId, tableId) {
 
       let map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
+      let imageSrc =
+          'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbyHkUu%2Fbtr3HTKknNu%2FOBRWlegU786HzkWsizcWDK%2Fimg.png', // 마커이미지의 주소입니다
+        imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+        imageOption = { offset: new kakao.maps.Point(27, 69) };
+
+      let markerImage = new kakao.maps.MarkerImage(
+          imageSrc,
+          imageSize,
+          imageOption,
+        ),
+        markerPosition = new kakao.maps.LatLng(res.data.lat, res.data.lng);
       // 마커가 표시될 위치입니다
-      let markerPosition = new kakao.maps.LatLng(res.data.lat, res.data.lng);
 
       // 마커를 생성합니다
       let marker = new kakao.maps.Marker({
         position: markerPosition,
+        image: markerImage,
       });
 
       // 마커가 지도 위에 표시되도록 설정합니다
