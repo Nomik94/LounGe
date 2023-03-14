@@ -11,6 +11,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { AuthService } from './auth.service';
 import { AuthDTO, KakaoLoginDTO, LogInBodyDTO } from './dto/auth.dto';
+import { RefreshTokenDTO } from './dto/refreshToken.dto';
 import { JwtRefreshGuard } from './guards/jwt.refresh.guard';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 
@@ -52,7 +53,7 @@ export class AuthController {
   // 엑세스토큰 재발급 API
   @Post('restore/accessToken')
   @UseGuards(JwtRefreshGuard)
-  async restoreAccessToken(@Body() body): Promise<{
+  async restoreAccessToken(@Body() body: RefreshTokenDTO): Promise<{
     accessToken: string;
   }> {
     const refreshToken = body.refreshToken;

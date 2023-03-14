@@ -15,7 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import _ from 'lodash';
 import { UserService } from 'src/user/user.service';
-import { AuthDTO } from './dto/auth.dto';
+import { AuthDTO, KakaoLoginDTO } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -64,7 +64,7 @@ export class AuthService {
   }
 
   // 카카오로그인
-  async kakaoLogin(user): Promise<{
+  async kakaoLogin(user: KakaoLoginDTO): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
