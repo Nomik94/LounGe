@@ -123,7 +123,7 @@ async function newsfeedlist(data) {
               <!-- USER AVATAR PROGRESS -->
               <div class="user-avatar-progress">
                 <!-- HEXAGON -->
-                <div class="hexagon-image-40-44" data-src=/userImage/${
+                <div class="hexagon-image-40-44" data-src="/userImage/${
                   data.userImage
                 }"></div>
                 <!-- /HEXAGON -->
@@ -197,16 +197,6 @@ async function newsfeedlist(data) {
   <script src="/js/utils/liquidify.js"></script>
   `;
   $('#ddd').append(asd);
-
-// const popupImage = document.querySelectorAll('.popup-image');
-
-// popupImage.forEach(image => {
-//   image.addEventListener('cilck',() => {
-//     const src = image.src
-//     const popup = window.open('')
-//     popup.document.write(`<img src="${src}">`)
-//   })
-// })
 }
 
 // 뉴스피드 삭제하기
@@ -277,13 +267,26 @@ async function serchtag(tag) {
       clearnewsfeed();
       newsfeedlist(res.data);
     })
-    .catch((err) => {
-      console.log(err);
-      Swal.fire({
-        icon: 'error',
-        title: '알수없는 이유로 실행되지 않았습니다.',
-        text: '관리자에게 문의해 주세요.',
-      });
+    .catch(async (err) => {
+      if (err.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인 정보가 일치하지 않습니다.',
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '알수없는 이유로 실행되지 않았습니다.',
+          text: '관리자에게 문의해 주세요.',
+        });
+      }
     });
 }
 
@@ -363,7 +366,7 @@ async function modinewsfeed(id){
             title: '사진은 최대 5장까지만 등록 가능합니다.',
             text: "죄송합니다.",
           });
-        } else if (err.response.data.statusCode === 403){
+        } else if (err.response.data.statusCode === 401){
           Swal.fire({
             icon: 'error',
             title: '로그인 정보가 일치하지 않습니다.',
@@ -392,38 +395,3 @@ function popupNewsfeed(src) {
     imageUrl: `/newsfeedImage/${src}`,
   })
 }
-
-
-// const contents = document.querySelector('#newsfeedbox');
-// let paraIndex = 1;
-
-// async function limitscroll() {
-//   for (let i = 0; i < 6; i++) {
-//     const $tr = document.createElement('tr');
-//     $tr.innerHTML = `
-//         <td width='50' align='center'>${paraIndex++}</td>
-//                             <td>a번문항<br>b번문항<br>C번문항</td>
-//                             `;
-//     contents.appendChild($tr);
-//   }
-// }
-
-// function debounce(callback, limit = 500) {
-//   let timeout;
-//   return function (...args) {
-//     clearTimeout(timeout);
-//     timeout = setTimeout(() => {
-//       callback.apply(this, args);
-//     }, limit);
-//   };
-// }
-
-// document.addEventListener(
-//   'scroll',
-//   debounce((e) => {
-//     const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
-//     if (clientHeight + scrollTop >= scrollHeight) {
-//       limitscroll();
-//     }
-//   }, 500),
-// );

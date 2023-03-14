@@ -100,7 +100,7 @@ function newsfeedlist(data) {
               <!-- USER AVATAR PROGRESS -->
               <div class="user-avatar-progress">
                 <!-- HEXAGON -->
-                <div class="hexagon-image-40-44" data-src=/userImage/${
+                <div class="hexagon-image-40-44" data-src="/userImage/${
                   data.userImage
                 }"></div>
                 <!-- /HEXAGON -->
@@ -186,15 +186,27 @@ function serchtag(tag) {
       clearnewsfeed();
       newsfeedlist(res.data);
     })
-    .catch((err) => {
-      console.log(err);
-      Swal.fire({
-        icon: 'error',
-        title: '알수없는 이유로 실행되지 않았습니다.',
-        text: "관리자에게 문의해 주세요.",
-      })
-    })
-
+    .catch(async (err) => {
+      if (err.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인 정보가 일치하지 않습니다.',
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '알수없는 이유로 실행되지 않았습니다.',
+          text: '관리자에게 문의해 주세요.',
+        });
+      }
+    });
 }
 
 // 뉴스피드 삭제하기
@@ -382,27 +394,6 @@ async function getImages() {
 
 // 뉴스피드 수정하기
 async function modinewsfeed(id){
-  // await Swal.mixin({
-  //   input: 'file',
-  //   confirmButtonText: '다음',
-  //   showCancelButton: true,
-  //   progressSteps: ['1', '2']
-  // }).queue([
-  //   {
-  //     title: '이미지 선택',
-  //     text: '업로드할 이미지를 선택해주세요'
-  //   },
-  //   {
-  //     title: '글 내용 입력',
-  //     text: '작성할 글 내용을 입력해주세요'
-  //   }
-  // ]).then((result) => {
-  //   if (result.value) {
-  //     const file = result.value[0];
-  //     const text = result.value[1];
-  //     // 파일 업로드와 글 작성 처리
-  //   }
-  // })
   let popupHtml = '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
   popupHtml += '<h2>뉴스피드 수정하기</h2>';
   popupHtml += '<form>';

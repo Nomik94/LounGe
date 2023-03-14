@@ -123,7 +123,7 @@ async function newsfeedlist(data) {
               <!-- USER AVATAR PROGRESS -->
               <div class="user-avatar-progress">
                 <!-- HEXAGON -->
-                <div class="hexagon-image-40-44" data-src=/userImage/${
+                <div class="hexagon-image-40-44" data-src="/userImage/${
                   data.userImage
                 }"></div>
                 <!-- /HEXAGON -->
@@ -270,7 +270,7 @@ async function serchtag(tag) {
       newsfeedlist(res.data);
     })
     .catch(async (err) => {
-      if (err.response.data.statusCode === 403) {
+      if (err.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
           toast: true,
           position: 'center-center',
@@ -369,7 +369,7 @@ async function modinewsfeed(id){
             title: '사진은 최대 5장까지만 등록 가능합니다.',
             text: "죄송합니다.",
           });
-        } else if (err.response.data.statusCode === 403){
+        } else if (err.response.data.statusCode === 401){
           Swal.fire({
             icon: 'error',
             title: '로그인 정보가 일치하지 않습니다.',
