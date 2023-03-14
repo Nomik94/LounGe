@@ -13,7 +13,7 @@ import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { GroupService } from './group.service';
-import { GroupTransfer } from './interface/group.transfer.interface';
+import { GroupTransfer } from './interface/transfer.group.interface';
 
 @Controller('/api/groups')
 export class GroupController {

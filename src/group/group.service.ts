@@ -11,7 +11,7 @@ import { UserGroup } from 'src/database/entities/user-group.entity';
 import { In, Like, Not, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
-import { GroupTransfer } from './interface/group.transfer.interface';
+import { GroupTransfer } from './interface/transfer.group.interface';
 
 @Injectable()
 export class GroupService {
