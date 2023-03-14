@@ -8,10 +8,10 @@ import {
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { GetUser } from 'src/common/decorator/get-user.decorator';
+import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { AuthService } from './auth.service';
 import { AuthDTO, KakaoLoginDTO, LogInBodyDTO } from './dto/auth.dto';
-import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { JwtRefreshGuard } from './guards/jwt.refresh.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('api/auth')

@@ -472,7 +472,7 @@ function deleteGroup() {
   });
 }
 
-function modifyGroup(groupImg, backImg) {
+async function modifyGroup(groupImg, backImg) {
   let query = window.location.search;
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
@@ -496,42 +496,48 @@ function modifyGroup(groupImg, backImg) {
   formData.append('tag', groupTags);
   formData.append('groupImage', groupImage);
   formData.append('backgroundImage', backgroundImage);
-
-  axios({
-    url: `/api/groups/${groupId}`,
-    method: 'put',
-    headers: {
-      Authorization: `${getCookie('accessToken')}`,
-    },
-    data: formData,
-  })
-    .then(async function (res) {
-      await Swal.fire({
-        icon: 'success',
-        text: `그룹이 수정되었습니다.`,
-      });
-      window.location.reload();
-    })
-    .catch(async function (error) {
-      if (error.response.data.statusCode === 401) {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'center-center',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-        });
-        await Toast.fire({
-          icon: 'error',
-          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
-        });
-        window.location.replace('/');
-      }
-      Swal.fire({
-        icon: 'error',
-        text: `${error.response.data.message}`,
-      });
+  if (!groupName || !groupDescription) {
+    await Swal.fire({
+      icon: 'error',
+      text: `정보를 모두 입력해주세요.`,
     });
+  } else {
+    axios({
+      url: `/api/groups/${groupId}`,
+      method: 'put',
+      headers: {
+        Authorization: `${getCookie('accessToken')}`,
+      },
+      data: formData,
+    })
+      .then(async function (res) {
+        await Swal.fire({
+          icon: 'success',
+          text: `그룹이 수정되었습니다.`,
+        });
+        window.location.reload();
+      })
+      .catch(async function (error) {
+        if (error.response.data.statusCode === 401) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'center-center',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+          await Toast.fire({
+            icon: 'error',
+            title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+          });
+          window.location.replace('/');
+        }
+        Swal.fire({
+          icon: 'error',
+          text: `${error.response.data.message}`,
+        });
+      });
+  }
 }
 
 function rejectGroup(groupId, memberId, userName) {

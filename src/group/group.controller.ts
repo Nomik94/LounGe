@@ -8,8 +8,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common/decorators';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { GetUser } from 'src/common/decorator/get-user.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { GroupService } from './group.service';
@@ -153,7 +153,7 @@ export class GroupController {
 
   @Delete('/:groupId/reject/:memberId')
   @UseGuards(JwtAuthGuard)
-  async rejectGroup(@GetUser() user, @Param() ids : GroupTransfer  ) {
+  async rejectGroup(@GetUser() user, @Param() ids: GroupTransfer) {
     const userId: number = user.id;
     return await this.groupService.rejectGroup(userId, ids);
   }

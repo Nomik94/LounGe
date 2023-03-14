@@ -8,8 +8,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { GetUser } from 'src/common/decorator/get-user.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { User } from 'src/database/entities/user.entity';
 import { FindPasswordDTO } from './dto/findPassword.dto';
 import { UpdatePasswordDTO } from './dto/updatePassword.dto';

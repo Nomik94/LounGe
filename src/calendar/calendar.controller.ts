@@ -11,8 +11,8 @@ import {
 import { CalendarService } from './calendar.service';
 import { GroupEventDto } from './dto/groupEvent.dto';
 import { UserEventDto } from './dto/userEvent.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { GetUser } from 'src/common/decorator/get-user.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
 import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
 
