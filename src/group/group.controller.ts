@@ -150,4 +150,11 @@ export class GroupController {
     const userId: number = user.id;
     return await this.groupService.kickOutGroup(userId, ids);
   }
+
+  @Delete('/:groupId/reject/:memberId')
+  @UseGuards(JwtAuthGuard)
+  async rejectGroup(@GetUser() user, @Param() ids : GroupTransfer  ) {
+    const userId: number = user.id;
+    return await this.groupService.rejectGroup(userId, ids);
+  }
 }
