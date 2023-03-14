@@ -40,9 +40,9 @@ export class GroupController {
   // 그룹 리스트 API
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getAllGroup(@GetUser() user) {
+  async getAllGroupList(@GetUser() user) {
     const userId: number = user.id;
-    return await this.groupService.getAllGroup(userId);
+    return await this.groupService.getAllGroupList(userId);
   }
 
   // 그룹 수정 API
@@ -54,107 +54,107 @@ export class GroupController {
       { name: 'backgroundImage', maxCount: 1 },
     ]),
   )
-  async modifyGruop(
+  async modifyGroup(
     @GetUser() user,
     @Body() data: ModifyGroupDto,
     @UploadedFiles() file,
     @Param('groupId') groupId: number,
   ) {
     const userId: number = user.id;
-    await this.groupService.modifyGruop(data, file, userId, groupId);
+    await this.groupService.modifyGroup(data, file, userId, groupId);
   }
 
   // 그룹 삭제 API
   @Delete('/:groupId')
   @UseGuards(JwtAuthGuard)
-  async deletedGroup(@GetUser() user, @Param('groupId') groupId: number) {
+  async deleteGroup(@GetUser() user, @Param('groupId') groupId: number) {
     const userId: number = user.id;
-    await this.groupService.deletedGroup(userId, groupId);
+    await this.groupService.deleteGroup(userId, groupId);
   }
 
   // 그룹 가입 API
   @Post('/:groupId/join')
   @UseGuards(JwtAuthGuard)
-  async sendGroupJoin(@GetUser() user, @Param('groupId') groupId: number) {
+  async addGroupJoinRequest(@GetUser() user, @Param('groupId') groupId: number) {
     const userId: number = user.id;
-    await this.groupService.sendGroupJoin(userId, groupId);
+    await this.groupService.addGroupJoinRequest(userId, groupId);
   }
 
   // 그룹 가입 신청 수락 API
   @Put('/:groupId/members/:memberId')
   @UseGuards(JwtAuthGuard)
-  async acceptGroupJoin(@GetUser() user, @Param() ids) {
+  async acceptGroupJoinRequest(@GetUser() user, @Param() ids) {
     const userId: number = user.id;
-    await this.groupService.acceptGroupJoin(userId, ids);
+    await this.groupService.acceptGroupJoinRequest(userId, ids);
   }
 
   // 그룹 태그 검색 API
   @Get('/search/:tag')
   @UseGuards(JwtAuthGuard)
-  async findGroupsByTag(@GetUser() user, @Param('tag') tag: string) {
+  async searchGroupByTag(@GetUser() user, @Param('tag') tag: string) {
     console.log(tag);
-    return await this.groupService.findGroupsByTag(tag);
+    return await this.groupService.searchGroupByTag(tag);
   }
 
   // 그룹 탈퇴 API
   @Delete('/:groupId/withdraw')
   @UseGuards(JwtAuthGuard)
-  async withdrawalGroup(@GetUser() user, @Param('groupId') groupId: number) {
+  async leaveGroup(@GetUser() user, @Param('groupId') groupId: number) {
     const userId: number = user.id;
-    await this.groupService.withdrawalGroup(userId, groupId);
+    await this.groupService.leaveGroup(userId, groupId);
   }
 
   // 매니지먼트 그룹 리스트 API
   @Get('/created/list')
   @UseGuards(JwtAuthGuard)
-  async createdGroupList(@GetUser() user) {
+  async getGroupManagementList(@GetUser() user) {
     const userId: number = user.id;
-    return await this.groupService.createdGroupList(userId);
+    return await this.groupService.getGroupManagementList(userId);
   }
 
   // 소속된 그룹 리스트 API
   @Get('/joined/list')
   @UseGuards(JwtAuthGuard)
-  async joinedGroupList(@GetUser() user) {
+  async getMyGroupList(@GetUser() user) {
     const userId: number = user.id;
-    return await this.groupService.joinedGroupList(userId);
+    return await this.groupService.getMyGroupList(userId);
   }
 
   // 그룹 가입 신청자 API
   @Get('/:groupId/applicant/list/')
   @UseGuards(JwtAuthGuard)
-  async groupApplicantList(@GetUser() user, @Param('groupId') groupId: number) {
+  async getGroupJoinRequestList(@GetUser() user, @Param('groupId') groupId: number) {
     const userId: number = user.id;
-    return await this.groupService.groupApplicantList(userId, groupId);
+    return await this.groupService.getGroupJoinRequestList(userId, groupId);
   }
 
   // 그룹 멤버 리스트 API
   @Get(':groupId/members/list/')
   @UseGuards(JwtAuthGuard)
-  async groupMembers(@Param('groupId') groupId: number) {
-    return await this.groupService.groupMembers(groupId);
+  async getGroupMemberList(@Param('groupId') groupId: number) {
+    return await this.groupService.getGroupMemberList(groupId);
   }
 
   // 그룹 양도 API
   @Put('/:groupId/leaders/transfer/:memberId')
   @UseGuards(JwtAuthGuard)
-  async groupTransfer(@GetUser() user, @Param() ids: GroupTransfer) {
+  async transferGroupOwnership(@GetUser() user, @Param() ids: GroupTransfer) {
     const userId: number = user.id;
-    return await this.groupService.groupTransfer(userId, ids);
+    return await this.groupService.transferGroupOwnership(userId, ids);
   }
 
   // 그룹 추방 API
   @Delete('/:groupId/kickout/:memberId')
   @UseGuards(JwtAuthGuard)
-  async kickOutGroup(@GetUser() user, @Param() ids: GroupTransfer) {
+  async removeGroupMember(@GetUser() user, @Param() ids: GroupTransfer) {
     const userId: number = user.id;
-    return await this.groupService.kickOutGroup(userId, ids);
+    return await this.groupService.removeGroupMember(userId, ids);
   }
 
   @Delete('/:groupId/reject/:memberId')
   @UseGuards(JwtAuthGuard)
-  async rejectGroup(@GetUser() user, @Param() ids: GroupTransfer) {
+  async rejectGroupJoinRequest(@GetUser() user, @Param() ids: GroupTransfer) {
     const userId: number = user.id;
-    return await this.groupService.rejectGroup(userId, ids);
+    return await this.groupService.rejectGroupJoinRequest(userId, ids);
   }
 }

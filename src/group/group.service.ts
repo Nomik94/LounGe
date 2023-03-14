@@ -27,7 +27,7 @@ export class GroupService {
   ) {}
 
   async createGroup(file, data: CreateGroupDto, userId: number): Promise<void> {
-    const tagArray = await data.tag.split(',');
+    const tagArray = data.tag.split(',');
     if (tagArray.find((tag) => tag.length >= 11)) {
       throw new BadRequestException(
         '태그의 길이는 11글자를 넘어갈 수 없습니다.',
@@ -47,7 +47,7 @@ export class GroupService {
       backgroundImage = file.backgroundImage[0].filename;
     }
 
-    const group = await this.groupRepository.create({
+    const group = this.groupRepository.create({
       groupName: data.groupName,
       description: data.description,
       groupImage,
@@ -55,9 +55,11 @@ export class GroupService {
       user: { id: userId }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
     });
     await this.groupRepository.save(group);
+
     if (tagArray.length > 0 && tagArray[0] !== '') {
-      await this.tagCheck(tagArray, group.id);
+      await this.checkTag(tagArray, group.id);
     }
+
     await this.userGroupRepository.insert({
       groupId: group.id,
       userId,
@@ -65,13 +67,13 @@ export class GroupService {
     });
   }
 
-  async getAllGroup(userId: number) {
-    const joinGroupIds = await this.userGroupRepository.find({
+  async getAllGroupList(userId: number) {
+    const foundUserWithGroups = await this.userGroupRepository.find({
       where: { userId },
     });
 
-    const groupIds = joinGroupIds.map((data) => data.groupId);
-    const groupList = await this.groupRepository.find({
+    const groupIds = foundUserWithGroups.map((data) => data.groupId);
+    const groupsWithoutTag = await this.groupRepository.find({
       select: [
         'id',
         'groupName',
@@ -83,17 +85,18 @@ export class GroupService {
       where: { id: Not(In(groupIds)) },
     });
 
-    const resultGroupList = this.tagMappingGroups(groupList);
-    return resultGroupList;
+    const mapGroupList = this.mapGroupsWithTags(groupsWithoutTag);
+
+    return mapGroupList;
   }
 
-  async modifyGruop(
+  async modifyGroup(
     data: ModifyGroupDto,
     file,
     userId: number,
     groupId: number,
   ) {
-    const tagArray = await data.tag.split(',');
+    const tagArray = data.tag.split(',');
     if (tagArray.find((tag) => tag.length >= 11)) {
       throw new BadRequestException(
         '태그의 길이는 11글자를 넘어갈 수 없습니다.',
@@ -103,22 +106,27 @@ export class GroupService {
       throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
     }
 
-    const findGroup = await this.groupRepository.findOneBy({
+    const foundGroup = await this.groupRepository.findOneBy({
       id: groupId,
       user: { id: userId },
     });
-    if (!findGroup) {
+
+    if (!foundGroup) {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
     console.log(file);
     if (file.groupImage) {
       data.groupImage = file.groupImage[0].filename;
     }
+
     if (file.backgroundImage) {
       data.backgroundImage = file.backgroundImage[0].filename;
     }
+
     await this.tagGroupRepository.delete({ groupId });
-    this.tagCheck(tagArray, groupId);
+
+    await this.checkTag(tagArray, groupId);
+
     await this.groupRepository.update(groupId, {
       groupName: data.groupName,
       description: data.description,
@@ -127,7 +135,7 @@ export class GroupService {
     });
   }
 
-  async deletedGroup(userId: number, groupId: number) {
+  async deleteGroup(userId: number, groupId: number) {
     const deletedGroup = await this.groupRepository.softDelete({
       id: groupId,
       user: { id: userId },
@@ -141,12 +149,12 @@ export class GroupService {
     });
   }
 
-  async sendGroupJoin(userId: number, groupId: number) {
-    const joinedGroupStatus = await this.userGroupRepository.findOneBy({
+  async addGroupJoinRequest(userId: number, groupId: number) {
+    const foundUserWithGroup = await this.userGroupRepository.findOneBy({
       userId,
       groupId,
     });
-    if (!joinedGroupStatus) {
+    if (!foundUserWithGroup) {
       await this.userGroupRepository.insert({
         userId,
         groupId,
@@ -155,16 +163,17 @@ export class GroupService {
     }
   }
 
-  async acceptGroupJoin(userId: number, ids) {
+  async acceptGroupJoinRequest(userId: number, ids) {
     const groupId = Number(ids.groupId);
     const memberId = Number(ids.memberId);
-    await this.groupLeaderCheck(userId, groupId);
-    const joinGroupMember = await this.userGroupRepository.findOneBy({
+
+    await this.checkGroupLeader(userId, groupId);
+    const foundUserWithGroup = await this.userGroupRepository.findOneBy({
       userId: memberId,
       groupId,
     });
 
-    if (!joinGroupMember || joinGroupMember.role !== '가입대기') {
+    if (!foundUserWithGroup || foundUserWithGroup.role !== '가입대기') {
       throw new BadRequestException('가입대기 상태만 수락할 수 있습니다.');
     }
     await this.userGroupRepository.update(
@@ -173,24 +182,26 @@ export class GroupService {
     );
   }
 
-  async findGroupsByTag(tag) {
-    const findTag = await this.tagRepository.find({
+  async searchGroupByTag(tag) {
+    const tags = await this.tagRepository.find({
       where: { tagName: Like(`%${tag}%`) },
       select: ['id'],
     });
 
-    if (findTag.length === 0) {
+    if (tags.length === 0) {
       throw new BadRequestException('존재하지 않는 태그입니다.');
     }
-    const tagIds = await findTag.map((tag) => ({ tagId: tag.id }));
+    const tagIds = tags.map((tag) => ({ tagId: tag.id }));
 
-    const findGroupIds = await this.tagGroupRepository.find({
+    const foundTagWithGroups = await this.tagGroupRepository.find({
       where: tagIds,
     });
 
-    const groupIds = findGroupIds.map((tagGroup) => ({ id: tagGroup.groupId }));
+    const groupIds = foundTagWithGroups.map((tagGroup) => ({
+      id: tagGroup.groupId,
+    }));
 
-    const findGroups = await this.groupRepository.find({
+    const foundGroups = await this.groupRepository.find({
       select: [
         'id',
         'groupName',
@@ -202,22 +213,22 @@ export class GroupService {
       where: groupIds,
     });
 
-    const resultGroupList = this.tagMappingGroups(findGroups);
+    const mapGroupList = this.mapGroupsWithTags(foundGroups);
 
-    return resultGroupList;
+    return mapGroupList;
   }
 
-  async withdrawalGroup(userId, groupId) {
-    const findUser = await this.userGroupRepository.findOne({
+  async leaveGroup(userId, groupId) {
+    const foundUser = await this.userGroupRepository.findOne({
       where: { userId, groupId },
     });
-    if (!findUser) {
+    if (!foundUser) {
       throw new BadRequestException(
         '존재하지 않는 그룹이거나 가입되어 있지 않습니다.',
       );
     }
 
-    if (findUser.role === '그룹장') {
+    if (foundUser.role === '그룹장') {
       throw new BadRequestException('그룹장을 양도해주세요.');
     }
 
@@ -227,14 +238,14 @@ export class GroupService {
     });
   }
 
-  async createdGroupList(userId) {
+  async getGroupManagementList(userId) {
     return await this.groupRepository.find({
       where: { userGroups: { userId, role: '그룹장' } },
     });
   }
 
-  async joinedGroupList(userId) {
-    const resultList = await this.groupRepository.find({
+  async getMyGroupList(userId) {
+    const myGroupList = await this.groupRepository.find({
       select: [
         'id',
         'groupName',
@@ -247,7 +258,7 @@ export class GroupService {
       where: { userGroups: { userId, role: Not('가입대기') } },
     });
 
-    return await resultList.map((group) => ({
+    return myGroupList.map((group) => ({
       groupId: group.id,
       groupName: group.groupName,
       groupImage: group.groupImage,
@@ -258,15 +269,15 @@ export class GroupService {
     }));
   }
 
-  async groupApplicantList(userId, groupId) {
-    await this.groupLeaderCheck(userId, groupId);
-    const resultList = await this.userGroupRepository.find({
+  async getGroupJoinRequestList(userId, groupId) {
+    await this.checkGroupLeader(userId, groupId);
+    const groupJoinRequestList = await this.userGroupRepository.find({
       where: { groupId, role: '가입대기' },
       select: ['userId', 'groupId'],
       relations: ['user'],
     });
 
-    return await resultList.map((data) => ({
+    return groupJoinRequestList.map((data) => ({
       userId: data.userId,
       groupId: data.groupId,
       userName: data.user.username,
@@ -274,18 +285,20 @@ export class GroupService {
       userImage: data.user.image,
     }));
   }
-  async groupMembers(groupId) {
+
+  async getGroupMemberList(groupId) {
     const group = await this.groupRepository.findOne({
       where: { id: groupId },
       relations: ['tagGroups.tag'],
     });
+
     const tags = group.tagGroups.map((tag) => tag.tag.tagName);
-    const resultList = await this.userGroupRepository.find({
+    const memberList = await this.userGroupRepository.find({
       where: { groupId, role: Not('가입대기') },
       relations: ['user'],
       order: { role: 'ASC' },
     });
-    const mappingList = await resultList.map((data) => ({
+    const mapMemberList = memberList.map((data) => ({
       userId: data.userId,
       groupId: data.groupId,
       userName: data.user.username,
@@ -293,19 +306,19 @@ export class GroupService {
       userImage: data.user.image,
       userRole: data.role,
     }));
-    return { members: mappingList, group, tags };
+    return { members: mapMemberList, group, tags };
   }
 
-  async groupTransfer(userId: number, ids: GroupTransfer) {
+  async transferGroupOwnership(userId: number, ids: GroupTransfer) {
     const groupId = Number(ids.groupId);
     const memberId = Number(ids.memberId);
-    const findUser = await this.userGroupRepository.findOne({
+    const foundUser = await this.userGroupRepository.findOne({
       where: { userId: memberId, groupId, role: '회원' },
     });
-    if (!findUser) {
+    if (!foundUser) {
       throw new BadRequestException('그룹원에게만 양도할 수 있습니다.');
     }
-    await this.groupLeaderCheck(userId, groupId);
+    await this.checkGroupLeader(userId, groupId);
 
     await this.groupRepository.update(groupId, {
       user: { id: memberId },
@@ -320,17 +333,17 @@ export class GroupService {
     );
   }
 
-  async kickOutGroup(userId, ids: GroupTransfer) {
+  async removeGroupMember(userId, ids: GroupTransfer) {
     const groupId = Number(ids.groupId);
     const memberId = Number(ids.memberId);
 
-    await this.groupLeaderCheck(userId, groupId);
+    await this.checkGroupLeader(userId, groupId);
 
-    const findUser = await this.userGroupRepository.findOne({
+    const foundUser = await this.userGroupRepository.findOne({
       where: { userId: memberId, groupId, role: '회원' },
     });
 
-    if (!findUser) {
+    if (!foundUser) {
       throw new BadRequestException('존재하지 않는 회원입니다.');
     }
 
@@ -340,9 +353,9 @@ export class GroupService {
       role: '회원',
     });
   }
-  async tagMappingGroups(groupList) {
-    const modifiedGroupList = groupList.map((group) => {
-      const TagGroups = group.tagGroups.map((tag) => tag.tag.tagName);
+  async mapGroupsWithTags(groupList) {
+    const mapGroupList = groupList.map((group) => {
+      const mapTagGroups = group.tagGroups.map((tag) => tag.tag.tagName);
 
       return {
         id: group.id,
@@ -350,13 +363,13 @@ export class GroupService {
         groupImage: group.groupImage,
         backgroundImage: group.backgroundImage,
         description: group.description,
-        tagGroups: TagGroups,
+        tagGroups: mapTagGroups,
       };
     });
-    return modifiedGroupList;
+    return mapGroupList;
   }
 
-  async tagCheck(tags: string[], groupId: number) {
+  async checkTag(tags: string[], groupId: number) {
     if (!tags.length) {
       return;
     }
@@ -397,20 +410,20 @@ export class GroupService {
     }
   }
 
-  async groupLeaderCheck(userId: number, groupId: number) {
-    const LeaderCheckResult = await this.groupRepository.findOne({
+  async checkGroupLeader(userId: number, groupId: number) {
+    const checkLeader = await this.groupRepository.findOne({
       where: { id: groupId },
       relations: ['user'],
     });
 
-    if (LeaderCheckResult.user.id !== userId)
+    if (checkLeader.user.id !== userId)
       throw new ForbiddenException('권한이 존재하지 않습니다.');
   }
 
-  async rejectGroup(userId: number, ids: GroupTransfer) {
+  async rejectGroupJoinRequest(userId: number, ids: GroupTransfer) {
     const groupId = Number(ids.groupId);
     const memberId = Number(ids.memberId);
-    await this.groupLeaderCheck(userId, groupId);
+    await this.checkGroupLeader(userId, groupId);
     this.userGroupRepository.delete({
       userId: memberId,
       groupId,
