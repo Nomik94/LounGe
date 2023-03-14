@@ -21,7 +21,7 @@ function getCookie(name) {
 
 function accessTokenExpires() {
   const accessDate = new Date();
-  accessDate.setTime(accessDate.getTime() + 1000 * 60 *60);
+  accessDate.setTime(accessDate.getTime() + 1000 * 20);
   const accessExpires = accessDate.toGMTString();
   return accessExpires;
 }
