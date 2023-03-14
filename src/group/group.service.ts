@@ -189,7 +189,7 @@ export class GroupService {
       description: data.description,
       groupImage,
       backgroundImage,
-      user: { id: userId }, // entity에서 user을 객체로 받기 때문에 user : User => user : { id : 1 } 과 같은 형식으로 넣어준다? ?? User 클래스 안에 있는 id를 활용!
+      user: { id: userId },
     });
     await this.groupRepository.save(group);
 
@@ -229,7 +229,6 @@ export class GroupService {
     if (!foundGroup) {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
-    console.log(file);
     if (file.groupImage) {
       data.groupImage = file.groupImage[0].filename;
     }

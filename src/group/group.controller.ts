@@ -31,7 +31,6 @@ export class GroupController {
   @Get('/search/:tag')
   @UseGuards(JwtAuthGuard)
   async searchGroupByTag(@GetUser() user, @Param('tag') tag: string) {
-    console.log(tag);
     return await this.groupService.searchGroupByTag(tag);
   }
 
@@ -145,7 +144,7 @@ export class GroupController {
     const userId: number = user.id;
     return await this.groupService.rejectGroupJoinRequest(userId, ids);
   }
-  
+
   // 그룹 가입 신청 API
   @Post('/:groupId/join')
   @UseGuards(JwtAuthGuard)
