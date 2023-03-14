@@ -28,7 +28,7 @@ async function readnewsfeedmygroup() {
       // clearnewsfeed();
      await newsfeedlist(res.data);
     })
-    .catch(async (err) => {
+    .catch((err) => {
       if (err.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
           toast: true,
@@ -37,7 +37,7 @@ async function readnewsfeedmygroup() {
           timer: 2000,
           timerProgressBar: true,
         });
-        await Toast.fire({
+        Toast.fire({
           icon: 'error',
           title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
         });
