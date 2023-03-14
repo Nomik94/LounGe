@@ -12,14 +12,15 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { User } from 'src/database/entities/user.entity';
 import { FindPasswordDTO } from './dto/findPassword.dto';
-import { UpdatePasswordDTO } from './dto/updatePassword.dto';
-import { UserUpdateDTO } from './dto/updateUser.dto';
+import { ModifyPasswordDTO } from './dto/modifyPassword.dto';
+import { ModifyUserDTO } from './dto/modifyUser.dto';
 import { UserService } from './user.service';
 
 @Controller('api/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // 유저정보 조회 API
   @Get()
   @UseGuards(JwtAuthGuard)
   async getUser(@GetUser() user): Promise<User> {
@@ -27,6 +28,7 @@ export class UserController {
     return await this.userService.getById(userId);
   }
 
+  // 유저이미지 및 유저네임 조회 API
   @Get('select')
   @UseGuards(JwtAuthGuard)
   async getUserImageAndUsername(@GetUser() user) {
@@ -34,39 +36,41 @@ export class UserController {
     return await this.userService.getUserImageAndUsername(userId);
   }
 
-  @Put('username')
+  // 유저네임 수정 API
+  @Put('modify/name')
   @UseGuards(JwtAuthGuard)
-  async updateUserName(
-    @GetUser() user,
-    @Body() data: UserUpdateDTO,
+  async ModifyUserName(
+    @GetUser() user: IUser,
+    @Body() data: ModifyUserDTO,
   ): Promise<void> {
-    return await this.userService.updateUserName({ user, data });
+    return await this.userService.ModifyUserName(user, data);
   }
 
-  @Put('userImage')
+  // 유저이미지 수정 API
+  @Put('modify/image')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('userImage'))
-  async updateUserImage(
-    @GetUser() user,
+  async ModifyUserImage(
+    @GetUser() user: IUser,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
-    return await this.userService.updateUserImage({ user, file });
+    return await this.userService.ModifyUserImage(user, file);
   }
 
-  @Put('password')
+  // 패스워드 수정 API
+  @Put('modify/password')
   @UseGuards(JwtAuthGuard)
-  async updatePassword(
-    @GetUser() user,
-    @Body() data: UpdatePasswordDTO,
+  async ModifyPassword(
+    @GetUser() user: IUser,
+    @Body() data: ModifyPasswordDTO,
   ): Promise<void> {
     const userId = user.id;
-    await this.userService.updatePassword({ userId, data });
+    await this.userService.ModifyPassword(userId, data);
   }
 
-  @Put('findPassword')
+  // 패스워드 찾기 API
+  @Put('find/password')
   async findPassword(@Body() data: FindPasswordDTO): Promise<void> {
-    console.log(data);
-
     return await this.userService.findPassword(data);
   }
 }

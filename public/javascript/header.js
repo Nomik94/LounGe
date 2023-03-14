@@ -20,7 +20,7 @@ function getUserImageAndUsername() {
   const accessToken = getCookie('accessToken');
 
   axios({
-    url: '/api/user',
+    url: '/api/user/select',
     method: 'get',
     headers: {
       Authorization: `${accessToken}`,
