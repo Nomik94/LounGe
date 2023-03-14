@@ -391,7 +391,7 @@ export class NewsfeedService {
         const newsfeedIds = newsfeed.map(Newsfeed => Newsfeed.newsFeedId)
         
         const newsfeeds = await this.newsfeedRepository.find({
-            relations: ['newsFeedTags.tag', 'newsImages', 'user'],
+            relations: ['newsFeedTags.tag', 'newsImages', 'user','groupNewsFeeds.group'],
             select: ['id', 'content', 'createdAt', 'updatedAt'],
             where: { id: In(newsfeedIds), deletedAt: null }
           });
@@ -413,7 +413,9 @@ export class NewsfeedService {
                 userEmail: userEmail,
                 userImage: userImage,
                 tagsName: tagsName,
-                newsfeedImage: newsfeedImage
+                newsfeedImage: newsfeedImage,
+                groupId: feed.groupNewsFeeds.map(group => group.group.id),
+                groupName: feed.groupNewsFeeds.map(group => group.group.groupName)
             }
         })
 

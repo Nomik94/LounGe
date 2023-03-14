@@ -17,7 +17,7 @@ export class NewsfeedController {
 // 뉴스피드 작성
   @Post('/newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FilesInterceptor('newsfeedImages', 5)) 
+  @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
   async postnewsfeed(
     @Param('groupId') groupId:number ,
     @GetUser() user,
@@ -42,7 +42,7 @@ export class NewsfeedController {
   // 뉴스피드 수정
   @Put('newsfeed/:newsfeedid')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FilesInterceptor('newsfeedImages', 5)) 
+  @UseInterceptors(FilesInterceptor('newsfeedImage', 5)) 
   async modinewsfeed(
       @GetUser() user,
       @UploadedFiles() file: Array<Express.Multer.File>,
