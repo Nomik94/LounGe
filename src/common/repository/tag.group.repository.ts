@@ -7,4 +7,12 @@ export class TagGroupRepository extends Repository<TagGroup> {
   constructor(private dataSource: DataSource) {
     super(TagGroup, dataSource.createEntityManager());
   }
+
+  async createTagWithGroup(mapTags) {
+    await this.createQueryBuilder()
+      .insert()
+      .into(TagGroup)
+      .values(mapTags)
+      .execute();
+  }
 }

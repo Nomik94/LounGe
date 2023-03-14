@@ -4,11 +4,13 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Group } from 'src/database/entities/group.entity';
+import { GroupRepository } from 'src/common/repository/group.repository';
+import { TagGroupRepository } from 'src/common/repository/tag.group.repository';
+import { TagRepository } from 'src/common/repository/tag.repository';
+import { UserGroupRepository } from 'src/common/repository/user.group.repository';
 import { TagGroup } from 'src/database/entities/tag-group.entity';
 import { Tag } from 'src/database/entities/tag.entity';
-import { UserGroup } from 'src/database/entities/user-group.entity';
-import { In, Like, Not, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { GroupTransfer } from './interface/transfer.group.interface';
@@ -16,14 +18,10 @@ import { GroupTransfer } from './interface/transfer.group.interface';
 @Injectable()
 export class GroupService {
   constructor(
-    @InjectRepository(Group)
-    private readonly groupRepository: Repository<Group>,
-    @InjectRepository(UserGroup)
-    private readonly userGroupRepository: Repository<UserGroup>,
-    @InjectRepository(Tag)
-    private readonly tagRepository: Repository<Tag>,
-    @InjectRepository(TagGroup)
-    private readonly tagGroupRepository: Repository<TagGroup>,
+    private readonly groupRepository: GroupRepository,
+    private readonly userGroupRepository: UserGroupRepository,
+    private readonly tagRepository: TagRepository,
+    private readonly tagGroupRepository: TagGroupRepository,
   ) {}
 
   // 전체 그룹 리스트
@@ -33,19 +31,10 @@ export class GroupService {
     });
 
     const groupIds = foundUserWithGroups.map((data) => data.groupId);
-    const groupsWithoutTag = await this.groupRepository.find({
-      select: [
-        'id',
-        'groupName',
-        'groupImage',
-        'backgroundImage',
-        'description',
-      ],
-      relations: ['tagGroups.tag'],
-      where: { id: Not(In(groupIds)) },
-    });
-
-    const mapGroupList = this.mapGroupsWithTags(groupsWithoutTag);
+    const getGroupsWithOutIds = await this.groupRepository.getGroupsWithOutIds(
+      groupIds,
+    );
+    const mapGroupList = this.mapGroupsWithTags(getGroupsWithOutIds);
 
     return mapGroupList;
   }
@@ -70,37 +59,17 @@ export class GroupService {
       id: tagGroup.groupId,
     }));
 
-    const foundGroups = await this.groupRepository.find({
-      select: [
-        'id',
-        'groupName',
-        'groupImage',
-        'backgroundImage',
-        'description',
-      ],
-      relations: ['tagGroups.tag'],
-      where: groupIds,
-    });
-
-    const mapGroupList = this.mapGroupsWithTags(foundGroups);
+    const getGroupsWithIds = await this.groupRepository.getGroupsWithIds(
+      groupIds,
+    );
+    const mapGroupList = this.mapGroupsWithTags(getGroupsWithIds);
 
     return mapGroupList;
   }
 
   // 소속된 그룹 리스트
   async getMyGroupList(userId) {
-    const myGroupList = await this.groupRepository.find({
-      select: [
-        'id',
-        'groupName',
-        'groupImage',
-        'backgroundImage',
-        'description',
-        'user',
-      ],
-      relations: ['user'],
-      where: { userGroups: { userId, role: Not('가입대기') } },
-    });
+    const myGroupList = await this.groupRepository.getMyGroupList(userId);
 
     return myGroupList.map((group) => ({
       groupId: group.id,
@@ -122,17 +91,10 @@ export class GroupService {
 
   // 그룹 멤버 리스트
   async getGroupMemberList(groupId) {
-    const group = await this.groupRepository.findOne({
-      where: { id: groupId },
-      relations: ['tagGroups.tag'],
-    });
+    const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId); // 그룹 수정에 사용중 분리 필요
 
-    const tags = group.tagGroups.map((tag) => tag.tag.tagName);
-    const memberList = await this.userGroupRepository.find({
-      where: { groupId, role: Not('가입대기') },
-      relations: ['user'],
-      order: { role: 'ASC' },
-    });
+    const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName); //그룹 수정에 사용중 분리 필요
+    const memberList = await this.userGroupRepository.getMemberList(groupId);
     const mapMemberList = memberList.map((data) => ({
       userId: data.userId,
       groupId: data.groupId,
@@ -141,17 +103,14 @@ export class GroupService {
       userImage: data.user.image,
       userRole: data.role,
     }));
-    return { members: mapMemberList, group, tags };
+    return { members: mapMemberList, foundGroup, tags };
   }
 
   // 그룹 가입 신청자 리스트
   async getGroupJoinRequestList(userId, groupId) {
     await this.checkGroupLeader(userId, groupId);
-    const groupJoinRequestList = await this.userGroupRepository.find({
-      where: { groupId, role: '가입대기' },
-      select: ['userId', 'groupId'],
-      relations: ['user'],
-    });
+    const groupJoinRequestList =
+      await this.userGroupRepository.getGroupJoinRequestList(groupId);
 
     return groupJoinRequestList.map((data) => ({
       userId: data.userId,
@@ -402,48 +361,31 @@ export class GroupService {
       return;
     }
 
-    const existTags = await this.tagRepository
-      .createQueryBuilder('tag')
-      .where('tag.tagName IN (:...tags)', { tags })
-      .getMany();
-
+    const existTags = await this.tagRepository.foundTags(tags);
     const existTagNames = existTags.map((tag) => tag.tagName);
     const newTags = tags.filter((tag) => !existTagNames.includes(tag));
+    const newTagNames = newTags.map((tag) => ({ tagName: tag }));
 
     if (newTags.length !== 0) {
-      const createdTags = await this.tagRepository
-        .createQueryBuilder()
-        .insert()
-        .into(Tag)
-        .values(newTags.map((tag) => ({ tagName: tag })))
-        .execute();
-
-      await this.tagGroupRepository
-        .createQueryBuilder()
-        .insert()
-        .into(TagGroup)
-        .values(
-          createdTags.identifiers.map((tag) => ({ tagId: tag.id, groupId })),
-        )
-        .execute();
+      const createTags = await this.tagRepository.createTags(newTagNames);
+      const mapTags = createTags.identifiers.map((tag) => ({
+        tagId: tag.id,
+        groupId,
+      }));
+      this.tagGroupRepository.createTagWithGroup(mapTags);
     }
 
     if (existTags.length !== 0) {
-      await this.tagGroupRepository
-        .createQueryBuilder()
-        .insert()
-        .into(TagGroup)
-        .values(existTags.map((tag) => ({ tagId: tag.id, groupId })))
-        .execute();
+      const mapTags = existTags.map((tag) => ({ tagId: tag.id, groupId }));
+      this.tagGroupRepository.createTagWithGroup(mapTags);
     }
   }
 
   // 그룹 리더 체크
   async checkGroupLeader(userId: number, groupId: number) {
-    const checkLeader = await this.groupRepository.findOne({
-      where: { id: groupId },
-      relations: ['user'],
-    });
+    const checkLeader = await this.groupRepository.foundGroupWithLeader(
+      groupId,
+    );
 
     if (checkLeader.user.id !== userId)
       throw new ForbiddenException('권한이 존재하지 않습니다.');
