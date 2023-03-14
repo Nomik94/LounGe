@@ -35,6 +35,7 @@ export class EmailService {
     });
   }
 
+  // 인증메일 발송
   async sendVerifyToken(
     emailAddress: string,
     signupVerifyToken: number,
@@ -49,13 +50,15 @@ export class EmailService {
     return await this.transporter.sendMail(mailOptions);
   }
 
+  // 인증번호 생성
   async sendVerification(email: string): Promise<void> {
     const verifyToken = this.randomNumber();
     await this.cacheManager.set(email, verifyToken, { ttl: 300 });
     await this.sendVerifyToken(email, verifyToken);
   }
 
-  async verifyEmail({ email, verifyToken }): Promise<void> {
+  // 이메일 확인
+  async verifyEmail(email: string, verifyToken: number): Promise<void> {
     const cacheVerifyToken = await this.cacheManager.get(email);
 
     if (_.isNil(cacheVerifyToken)) {
@@ -67,6 +70,7 @@ export class EmailService {
     }
   }
 
+  // 인증번호 생성
   private randomNumber(): number {
     const min = 100000;
     const max = 999999;

@@ -7,6 +7,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { ModifyUserDTO } from './dto/modifyUser.dto';
+import { ModifyPasswordDTO } from './dto/modifyPassword.dto';
 
 @Injectable()
 export class UserService {
@@ -15,7 +17,8 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async validateUser({ email, password }): Promise<User> {
+  // 유저 검증
+  async validateUser(email: string, password: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { email } });
 
     const isRegister = await bcrypt.compare(password, user.password);
@@ -29,39 +32,45 @@ export class UserService {
     return user;
   }
 
-  async getByEmail(email: string): Promise<User | undefined> {
+  // 이메일로 유저 조회
+  async getByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException('유저가 존재하지 않습니다.');
     }
     return user;
   }
 
-  async getById(userId: number): Promise<User | undefined> {
+  // 유저아이디로 유저 조회
+  async getById(userId: number): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException('유저가 존재하지 않습니다.');
     }
     return user;
   }
-  async getUserImageAndUsername(userId: number) {
+
+  // 유저이미지 및 유저네임 조회
+  async getUserImageAndUsername(userId: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: ['username', 'image'],
     });
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException('유저가 존재하지 않습니다.');
     }
     return user;
   }
 
-  async updateUserName({ user, data }): Promise<void> {
+  // 유저네임 수정
+  async ModifyUserName(user, data: ModifyUserDTO): Promise<void> {
     const userId = user.id;
     await this.getById(userId);
     await this.userRepository.update(userId, { username: data.username });
   }
 
-  async updateUserImage({ user, file }): Promise<void> {
+  // 유저이미지 수정
+  async ModifyUserImage(user, file: Express.Multer.File): Promise<void> {
     const userId = user.id;
     await this.getById(userId);
 
@@ -69,7 +78,8 @@ export class UserService {
     await this.userRepository.update(userId, { image: filename });
   }
 
-  async updatePassword({ userId, data }): Promise<void> {
+  // 패스워드 수정
+  async ModifyPassword(userId: number, data: ModifyPasswordDTO): Promise<void> {
     const user = await this.getById(userId);
     const pass = data.password;
     const newPassword = data.newPassword;
@@ -84,6 +94,7 @@ export class UserService {
     await this.userRepository.update(userId, { password });
   }
 
+  // 패스워드가 같은지 체크
   async checkPassword(data): Promise<User> {
     const user = await this.getByEmail(data.email);
     const password = data.password;
@@ -96,6 +107,7 @@ export class UserService {
     return user;
   }
 
+  // 패스워드 찾기
   async findPassword(data): Promise<void> {
     const user = await this.getByEmail(data.email);
     const pass = data.password;

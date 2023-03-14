@@ -10,12 +10,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { AuthDTO } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import _ from 'lodash';
 import { UserService } from 'src/user/user.service';
+import { AuthDTO } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +29,8 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async register({ authDTO, file }): Promise<void> {
+  // 회원가입
+  async register(authDTO: AuthDTO, file): Promise<void> {
     let filename = 'userImage_logo.png';
     if (file) {
       filename = file.filename;
@@ -51,19 +52,18 @@ export class AuthService {
     await this.userRepository.insert(createUser);
   }
 
-  async login({ user }): Promise<{
+  // 로그인
+  async login(user): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
     const userEmail = user.email;
     const userId = user.id;
 
-    return await this.getTokens({
-      userEmail,
-      userId,
-    });
+    return await this.getTokens(userEmail, userId);
   }
 
+  // 카카오로그인
   async kakaoLogin(user): Promise<{
     accessToken: string;
     refreshToken: string;
@@ -79,32 +79,31 @@ export class AuthService {
       });
       const userEmail = newUser.email;
       const userId = newUser.id;
-      return await this.getTokens({
-        userEmail,
-        userId,
-      });
+      return await this.getTokens(userEmail, userId);
     }
 
     const userEmail = existUser.email;
     const userId = existUser.id;
 
-    return await this.getTokens({
-      userEmail,
-      userId,
-    });
+    return await this.getTokens(userEmail, userId);
   }
 
-  async getTokens({ userEmail, userId }): Promise<{
+  // 엑세스토큰 및 리프레시토큰 발급
+  async getTokens(
+    userEmail: string,
+    userId: number,
+  ): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
-    const accessToken = await this.getAccessToken({ userEmail, userId });
-    const refreshToken = await this.getRefreshToken({ userEmail, userId });
+    const accessToken = await this.getAccessToken(userEmail, userId);
+    const refreshToken = await this.getRefreshToken(userEmail, userId);
 
     return { accessToken, refreshToken };
   }
 
-  async getAccessToken({ userEmail, userId }): Promise<string> {
+  // 엑세스토큰 발급
+  async getAccessToken(userEmail: string, userId: number): Promise<string> {
     const payload = {
       sub: userId,
       email: userEmail,
@@ -118,7 +117,8 @@ export class AuthService {
     return accessToken;
   }
 
-  async getRefreshToken({ userEmail, userId }): Promise<string> {
+  // 리프레시토큰 발급
+  async getRefreshToken(userEmail: string, userId: number): Promise<string> {
     const payload = {
       sub: userId,
       email: userEmail,
@@ -136,7 +136,8 @@ export class AuthService {
     return refreshToken;
   }
 
-  async restoreAccessToken(refreshToken): Promise<{
+  // 엑세스토큰 재발급
+  async restoreAccessToken(refreshToken: string): Promise<{
     accessToken: string;
   }> {
     const userEmail: string = await this.cacheManager.get(refreshToken);
@@ -151,7 +152,7 @@ export class AuthService {
       throw new NotFoundException();
     }
 
-    const restoreAccessToken = await this.getAccessToken({ userEmail, userId });
+    const restoreAccessToken = await this.getAccessToken(userEmail, userId);
 
     return { accessToken: restoreAccessToken };
   }
