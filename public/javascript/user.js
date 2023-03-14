@@ -148,7 +148,7 @@ function getUser() {
             <!-- FORM INPUT -->
             <div class="form-input small active">
               <label for="register-image">프로필 이미지</label>
-              <input type='file' class='form-control' id='profileImage' style="background-color: #1D2333; color:antiquewhite"/>
+              <input type='file' class='form-control' id='profileImage'/>
             </div>
             <!-- /FORM INPUT -->
           </div>
