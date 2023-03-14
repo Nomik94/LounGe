@@ -41,7 +41,7 @@ async function readnewsfeedmygroup() {
           icon: 'error',
           title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
         });
-        window.location.href = '/';
+        // window.location.href = '/';
       }
 
       if (err.response.data.statusCode !== 401) {
@@ -166,9 +166,9 @@ async function newsfeedlist(data) {
         <p class="widget-box-status-text">${data.content}</p>
         <!-- /WIDGET BOX STATUS TEXT -->
 
-        <div class="hexagon-image-90-110-container">
+        <div class="newsfeed-image">
         ${data.newsfeedImage.map(image => `
-          <div class="hexagon-image-90-110" data-src="/newsfeedImages/${image}"></div>
+          <img class="popup-image" onclick="popupNewsfeed('${image}')" src="/newsfeedImage/${image}">
         `).join('')}
       </div>
 
@@ -197,6 +197,16 @@ async function newsfeedlist(data) {
   <script src="/js/utils/liquidify.js"></script>
   `;
   $('#ddd').append(asd);
+
+// const popupImage = document.querySelectorAll('.popup-image');
+
+// popupImage.forEach(image => {
+//   image.addEventListener('cilck',() => {
+//     const src = image.src
+//     const popup = window.open('')
+//     popup.document.write(`<img src="${src}">`)
+//   })
+// })
 }
 
 // 뉴스피드 삭제하기
@@ -319,7 +329,7 @@ async function modinewsfeed(id){
   }
   if(selectedImages.length !==0) {
     for(let i = 0; i < selectedImages.length; i++) {
-      formData.append('newsfeedImages',selectedImages[i])
+      formData.append('newsfeedImage',selectedImages[i])
     }
   }
     if (!newsfeedcontent.value) {
@@ -376,6 +386,13 @@ async function modinewsfeed(id){
    document.body.removeChild(popup)
   })
 }
+
+function popupNewsfeed(src) {
+  Swal.fire({
+    imageUrl: `/newsfeedImage/${src}`,
+  })
+}
+
 
 // const contents = document.querySelector('#newsfeedbox');
 // let paraIndex = 1;

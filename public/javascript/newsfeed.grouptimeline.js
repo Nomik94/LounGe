@@ -135,9 +135,9 @@ function newsfeedlist(data) {
         <p class="widget-box-status-text">${data.content}</p>
         <!-- /WIDGET BOX STATUS TEXT -->
         
-        <div class="hexagon-image-90-110-container">
+        <div class="newsfeed-image">
         ${data.newsfeedImage.map(image => `
-          <div class="hexagon-image-90-110" data-src="/newsfeedImages/${image}"></div>
+          <img class="popup-image" onclick="popupNewsfeed('${image}')" src="/newsfeedImage/${image}">
         `).join('')}
       </div>
 
@@ -267,7 +267,7 @@ async function postnewsfeed() {
   }
   formData.append('content', content)
     for(let i = 0; i < selectedImages.length; i++) {
-      formData.append('newsfeedImages',selectedImages[i])
+      formData.append('newsfeedImage',selectedImages[i])
     }
     if (!content) {
       await Swal.fire({
@@ -436,7 +436,7 @@ async function modinewsfeed(id){
   }
   if(selectedImages.length !==0) {
     for(let i = 0; i < selectedImages.length; i++) {
-      formData.append('newsfeedImages',selectedImages[i])
+      formData.append('newsfeedImage',selectedImages[i])
     }
   }
     if (!newsfeedcontent.value) {
@@ -470,7 +470,7 @@ async function modinewsfeed(id){
             title: '사진은 최대 5장까지만 등록 가능합니다.',
             text: "죄송합니다.",
           });
-        } else if (err.response.data.statusCode === 403){
+        } else if (err.response.data.statusCode === 401){
           Swal.fire({
             icon: 'error',
             title: '로그인 정보가 일치하지 않습니다.',
@@ -491,5 +491,11 @@ async function modinewsfeed(id){
   const cancelButton = popup.querySelector('.cancel')
   cancelButton.addEventListener('click',() => {
    document.body.removeChild(popup)
+  })
+}
+
+function popupNewsfeed(src) {
+  Swal.fire({
+    imageUrl: `/newsfeedImage/${src}`,
   })
 }
