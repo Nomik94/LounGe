@@ -85,6 +85,7 @@ function groupEventList() {
           <!-- /EVENT PREVIEW -->`;
           $('#groupEventList').append(temp_html);
         } else {
+          document.getElementById('createButton').innerHTML=''
           let temp_html = `      <!-- EVENT PREVIEW -->
         <div class="event-preview">
           <!-- EVENT PREVIEW COVER -->
