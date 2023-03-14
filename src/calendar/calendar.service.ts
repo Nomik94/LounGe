@@ -84,7 +84,7 @@ export class CalendarService {
     }));
 
     const joinEvents = mapGroupEvents.concat(mapUserEvents);
-    await joinEvents.sort((a, b) => a.start - b.start);
+    joinEvents.sort((a, b) =>  new Date(a.start).getTime() - new Date(b.start).getTime());
     return joinEvents;
   }
 
