@@ -47,11 +47,14 @@ export class GroupController {
   }
 
   // 소속된 그룹 리스트 API
-  @Get('/joined/list')
+  @Get('/joined/list/:page')
   @UseGuards(JwtAuthGuard)
-  async getMyGroupList(@GetUser() user: IUser): Promise<IMyGroupList[]> {
+  async getMyGroupList(
+    @GetUser() user: IUser,
+    @Param('page') page: number,
+  ): Promise<IMyGroupList[]> {
     const userId: number = user.id;
-    return await this.groupService.getMyGroupList(userId);
+    return await this.groupService.getMyGroupList(userId, page);
   }
 
   // 그룹 관리 리스트 API

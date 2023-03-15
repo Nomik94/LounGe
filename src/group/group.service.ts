@@ -74,8 +74,9 @@ export class GroupService {
   }
 
   // 소속된 그룹 리스트
-  async getMyGroupList(userId: number): Promise<IMyGroupList[]> {
-    const myGroupList = await this.groupRepository.getMyGroupList(userId);
+  async getMyGroupList(userId: number, page: number): Promise<IMyGroupList[]> {
+    const pageSize = 9
+    const myGroupList = await this.groupRepository.getMyGroupList(userId, page, pageSize);
 
     return myGroupList.map((group) => ({
       groupId: group.id,

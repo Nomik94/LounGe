@@ -1,7 +1,34 @@
+let page = 1
 $(document).ready(async function () {
   await restoreToken();
-  joinedGroupList();
+  joinedGroupList(page);
 });
+
+async function limitscroll() {
+  page++;
+  joinedGroupList(page);
+}
+
+function debounce(callback, limit = 500) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback.apply(this, args);
+    }, limit);
+  };
+}
+
+document.addEventListener(
+  'scroll',
+  debounce((e) => {
+    const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
+    if (clientHeight + scrollTop >= scrollHeight) {
+      limitscroll();
+    }
+  }, 500),
+);
+
 function getCookie(name) {
   let matches = document.cookie.match(
     new RegExp(
@@ -13,9 +40,9 @@ function getCookie(name) {
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-function joinedGroupList() {
+function joinedGroupList(page) {
   axios({
-    url: '/api/groups/joined/list',
+    url: `/api/groups/joined/list/${page}`,
     method: 'get',
     headers: {
       Authorization: `${getCookie('accessToken')}`,

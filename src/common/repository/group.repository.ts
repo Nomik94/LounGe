@@ -23,9 +23,9 @@ export class GroupRepository extends Repository<Group> {
         'description',
       ],
       relations: ['tagGroups.tag'],
-      where: { id: Not(In(groupIds)), },
-      take : pageSize,
-      skip : pageSize * (page -1)
+      where: { id: Not(In(groupIds)) },
+      take: pageSize,
+      skip: pageSize * (page - 1),
     });
   }
 
@@ -43,7 +43,11 @@ export class GroupRepository extends Repository<Group> {
     });
   }
 
-  async getMyGroupList(userId: number): Promise<Group[]> {
+  async getMyGroupList(
+    userId: number,
+    page: number,
+    pageSize: number,
+  ): Promise<Group[]> {
     return await this.find({
       select: [
         'id',
@@ -55,6 +59,8 @@ export class GroupRepository extends Repository<Group> {
       ],
       relations: ['user'],
       where: { userGroups: { userId, role: Not('가입대기') } },
+      take: pageSize,
+      skip: pageSize * (page - 1),
     });
   }
 
