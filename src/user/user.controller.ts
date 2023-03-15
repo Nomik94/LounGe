@@ -23,7 +23,7 @@ export class UserController {
   // 유저정보 조회 API
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getUser(@GetUser() user): Promise<User> {
+  async getUser(@GetUser() user: IUser): Promise<User> {
     const userId = user.id;
     return await this.userService.getById(userId);
   }
@@ -31,7 +31,7 @@ export class UserController {
   // 유저이미지 및 유저네임 조회 API
   @Get('select')
   @UseGuards(JwtAuthGuard)
-  async getUserImageAndUsername(@GetUser() user) {
+  async getUserImageAndUsername(@GetUser() user: IUser) {
     const userId = user.id;
     return await this.userService.getUserImageAndUsername(userId);
   }
