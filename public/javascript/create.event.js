@@ -36,6 +36,16 @@ function createUserEvent() {
   const location = document.getElementById('event-location').value || undefined;
   const latlngStr = document.getElementById('event-latlng').value || undefined;
 
+  const checkStartDate = validateDate(start);
+  const checkEndDate = validateDate(end);
+
+  if (!checkStartDate || !checkEndDate) {
+    return Swal.fire({
+      icon: 'error',
+      text: `날짜는 YYYY-MM-DD와 같은 형식으로 입력해주세요.`,
+    });
+  }
+
   let latlng = [];
   if (latlngStr) {
     latlng = latlngStr.split(',');
@@ -107,6 +117,16 @@ function createGroupEvent() {
   const location = document.getElementById('event-location').value || undefined;
   const latlngStr = document.getElementById('event-latlng').value || undefined;
 
+  const checkStartDate = validateDate(start);
+  const checkEndDate = validateDate(end);
+
+  if (!checkStartDate || !checkEndDate) {
+    return Swal.fire({
+      icon: 'error',
+      text: `날짜는 YYYY-MM-DD와 같은 형식으로 입력해주세요.`,
+    });
+  }
+
   let latlng = [];
   if (latlngStr) {
     latlng = latlngStr.split(',');
@@ -159,4 +179,15 @@ function createGroupEvent() {
         text: `${error.response.data.message}`,
       });
     });
+}
+
+function validateDate(dateStr) {
+  // YYYY-MM-DD 형식인지 확인
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+
+  // 유효한 날짜인지 확인
+  const dateObj = new Date(dateStr);
+  if (isNaN(dateObj.getTime())) return false;
+
+  return true;
 }
