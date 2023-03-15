@@ -1,73 +1,73 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=transparent&color=auto&height=200&section=header&text=LounGe&fontSize=90" />
+</div>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+---
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+<div align='center'><h2>소모임 커뮤니티 with 캘린더</h2>
+</div>
+<div align='center'>같은 취미를 가진 사람을 찾고 싶으신가요?<br>
+저희는 새로운 사람을 만나는 것을 즐기고 일정을 공유하여 건강한 만남을 가지는 커뮤니티를 지향합니다.
+</div>
 
-## Description
+## 멤버
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+|    이름    |  역할  |                               깃허브                               |
+| :--------: | :----: | :----------------------------------------------------------------: |
+| **김정민** |  팀장  |       [Nomik94](https://github.com/Nomik94?tab=repositories)       |
+| **오길환** | 부팀장 |        [5kiran](https://github.com/5kiran?tab=repositories)        |
+| **한주호** |  팀원  |      [Joto-Han](https://github.com/Joto-Han?tab=repositories)      |
+| **김택환** |  팀원  | [taekhwankim21](https://github.com/taekhwankim21?tab=repositories) |
+| **유진우** |  팀원  |   [goodjwyoo77](https://github.com/goodjwyoo77?tab=repositories)   |
 
-## Installation
+## 배포 주소
 
-```bash
-$ npm install
-```
+## 프로젝트 기간
 
-## Running the app
+2023.02.28 ~ 2023.04.03
 
-```bash
-# development
-$ npm run start
+---
 
-# watch mode
-$ npm run start:dev
+<div align='center'>
+<h3>📚 Tech Stack 📚</h3>
+</div>
+<div align='center'>
+<img src="https://img.shields.io/badge/Handelbars-000000?style=flat&logo=Handlebars.js&logoColor=white"/>
+<img src="https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=CSS3&logoColor=white"/>
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=JavaScript&logoColor=white"/>
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=TypeScript&logoColor=white"/>
+<img src="https://img.shields.io/badge/Node.js-339933?style=flat&logo=Node.js&logoColor=white"/>
+<br>
+<img src="https://img.shields.io/badge/NestJs-E0234E?style=flat&logo=NestJs&logoColor=white"/>
+<img src="https://img.shields.io/badge/TypeORM-blue" alt="TypeORM">
+<img src="https://img.shields.io/badge/AWS-232F3E?style=flat&logo=Amazon AWS&logoColor=white"/>
+<img src="https://img.shields.io/badge/Jest-C21325?style=flat&logo=Jest&logoColor=white"/>
+<img src="https://img.shields.io/badge/Mysql-4479A1?style=flat&logo=Mysql&logoColor=white"/>
+<br>
+<img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=Redis&logoColor=white"/>
+</div>
 
-# production mode
-$ npm run start:prod
-```
+<div align='center'>
+<h3>🛠 Tools 🛠</h3>
+</div>
+<div align='center'>
+<img src="https://img.shields.io/badge/Git-F05032?style=flat&logo=Git&logoColor=white"/>
+<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"/>
+<img src="https://img.shields.io/badge/Notion-000000?style=flat&logo=Notion&logoColor=white"/>
+<img src="https://img.shields.io/badge/Slack-4A154B?style=flat&logo=Slack&logoColor=white"/>
+<img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat&logo=Visual Studio Code&logoColor=white"/>
+</div>
 
-## Test
+## 주요 기능
 
-```bash
-# unit tests
-$ npm run test
+### ⭐️ 그룹 창설 및 가입으로 소규모 커뮤니티 서비스 제공
 
-# e2e tests
-$ npm run test:e2e
+- tag 검색을 통해 원하는 성격의 그룹 조회 기능 제공
+- 뉴스피드 작성을 통한 커뮤니티 활성화
+- 추후 업데이트를 통해 다양한 편의성 기능 제공 예정
 
-# test coverage
-$ npm run test:cov
-```
+### ⭐️ 캘린더를 통한 일정 관리 기능
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- fullcalendar 라이브러리를 이용하여 캘린더 기능 제공
+- 그룹 일정 공유 기능 제공
+- 추후 업데이트를 통해 다양한 편의성 기능 제공 예정
