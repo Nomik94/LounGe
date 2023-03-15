@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Group } from 'src/database/entities/group.entity';
-import { DataSource, In, Not, Repository } from 'typeorm';
+import { And, DataSource, In, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class GroupRepository extends Repository<Group> {
@@ -9,7 +9,11 @@ export class GroupRepository extends Repository<Group> {
   }
 
   // 전체 그룹 리스트
-  async getGroupsWithOutIds(groupIds : number[]): Promise<Group[]> {
+  async getGroupsWithOutIds(
+    groupIds: number[],
+    page: number,
+    pageSize: number,
+  ): Promise<Group[]> {
     return await this.find({
       select: [
         'id',
@@ -19,7 +23,9 @@ export class GroupRepository extends Repository<Group> {
         'description',
       ],
       relations: ['tagGroups.tag'],
-      where: { id: Not(In(groupIds)) },
+      where: { id: Not(In(groupIds)), },
+      take : pageSize,
+      skip : pageSize * (page -1)
     });
   }
 

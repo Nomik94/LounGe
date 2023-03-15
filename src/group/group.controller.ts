@@ -1,4 +1,4 @@
-import { Body, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
   Delete,
@@ -26,11 +26,14 @@ export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   // 전체 그룹 리스트 API
-  @Get()
+  @Get('/:page')
   @UseGuards(JwtAuthGuard)
-  async getAllGroupList(@GetUser() user: IUser): Promise<IMapGroups[]> {
+  async getAllGroupList(
+    @Param('page') page: number,
+    @GetUser() user: IUser,
+  ): Promise<IMapGroups[]> {
     const userId: number = user.id;
-    return await this.groupService.getAllGroupList(userId);
+    return await this.groupService.getAllGroupList(userId, page);
   }
 
   // 그룹 태그 검색 리스트 API

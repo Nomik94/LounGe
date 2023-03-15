@@ -28,7 +28,9 @@ export class GroupService {
   ) {}
 
   // 전체 그룹 리스트
-  async getAllGroupList(userId: number): Promise<IMapGroups[]> {
+  async getAllGroupList(userId: number, page: number): Promise<IMapGroups[]> {
+    const currPage = page;
+    const pageSize = 9; 
     const foundUserWithGroups = await this.userGroupRepository.find({
       where: { userId },
     });
@@ -36,6 +38,8 @@ export class GroupService {
     const groupIds = foundUserWithGroups.map((data) => data.groupId);
     const getGroupsWithOutIds = await this.groupRepository.getGroupsWithOutIds(
       groupIds,
+      currPage,
+      pageSize,
     );
     const mapGroupList = this.mapGroupsWithTags(getGroupsWithOutIds);
 
@@ -43,7 +47,7 @@ export class GroupService {
   }
 
   // 그룹 태그 검색 리스트
-  async searchGroupByTag(tag: string): Promise<IMapGroups[]> {
+  async searchGroupByTag(tag: string,): Promise<IMapGroups[]> {
     const tags = await this.tagRepository.find({
       where: { tagName: Like(`%${tag}%`) },
       select: ['id'],
@@ -358,7 +362,6 @@ export class GroupService {
 
   // 그룹 리스트 태그 매핑
   async mapGroupsWithTags(groupList: Group[]): Promise<IMapGroups[]> {
-    console.log(groupList);
     const mapGroupList = groupList.map((group) => {
       const mapTagGroups = group.tagGroups.map((tag) => tag.tag.tagName);
 
