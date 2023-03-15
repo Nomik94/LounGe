@@ -236,7 +236,7 @@ async function findPassword() {
     });
   } else {
     axios
-      .put('api/user/findPassword', {
+      .put('api/user/find/password', {
         email: email,
         password: password,
       })
@@ -277,7 +277,7 @@ async function updatePassword() {
     });
   } else {
     axios({
-      url: '/api/user/password',
+      url: '/api/user/modify/password',
       method: 'put',
       headers: {
         Authorization: `${accessToken}`,
@@ -327,7 +327,7 @@ function updateImage() {
 
   axios({
     method: 'put',
-    url: '/api/user/userImage',
+    url: '/api/user/modify/image',
     headers: {
       Authorization: `${accessToken}`,
     },
@@ -372,7 +372,7 @@ function updateUserName() {
 
   axios({
     method: 'put',
-    url: '/api/user/username',
+    url: '/api/user/modify/name',
     headers: {
       Authorization: `${accessToken}`,
     },

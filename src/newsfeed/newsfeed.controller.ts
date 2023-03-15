@@ -31,7 +31,7 @@ export class NewsfeedController {
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5))
   async createNewsfeed(
     @Param('groupId') groupId: number,
-    @GetUser() user,
+    @GetUser() user: IUser,
     @UploadedFiles() file: Array<Express.Multer.File>,
     @Body() data: newsfeedCheckDto,
   ): Promise<void> {
@@ -43,7 +43,7 @@ export class NewsfeedController {
   @Delete('newsfeed/:newsfeedId')
   @UseGuards(JwtAuthGuard)
   async deleteNewsfeed(
-    @GetUser() user,
+    @GetUser() user: IUser,
     @Param('newsfeedId') newsfeedId: number,
   ):Promise<void> {
     const userId = user.id;
@@ -55,7 +55,7 @@ export class NewsfeedController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5))
   async modifyNewsfeed(
-    @GetUser() user,
+    @GetUser() user: IUser,
     @UploadedFiles() file: Array<Express.Multer.File>,
     @Param('newsfeedId') newsfeedId: number,
     @Body() data: modifyNewsfeedCheckDto,
@@ -83,7 +83,7 @@ export class NewsfeedController {
   // 태그 검색 (내 뉴스피드) API
   @Get('tag/newsfeed/list')
   @UseGuards(JwtAuthGuard)
-  async serchTagMyNewsfeed(@Query('tag') data: string, @GetUser() user):Promise<ISerchTagMyNewsfeed[]>{
+  async serchTagMyNewsfeed(@Query('tag') data: string, @GetUser() user: IUser):Promise<ISerchTagMyNewsfeed[]>{
     const userId = user.id;
     return await this.newsfeedService.serchTagMyNewsfeed(data, userId);
   }
@@ -97,7 +97,7 @@ export class NewsfeedController {
   // 뉴스피드 읽기 (내 뉴스피드) API
   @Get('newsfeed')
   @UseGuards(JwtAuthGuard)
-  async readNewsfeedMyList(@GetUser() user):Promise<ISerchNewsfeedList[]>{
+  async readNewsfeedMyList(@GetUser() user: IUser):Promise<ISerchNewsfeedList[]>{
     const userId = user.id;
     return await this.newsfeedService.readNewsfeedMyList(userId);
   }
@@ -105,7 +105,7 @@ export class NewsfeedController {
   // 뉴스피드 읽기 (소속 그룹 뉴스피드) API
   @Get('newsfeed/groups')
   @UseGuards(JwtAuthGuard)
-  async readNewsfeedMyGroup(@GetUser() user):Promise<ISerchNewsfeedList[]>{
+  async readNewsfeedMyGroup(@GetUser() user:IUser):Promise<ISerchNewsfeedList[]>{
     const userId = user.id;
     return await this.newsfeedService.readNewsfeedMyGroup(userId);
   }

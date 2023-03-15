@@ -2,7 +2,7 @@ import { PickType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
 import { AuthDTO } from 'src/auth/dto/auth.dto';
 
-export class UpdatePasswordDTO extends PickType(AuthDTO, ['password']) {
+export class ModifyPasswordDTO extends PickType(AuthDTO, ['password']) {
   @IsNotEmpty()
   @IsString()
   @MinLength(4)
