@@ -49,7 +49,7 @@ export class UserService {
   async getById(userId: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      select: ['id', 'username', 'password', 'email'],
+      select: ['id', 'username', 'email', 'image'],
     });
     if (!user) {
       throw new NotFoundException('유저가 존재하지 않습니다.');
