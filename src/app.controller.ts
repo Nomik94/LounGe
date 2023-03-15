@@ -46,7 +46,6 @@ export class AppController {
   @Render('hub-profile-info')
   profileInfo() {}
 
-
   @Get('/group/timeline')
   @Render('group-timeline')
   async groupTimeline(@Query('groupId') groupId: number) {
@@ -76,6 +75,5 @@ export class AppController {
 
   @Get('/newsfeed/mylist')
   @Render('newsfeed-mylist')
-  mylist(){}
-
+  mylist() {}
 }

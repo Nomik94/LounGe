@@ -17,7 +17,7 @@ function managementMemberList() {
     },
   })
     .then(function (res) {
-      console.log(res)
+
       res.data.members.forEach((data) => {
         let temp_html = `        <!-- USER PREVIEW -->
         <div class="user-preview">

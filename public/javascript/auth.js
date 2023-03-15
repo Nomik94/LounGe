@@ -53,7 +53,7 @@ async function login() {
         const refreshExpires = refreshTokenExpires();
         document.cookie = `accessToken=Bearer ${res.data.accessToken}; path=/; expires=${accessExpires}`;
         document.cookie = `refreshToken=Bearer ${res.data.refreshToken}; path=/; expires=${refreshExpires}`;
-        window.location.href = 'http://localhost:3000/newsfeed';
+        window.location.href = '/newsfeed';
       })
       .catch(async (error) => {
         Swal.fire({
@@ -65,7 +65,7 @@ async function login() {
 }
 
 function kakaoLogin() {
-  window.open('http://localhost:3000/api/auth/login/kakao');
+  window.open('/api/auth/login/kakao');
   function loginCallback(event) {
     if (event.data?.accessToken) {
       const accessToken = event.data?.accessToken;
@@ -76,7 +76,7 @@ function kakaoLogin() {
       document.cookie = `refreshToken=Bearer ${refreshToken}; path=/; expires=${refreshExpires}`;
     }
     window.removeEventListener('message', loginCallback);
-    window.location.href = 'http://localhost:3000/newsfeed';
+    window.location.href = '/newsfeed';
   }
   window.addEventListener('message', loginCallback);
 }

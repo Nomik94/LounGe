@@ -78,6 +78,5 @@ app.querySelector('.tweet-feed', function (tweetFeeds) {
       tweetFeed.appendChild(TweetComponent(tweets));
     }
   }).catch(function (error) {
-    console.log(error);
   });
 });
