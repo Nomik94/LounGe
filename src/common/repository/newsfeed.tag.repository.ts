@@ -14,21 +14,21 @@ export class NewsfeedTagRepository extends Repository<NewsFeedTag> {
     })
   }
 
-  createNewsfeed(i:any,newsfeedId:any){
+  createNewsfeed(id:number,newsfeedId:number){
     return this.save({
-      tagId:i,
-      newsFeedId: newsfeedId.id
+      tagId:id,
+      newsFeedId: newsfeedId
     })
   }
 
-  modifyNewsfeed(i:any,id:number) {
+  modifyNewsfeed(tagId:number,id:number) {
     return this.save({
-      tagId:i,
+      tagId:tagId,
       newsFeedId: id
     })
   }
 
-  serchTagArray(whereNewsfeedId:any){
+  serchTagArray(whereNewsfeedId:object[]){
     return this.find({
       where: whereNewsfeedId,
       select: ['newsFeedId']

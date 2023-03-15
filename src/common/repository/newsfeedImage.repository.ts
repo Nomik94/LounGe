@@ -14,14 +14,14 @@ export class NewsfeedImageRepository extends Repository<NewsFeedImage> {
     })
   }
 
-  createNewsfeedImage(filename,newsfeedId){
+  createNewsfeedImage(filename:string,newsfeedId:number){
     return this.save({
       image: filename,
-      newsFeed: {id:newsfeedId.id}
+      newsFeed: {id:newsfeedId}
     })
   }
 
-  modifyNewsfeedImage(filename:any,id:number){
+  modifyNewsfeedImage(filename:string,id:number){
     return this.save({
       image: filename,
       newsFeed: {id:id}

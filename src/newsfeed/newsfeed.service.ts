@@ -1,22 +1,13 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { GroupNewsfeedRepository } from 'src/common/repository/group.newsfeed.repository';
-import { GroupRepository } from 'src/common/repository/group.repository';
 import { NewsfeedRepository } from 'src/common/repository/newsfeed.repository';
 import { NewsfeedTagRepository } from 'src/common/repository/newsfeed.tag.repository';
 import { NewsfeedImageRepository } from 'src/common/repository/newsfeedImage.repository';
 import { TagRepository } from 'src/common/repository/tag.repository';
 import { UserGroupRepository } from 'src/common/repository/user.group.repository';
-import { UserRepository } from 'src/common/repository/user.repository';
-import { GroupNewsFeed } from 'src/database/entities/group-newsfeed.entity';
-import { Group } from 'src/database/entities/group.entity';
-import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
-import { NewsFeed } from 'src/database/entities/newsFeed.entity';
-import { NewsFeedImage } from 'src/database/entities/newsFeedImage.entity';
-import { Tag } from 'src/database/entities/tag.entity';
-import { UserGroup } from 'src/database/entities/user-group.entity';
-import { User } from 'src/database/entities/user.entity';
-import { In, Like, Repository } from 'typeorm';
+import { ISerchNewsfeedList } from './interface/serch.newsfeed.list.interface';
+import { ISerchTagMyNewsfeed } from './interface/serch.tag.mynewsfeed.interface';
+import { ISerchTagNewsfeed } from './interface/serch.tag.newsfeed.interface';
 
 @Injectable()
 export class NewsfeedService {
@@ -25,10 +16,8 @@ export class NewsfeedService {
         private readonly tagRepository: TagRepository,
         private readonly newsfeedTagRepository: NewsfeedTagRepository,
         private readonly newsfeedImageRepository: NewsfeedImageRepository,
-        private readonly userRepository: UserRepository,
         private readonly groupNewsfeedRepository: GroupNewsfeedRepository,
-        private readonly userGroupRepository: UserGroupRepository,
-        private readonly groupRepository: GroupRepository,
+        private readonly userGroupRepository: UserGroupRepository
     ) {}
 
     // 뉴스피드 작성
@@ -55,15 +44,15 @@ export class NewsfeedService {
                 serchTag.push(a.id);
             }
             for (const i of serchTag) {
-                await this.newsfeedTagRepository.createNewsfeed(i,newsfeedId)
+                await this.newsfeedTagRepository.createNewsfeed(i,newsfeedId.id)
             }
         }
         if (file.length !== 0) {
             const fileNames = file.map(file => file.filename)
-            const promises = fileNames.map(filename => this.newsfeedImageRepository.createNewsfeedImage(filename,newsfeedId))
+            const promises = fileNames.map(filename => this.newsfeedImageRepository.createNewsfeedImage(filename,newsfeedId.id))
             await Promise.all(promises)
         }
-        await this.groupNewsfeedRepository.createNewsfeed(newsfeedId,groupId)
+        await this.groupNewsfeedRepository.createNewsfeed(newsfeedId.id,groupId)
         return
         }
 
@@ -130,7 +119,7 @@ export class NewsfeedService {
     }
 
     // 태그 검색 (소속 그룹 뉴스피드)
-    async serchTagNewsfeed(data):Promise<Array<any>>{
+    async serchTagNewsfeed(data):Promise<ISerchTagNewsfeed[]>{
         try {
             const tag = data
             const serchTag = await this.tagRepository.serchTagWord(tag)
@@ -166,7 +155,7 @@ export class NewsfeedService {
     }
 
     // 태그 검색 (특정 그룹 뉴스피드)
-    async serchTagNewsfeedGroup(data,groupId){
+    async serchTagNewsfeedGroup(data,groupId):Promise<ISerchTagNewsfeed[]>{
         try {
             const {tag} = data
             const serchTag = await this.tagRepository.serchTagWord(tag)
@@ -203,7 +192,7 @@ export class NewsfeedService {
     }
 
     // 태그 검색 (내 뉴스피드)
-    async serchTagMyNewsfeed(data,userId) {
+    async serchTagMyNewsfeed(data,userId):Promise<ISerchTagMyNewsfeed[]>{
         try {
             const tag = data
             const serchTag = await this.tagRepository.serchTagWord(tag)
@@ -241,7 +230,7 @@ export class NewsfeedService {
     }
 
     // 뉴스피드 읽기 (특정 그룹)
-    async readNewsfeedGroup(groupId:number) {
+    async readNewsfeedGroup(groupId:number):Promise<ISerchNewsfeedList[]>{
         try {
             const newsfeed = await this.groupNewsfeedRepository.serchNewsfeedIdByGroupId(groupId)
             const newsfeedIds = newsfeed.map(Newsfeed => Newsfeed.newsFeedId)
@@ -273,7 +262,7 @@ export class NewsfeedService {
     }
 
     // 뉴스피드 읽기 (내 뉴스피드)
-    async readNewsfeedMyList(userId:number) {
+    async readNewsfeedMyList(userId:number):Promise<ISerchNewsfeedList[]>{
         try {
             const findNewsfeed = await this.newsfeedRepository.findnewsfeedByUserId(userId)
                 const result = findNewsfeed.map(feed => {
@@ -305,7 +294,7 @@ export class NewsfeedService {
     }
 
     // 뉴스피드 읽기 (소속 그룹 뉴스피드)
-    async readNewsfeedMyGroup(userId:number){
+    async readNewsfeedMyGroup(userId:number):Promise<ISerchNewsfeedList[]>{
         try {
             const findGroup = await this.userGroupRepository.checkUserStatus(userId)
             const groupIds = findGroup.map(group => group.groupId);
@@ -342,4 +331,3 @@ export class NewsfeedService {
         }
     }
 }
-

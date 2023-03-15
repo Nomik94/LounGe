@@ -19,27 +19,27 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     return this.softDelete(id)
   }
 
-  createNewsfeed(content:any,userId:number){
+  createNewsfeed(content:string,userId:number){
     return this.save({
       content:content,
       user: {id : userId},
     })
   }
 
-  modifyNewsfeedContent(id:number,content:any){
+  modifyNewsfeedContent(id:number,content:string){
     return this.update(id,
       {content:content}
   );
   }
 
-  findNewsfeedByTag(numberingId:any){
+  findNewsfeedByTag(numberingId:object[]){
     return this.find({
       relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
       where: numberingId
     })
   }
 
-  findnewsfeedByNewsfeedId(newsfeedIds:any){
+  findnewsfeedByNewsfeedId(newsfeedIds:number[]){
     return this.find({
       relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
       select: ['id', 'content', 'createdAt', 'updatedAt'],

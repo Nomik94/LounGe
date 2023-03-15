@@ -8,17 +8,17 @@ export class TagRepository extends Repository<Tag> {
     super(Tag, dataSource.createEntityManager());
   }
 
-  serchTagOne(i:any) {
-    return this.findOneBy({tagName:i})
+  serchTagOne(tag:string) {
+    return this.findOneBy({tagName:tag})
   }
 
-  createTag(i:any) {
-    return this.insert({tagName:i})
+  createTag(tag:string) {
+    return this.insert({tagName:tag})
   }
 
-  serchTagOneForNewsfeed(i:any){
+  serchTagOneForNewsfeed(tag:string){
     return this.findOne({
-      where: {tagName:i},
+      where: {tagName:tag},
       select: ["id"]}
       )
   }

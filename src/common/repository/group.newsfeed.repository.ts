@@ -12,9 +12,9 @@ export class GroupNewsfeedRepository extends Repository<GroupNewsFeed> {
     return this.delete({newsFeedId:id})
   }
 
-  createNewsfeed(newsfeedId:any,groupId:number){
+  createNewsfeed(newsfeedId:number,groupId:number){
     return this.insert({
-      newsFeedId: newsfeedId.id,
+      newsFeedId: newsfeedId,
       groupId: groupId
   })
   }
@@ -26,7 +26,7 @@ export class GroupNewsfeedRepository extends Repository<GroupNewsFeed> {
     })
   }
 
-  serchNewsfeedIdByGroupIdArray(groupIds:any){
+  serchNewsfeedIdByGroupIdArray(groupIds:number[]){
     return this.find({
       where: { groupId: In(groupIds) },
       select: ['newsFeedId']
