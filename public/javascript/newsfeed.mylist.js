@@ -15,9 +15,9 @@ async function readnewsfeedmylist(page) {
     },
   })
     .then(async (res) => {
-     await newsfeedlist(res.data);
+      await newsfeedlist(res.data);
     })
-    .catch( (err) => {
+    .catch((err) => {
       if (err.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
           toast: true,
@@ -26,7 +26,7 @@ async function readnewsfeedmylist(page) {
           timer: 2000,
           timerProgressBar: true,
         });
-         Toast.fire({
+        Toast.fire({
           icon: 'error',
           title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
         });
@@ -49,9 +49,9 @@ async function readnewsfeedmylist(page) {
 
 // 무한 스크롤
 async function limitscroll() {
-  page++
-  readnewsfeedmylist(page)
-  }
+  page++;
+  readnewsfeedmylist(page);
+}
 
 // 내 뉴스피드에서 태그 정렬
 async function serchtag(tag) {

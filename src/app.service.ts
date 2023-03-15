@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
-import { GroupNewsFeed } from './database/entities/group-newsfeed.entity';
 import { Group } from './database/entities/group.entity';
 import { UserGroup } from './database/entities/user-group.entity';
 
@@ -11,8 +10,6 @@ export class AppService {
   private readonly groupRepository: Repository<Group>;
   @InjectRepository(UserGroup)
   private readonly userGroupRepository: Repository<UserGroup>;
-  @InjectRepository(GroupNewsFeed)
-  private readonly groupNewsfeedRepository: Repository<GroupNewsFeed>;
 
   async groupInfo(groupId) {
     const group = await this.groupRepository.findOne({
@@ -30,9 +27,9 @@ export class AppService {
       take: 5,
     });
 
-    const newsfeedCount = await this.groupNewsfeedRepository.count({
-      where: { groupId },
-    });
+    // const newsfeedCount = await this.groupNewsfeedRepository.count({
+    //   where: { groupId },
+    // });
     console.log(group)
     return {
       groupId: group.id,
@@ -50,7 +47,7 @@ export class AppService {
         memberImage: member.user.image,
         memberJoinedAt: member.createdAt.toLocaleString(), //추후 업데이트로 변경해야함
       })),
-      newsfeedCount,
+      // newsfeedCount,
     };
   }
 }

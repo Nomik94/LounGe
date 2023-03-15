@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { GroupNewsFeed } from './group-newsfeed.entity';
 import { GroupEvent } from './groupEvent.entity';
+import { NewsFeed } from './newsFeed.entity';
 import { TagGroup } from './tag-group.entity';
 import { UserGroup } from './user-group.entity';
 import { User } from './user.entity';
@@ -53,6 +53,6 @@ export class Group extends BaseEntity {
   @OneToMany(() => UserGroup, (userGroup) => userGroup.group)
   userGroups: UserGroup[];
 
-  @OneToMany(() => GroupNewsFeed, (groupNewsFeed) => groupNewsFeed.group)
-  groupNewsFeeds: GroupNewsFeed[];
+  @OneToMany(() => NewsFeed, (newsfeed) => newsfeed.group)
+  newsfeed: NewsFeed[]
 }

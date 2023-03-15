@@ -8,6 +8,6 @@ export interface ISerchTagNewsfeed {
   userEmail: string;
   tagsName: string[];
   newsfeedImage: string[];
-  groupId: number[];
-  groupName: string[];
+  groupId: number;
+  groupName: string;
 }

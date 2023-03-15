@@ -58,6 +58,9 @@ async function serchtag(tag) {
     params: {
       tag: test,
     },
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
   })
     .then(async (res) => {
       clearnewsfeed();

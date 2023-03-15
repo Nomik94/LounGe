@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../app.module';
 import { NewsfeedService } from './newsfeed.service';
-import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
+import { newsfeedCheckDto } from './dto/newsfeed.check.dto';
 import * as request from 'supertest';
 
 describe('NewsfeedController (e2e)', () => {

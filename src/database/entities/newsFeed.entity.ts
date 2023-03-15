@@ -9,10 +9,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { GroupNewsFeed } from './group-newsfeed.entity';
 import { NewsFeedImage } from './newsFeedImage.entity';
 import { NewsFeedTag } from './newsFeed-Tag.entity';
 import { User } from './user.entity';
+import { Group } from './group.entity';
 
 @Entity()
 export class NewsFeed extends BaseEntity {
@@ -37,9 +37,9 @@ export class NewsFeed extends BaseEntity {
   @ManyToOne(() => User, (user) => user.newsFeeds)
   user: User;
 
-  @OneToMany(() => GroupNewsFeed, (groupNewsFeed) => groupNewsFeed.newsFeed)
-  groupNewsFeeds: GroupNewsFeed[];
-
   @OneToMany(() => NewsFeedTag, (newsFeedTag) => newsFeedTag.newsFeed)
   newsFeedTags: NewsFeedTag[];
+
+  @ManyToOne(() => Group, (group) => group.newsfeed)
+  group: Group
 }
