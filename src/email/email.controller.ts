@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { EmailDTO, VerifyEmailDTO } from './dto/email.dto';
 import { EmailService } from './email.service';
 
 @Controller('api/emailVerify')
@@ -7,13 +8,13 @@ export class EmailController {
 
   // 인증메일 발송 API
   @Post()
-  async sendVerifyEmail(@Body() body): Promise<void> {
+  async sendVerifyEmail(@Body() body: EmailDTO): Promise<void> {
     return await this.emailService.sendVerification(body.email);
   }
 
   // 인증번호 체크 API
   @Post('check')
-  async verifyEmail(@Body() body): Promise<{
+  async verifyEmail(@Body() body: VerifyEmailDTO): Promise<{
     message: string;
   }> {
     const verifyToken = parseInt(body.checkNumber);
