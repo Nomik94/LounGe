@@ -1,7 +1,33 @@
+let page = 1
+
 $(document).ready(async function () {
   await restoreToken();
-  leaderGroupList();
+  leaderGroupList(page);
 });
+async function limitscroll() {
+  page++;
+  leaderGroupList(page);
+}
+
+function debounce(callback, limit = 500) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback.apply(this, args);
+    }, limit);
+  };
+}
+
+document.addEventListener(
+  'scroll',
+  debounce((e) => {
+    const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
+    if (clientHeight + scrollTop >= scrollHeight) {
+      limitscroll();
+    }
+  }, 500),
+);
 function createGroup() {
   const groupName = document.getElementById('groupName').value;
   const groupDescription = document.getElementById('groupDescription').value;
@@ -53,16 +79,16 @@ function createGroup() {
     });
 }
 
-function leaderGroupList() {
+function leaderGroupList(page) {
+  console.log(page)
   axios({
-    url: `/api/groups/created/list`,
+    url: `/api/groups/created/list/${page}`,
     method: 'get',
     headers: {
       Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
-      console.log(res.data);
       res.data.forEach((data) => {
         let temp_html = `          <!-- USER PREVIEW -->
         <div class="user-preview small fixed-height-medium">

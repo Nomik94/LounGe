@@ -55,11 +55,14 @@ export class GroupController {
   }
 
   // 그룹 관리 리스트 API
-  @Get('/created/list')
+  @Get('/created/list/:page')
   @UseGuards(JwtAuthGuard)
-  async getGroupManagementList(@GetUser() user: IUser): Promise<Group[]> {
+  async getGroupManagementList(
+    @GetUser() user: IUser,
+    @Param('page') page: number,
+  ): Promise<Group[]> {
     const userId: number = user.id;
-    return await this.groupService.getGroupManagementList(userId);
+    return await this.groupService.getGroupManagementList(userId, page);
   }
 
   // 그룹 멤버 리스트 API

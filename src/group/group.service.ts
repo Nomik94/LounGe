@@ -29,7 +29,6 @@ export class GroupService {
 
   // 전체 그룹 리스트
   async getAllGroupList(userId: number, page: number): Promise<IMapGroups[]> {
-    const currPage = page;
     const pageSize = 9; 
     const foundUserWithGroups = await this.userGroupRepository.find({
       where: { userId },
@@ -38,7 +37,7 @@ export class GroupService {
     const groupIds = foundUserWithGroups.map((data) => data.groupId);
     const getGroupsWithOutIds = await this.groupRepository.getGroupsWithOutIds(
       groupIds,
-      currPage,
+      page,
       pageSize,
     );
     const mapGroupList = this.mapGroupsWithTags(getGroupsWithOutIds);
@@ -90,9 +89,15 @@ export class GroupService {
   }
 
   // 그룹 관리 리스트
-  async getGroupManagementList(userId: number): Promise<Group[]> {
+  async getGroupManagementList(userId: number, page: number): Promise<Group[]> {
+    let pageSize = 9
+    if(page === 1) {
+      pageSize = 8
+    }
     return await this.groupRepository.find({
       where: { userGroups: { userId, role: '그룹장' } },
+      take : pageSize,
+      skip : pageSize * (page -1)
     });
   }
 
