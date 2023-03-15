@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotAcceptableException } from '@nestjs/common';
 import { GroupNewsfeedRepository } from 'src/common/repository/group.newsfeed.repository';
 import { NewsfeedRepository } from 'src/common/repository/newsfeed.repository';
 import { NewsfeedTagRepository } from 'src/common/repository/newsfeed.tag.repository';
@@ -269,6 +269,9 @@ export class NewsfeedService {
     async readNewsfeedMyList(userId:number,page:number):Promise<ISerchNewsfeedList[]>{
         try {
             const findNewsfeed = await this.newsfeedRepository.findnewsfeedByUserId(userId,page,this.pageSize)
+            if(!findNewsfeed){
+                throw new NotAcceptableException("작성된 뉴스피드가 없습니다.")
+            }
                 const result = findNewsfeed.map(feed => {
                     const userName = feed.user.username;
                     const userImage = feed.user.image;

@@ -41,8 +41,8 @@ async function getGroupList(page) {
     },
   })
     .then(function (res) {
-      if(res.data.length <9) {
-        document.getElementById('loader').innerHTML = ''
+      if (res.data.length < 9) {
+        document.getElementById('loader').innerHTML = '';
       }
       groupList(res.data);
     })
