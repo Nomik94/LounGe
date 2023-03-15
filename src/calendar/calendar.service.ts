@@ -131,10 +131,12 @@ export class CalendarService {
     groupId: number,
   ): Promise<IGroupEventList> {
     await this.checkMember(userId, groupId);
+
     const checkRole = await this.groupRepository.findOne({
       where: { id: groupId, user: { id: userId } },
     });
     let role = false;
+
     if (checkRole) {
       role = true;
     }
