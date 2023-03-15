@@ -10,10 +10,16 @@ import {
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { GetUser } from 'src/common/decorator/get.user.decorator';
+import { Group } from 'src/database/entities/group.entity';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { GroupService } from './group.service';
-import { GroupTransfer } from './interface/transfer.group.interface';
+import { IFile } from './interface/file.interface';
+import { IMyGroupList } from './interface/get.my.group.list.interface';
+import { IJoinRequest } from './interface/group.join.request.interface';
+import { IMemberList } from './interface/group.member.list.interface';
+import { IMapGroups } from './interface/map.group.tag.interface';
+import { IGroupWithMemberIdsStr } from './interface/member.group.ids.interface';
 
 @Controller('/api/groups')
 export class GroupController {
@@ -22,7 +28,7 @@ export class GroupController {
   // 전체 그룹 리스트 API
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getAllGroupList(@GetUser() user) {
+  async getAllGroupList(@GetUser() user: IUser): Promise<IMapGroups[]> {
     const userId: number = user.id;
     return await this.groupService.getAllGroupList(userId);
   }
@@ -30,14 +36,17 @@ export class GroupController {
   // 그룹 태그 검색 리스트 API
   @Get('/search/:tag')
   @UseGuards(JwtAuthGuard)
-  async searchGroupByTag(@GetUser() user, @Param('tag') tag: string) {
+  async searchGroupByTag(
+    @GetUser() user: IUser,
+    @Param('tag') tag: string,
+  ): Promise<IMapGroups[]> {
     return await this.groupService.searchGroupByTag(tag);
   }
 
   // 소속된 그룹 리스트 API
   @Get('/joined/list')
   @UseGuards(JwtAuthGuard)
-  async getMyGroupList(@GetUser() user) {
+  async getMyGroupList(@GetUser() user: IUser): Promise<IMyGroupList[]> {
     const userId: number = user.id;
     return await this.groupService.getMyGroupList(userId);
   }
@@ -45,7 +54,7 @@ export class GroupController {
   // 그룹 관리 리스트 API
   @Get('/created/list')
   @UseGuards(JwtAuthGuard)
-  async getGroupManagementList(@GetUser() user) {
+  async getGroupManagementList(@GetUser() user: IUser): Promise<Group[]> {
     const userId: number = user.id;
     return await this.groupService.getGroupManagementList(userId);
   }
@@ -53,7 +62,9 @@ export class GroupController {
   // 그룹 멤버 리스트 API
   @Get(':groupId/members/list/')
   @UseGuards(JwtAuthGuard)
-  async getGroupMemberList(@Param('groupId') groupId: number) {
+  async getGroupMemberList(
+    @Param('groupId') groupId: number,
+  ): Promise<IMemberList> {
     return await this.groupService.getGroupMemberList(groupId);
   }
 
@@ -61,9 +72,9 @@ export class GroupController {
   @Get('/:groupId/applicant/list/')
   @UseGuards(JwtAuthGuard)
   async getGroupJoinRequestList(
-    @GetUser() user,
+    @GetUser() user: IUser,
     @Param('groupId') groupId: number,
-  ) {
+  ): Promise<IJoinRequest[]> {
     const userId: number = user.id;
     return await this.groupService.getGroupJoinRequestList(userId, groupId);
   }
@@ -78,8 +89,8 @@ export class GroupController {
     ]),
   )
   async createGroup(
-    @GetUser() user,
-    @UploadedFiles() file,
+    @GetUser() user: IUser,
+    @UploadedFiles() file: IFile,
     @Body() data: CreateGroupDto,
   ): Promise<void> {
     const userId: number = user.id;
@@ -96,11 +107,11 @@ export class GroupController {
     ]),
   )
   async modifyGroup(
-    @GetUser() user,
+    @GetUser() user: IUser,
     @Body() data: ModifyGroupDto,
-    @UploadedFiles() file,
+    @UploadedFiles() file: IFile,
     @Param('groupId') groupId: number,
-  ) {
+  ): Promise<void> {
     const userId: number = user.id;
     await this.groupService.modifyGroup(data, file, userId, groupId);
   }
@@ -108,7 +119,10 @@ export class GroupController {
   // 그룹 삭제 API
   @Delete('/:groupId')
   @UseGuards(JwtAuthGuard)
-  async deleteGroup(@GetUser() user, @Param('groupId') groupId: number) {
+  async deleteGroup(
+    @GetUser() user: IUser,
+    @Param('groupId') groupId: number,
+  ): Promise<void> {
     const userId: number = user.id;
     await this.groupService.deleteGroup(userId, groupId);
   }
@@ -116,7 +130,10 @@ export class GroupController {
   // 그룹 양도 API
   @Put('/:groupId/leaders/transfer/:memberId')
   @UseGuards(JwtAuthGuard)
-  async transferGroupOwnership(@GetUser() user, @Param() ids: GroupTransfer) {
+  async transferGroupOwnership(
+    @GetUser() user: IUser,
+    @Param() ids: IGroupWithMemberIdsStr,
+  ): Promise<void> {
     const userId: number = user.id;
     return await this.groupService.transferGroupOwnership(userId, ids);
   }
@@ -124,7 +141,10 @@ export class GroupController {
   // 그룹 추방 API
   @Delete('/:groupId/kickout/:memberId')
   @UseGuards(JwtAuthGuard)
-  async removeGroupMember(@GetUser() user, @Param() ids: GroupTransfer) {
+  async removeGroupMember(
+    @GetUser() user: IUser,
+    @Param() ids: IGroupWithMemberIdsStr,
+  ): Promise<void> {
     const userId: number = user.id;
     return await this.groupService.removeGroupMember(userId, ids);
   }
@@ -132,7 +152,10 @@ export class GroupController {
   // 그룹 가입 신청 수락 API
   @Put('/:groupId/members/:memberId')
   @UseGuards(JwtAuthGuard)
-  async acceptGroupJoinRequest(@GetUser() user, @Param() ids) {
+  async acceptGroupJoinRequest(
+    @GetUser() user: IUser,
+    @Param() ids: IGroupWithMemberIdsStr,
+  ): Promise<void> {
     const userId: number = user.id;
     await this.groupService.acceptGroupJoinRequest(userId, ids);
   }
@@ -140,7 +163,10 @@ export class GroupController {
   // 그룹 가입 거절 API
   @Delete('/:groupId/reject/:memberId')
   @UseGuards(JwtAuthGuard)
-  async rejectGroupJoinRequest(@GetUser() user, @Param() ids: GroupTransfer) {
+  async rejectGroupJoinRequest(
+    @GetUser() user: IUser,
+    @Param() ids: IGroupWithMemberIdsStr,
+  ): Promise<void> {
     const userId: number = user.id;
     return await this.groupService.rejectGroupJoinRequest(userId, ids);
   }
@@ -149,9 +175,9 @@ export class GroupController {
   @Post('/:groupId/join')
   @UseGuards(JwtAuthGuard)
   async addGroupJoinRequest(
-    @GetUser() user,
+    @GetUser() user: IUser,
     @Param('groupId') groupId: number,
-  ) {
+  ): Promise<void> {
     const userId: number = user.id;
     await this.groupService.addGroupJoinRequest(userId, groupId);
   }
@@ -159,7 +185,10 @@ export class GroupController {
   // 그룹 탈퇴 API
   @Delete('/:groupId/withdraw')
   @UseGuards(JwtAuthGuard)
-  async leaveGroup(@GetUser() user, @Param('groupId') groupId: number) {
+  async leaveGroup(
+    @GetUser() user: IUser,
+    @Param('groupId') groupId: number,
+  ): Promise<void> {
     const userId: number = user.id;
     await this.groupService.leaveGroup(userId, groupId);
   }

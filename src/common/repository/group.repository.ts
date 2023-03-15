@@ -9,7 +9,7 @@ export class GroupRepository extends Repository<Group> {
   }
 
   // 전체 그룹 리스트
-  async getGroupsWithOutIds(groupIds) {
+  async getGroupsWithOutIds(groupIds : number[]): Promise<Group[]> {
     return await this.find({
       select: [
         'id',
@@ -23,7 +23,7 @@ export class GroupRepository extends Repository<Group> {
     });
   }
 
-  async getGroupsWithIds(groupIds) {
+  async getGroupsWithIds(groupIds: { id: number }[]): Promise<Group[]> {
     return await this.find({
       select: [
         'id',
@@ -37,7 +37,7 @@ export class GroupRepository extends Repository<Group> {
     });
   }
 
-  async getMyGroupList(userId) {
+  async getMyGroupList(userId: number): Promise<Group[]> {
     return await this.find({
       select: [
         'id',
@@ -52,14 +52,14 @@ export class GroupRepository extends Repository<Group> {
     });
   }
 
-  async foundGroupByGroupId(groupId) {
+  async foundGroupByGroupId(groupId: number): Promise<Group> {
     return await this.findOne({
       where: { id: groupId },
       relations: ['tagGroups.tag'],
     });
   }
 
-  async foundGroupWithLeader(groupId) {
+  async foundGroupWithLeader(groupId: number): Promise<Group> {
     return await this.findOne({
       where: { id: groupId },
       relations: ['user'],

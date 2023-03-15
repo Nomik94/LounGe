@@ -3,17 +3,20 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { GroupRepository } from 'src/common/repository/group.repository';
 import { TagGroupRepository } from 'src/common/repository/tag.group.repository';
 import { TagRepository } from 'src/common/repository/tag.repository';
 import { UserGroupRepository } from 'src/common/repository/user.group.repository';
-import { TagGroup } from 'src/database/entities/tag-group.entity';
-import { Tag } from 'src/database/entities/tag.entity';
-import { Like, Repository } from 'typeorm';
+import { Like } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
-import { GroupTransfer } from './interface/transfer.group.interface';
+import { IMapGroups } from './interface/map.group.tag.interface';
+import { IGroupWithMemberIdsStr } from './interface/member.group.ids.interface';
+import { IMyGroupList } from './interface/get.my.group.list.interface';
+import { Group } from 'src/database/entities/group.entity';
+import { IMemberList } from './interface/group.member.list.interface';
+import { IJoinRequest } from './interface/group.join.request.interface';
+import { IFile } from './interface/file.interface';
 
 @Injectable()
 export class GroupService {
@@ -25,7 +28,7 @@ export class GroupService {
   ) {}
 
   // 전체 그룹 리스트
-  async getAllGroupList(userId: number) {
+  async getAllGroupList(userId: number): Promise<IMapGroups[]> {
     const foundUserWithGroups = await this.userGroupRepository.find({
       where: { userId },
     });
@@ -40,7 +43,7 @@ export class GroupService {
   }
 
   // 그룹 태그 검색 리스트
-  async searchGroupByTag(tag) {
+  async searchGroupByTag(tag: string): Promise<IMapGroups[]> {
     const tags = await this.tagRepository.find({
       where: { tagName: Like(`%${tag}%`) },
       select: ['id'],
@@ -68,7 +71,7 @@ export class GroupService {
   }
 
   // 소속된 그룹 리스트
-  async getMyGroupList(userId) {
+  async getMyGroupList(userId: number): Promise<IMyGroupList[]> {
     const myGroupList = await this.groupRepository.getMyGroupList(userId);
 
     return myGroupList.map((group) => ({
@@ -83,14 +86,14 @@ export class GroupService {
   }
 
   // 그룹 관리 리스트
-  async getGroupManagementList(userId) {
+  async getGroupManagementList(userId: number): Promise<Group[]> {
     return await this.groupRepository.find({
       where: { userGroups: { userId, role: '그룹장' } },
     });
   }
 
   // 그룹 멤버 리스트
-  async getGroupMemberList(groupId) {
+  async getGroupMemberList(groupId: number): Promise<IMemberList> {
     const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId); // 그룹 수정에 사용중 분리 필요
 
     const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName); //그룹 수정에 사용중 분리 필요
@@ -107,7 +110,10 @@ export class GroupService {
   }
 
   // 그룹 가입 신청자 리스트
-  async getGroupJoinRequestList(userId, groupId) {
+  async getGroupJoinRequestList(
+    userId: number,
+    groupId: number,
+  ): Promise<IJoinRequest[]> {
     await this.checkGroupLeader(userId, groupId);
     const groupJoinRequestList =
       await this.userGroupRepository.getGroupJoinRequestList(groupId);
@@ -166,10 +172,10 @@ export class GroupService {
   // 그룹 수정
   async modifyGroup(
     data: ModifyGroupDto,
-    file,
+    file: IFile,
     userId: number,
     groupId: number,
-  ) {
+  ): Promise<void> {
     const tagArray = data.tag.split(',');
     if (tagArray.find((tag) => tag.length >= 11)) {
       throw new BadRequestException(
@@ -209,7 +215,7 @@ export class GroupService {
   }
 
   // 그룹 삭제
-  async deleteGroup(userId: number, groupId: number) {
+  async deleteGroup(userId: number, groupId: number): Promise<void> {
     const deletedGroup = await this.groupRepository.softDelete({
       id: groupId,
       user: { id: userId },
@@ -224,7 +230,10 @@ export class GroupService {
   }
 
   // 그룹 양도
-  async transferGroupOwnership(userId: number, ids: GroupTransfer) {
+  async transferGroupOwnership(
+    userId: number,
+    ids: IGroupWithMemberIdsStr,
+  ): Promise<void> {
     const groupId = Number(ids.groupId);
     const memberId = Number(ids.memberId);
     const foundUser = await this.userGroupRepository.findOne({
@@ -249,7 +258,10 @@ export class GroupService {
   }
 
   // 그룹 추방
-  async removeGroupMember(userId, ids: GroupTransfer) {
+  async removeGroupMember(
+    userId: number,
+    ids: IGroupWithMemberIdsStr,
+  ): Promise<void> {
     const groupId = Number(ids.groupId);
     const memberId = Number(ids.memberId);
 
@@ -271,7 +283,10 @@ export class GroupService {
   }
 
   // 그룹 가입 신청 수락
-  async acceptGroupJoinRequest(userId: number, ids) {
+  async acceptGroupJoinRequest(
+    userId: number,
+    ids: IGroupWithMemberIdsStr,
+  ): Promise<void> {
     const groupId = Number(ids.groupId);
     const memberId = Number(ids.memberId);
 
@@ -291,7 +306,10 @@ export class GroupService {
   }
 
   // 그룹 가입 거절
-  async rejectGroupJoinRequest(userId: number, ids: GroupTransfer) {
+  async rejectGroupJoinRequest(
+    userId: number,
+    ids: IGroupWithMemberIdsStr,
+  ): Promise<void> {
     const groupId = Number(ids.groupId);
     const memberId = Number(ids.memberId);
     await this.checkGroupLeader(userId, groupId);
@@ -303,7 +321,7 @@ export class GroupService {
   }
 
   // 그룹 가입 신청
-  async addGroupJoinRequest(userId: number, groupId: number) {
+  async addGroupJoinRequest(userId: number, groupId: number): Promise<void> {
     const foundUserWithGroup = await this.userGroupRepository.findOneBy({
       userId,
       groupId,
@@ -318,7 +336,7 @@ export class GroupService {
   }
 
   // 그룹 탈퇴
-  async leaveGroup(userId, groupId) {
+  async leaveGroup(userId: number, groupId: number): Promise<void> {
     const foundUser = await this.userGroupRepository.findOne({
       where: { userId, groupId },
     });
@@ -339,7 +357,8 @@ export class GroupService {
   }
 
   // 그룹 리스트 태그 매핑
-  async mapGroupsWithTags(groupList) {
+  async mapGroupsWithTags(groupList: Group[]): Promise<IMapGroups[]> {
+    console.log(groupList);
     const mapGroupList = groupList.map((group) => {
       const mapTagGroups = group.tagGroups.map((tag) => tag.tag.tagName);
 
@@ -356,7 +375,7 @@ export class GroupService {
   }
 
   // 태그 체크
-  async checkTag(tags: string[], groupId: number) {
+  async checkTag(tags: string[], groupId: number): Promise<void> {
     if (!tags.length) {
       return;
     }
@@ -376,13 +395,16 @@ export class GroupService {
     }
 
     if (existTags.length !== 0) {
-      const mapTags = existTags.map((tag) => ({ tagId: tag.id, groupId }));
+      const mapTags = existTags.map((tag) => ({
+        tagId: tag.id,
+        groupId,
+      }));
       this.tagGroupRepository.createTagWithGroup(mapTags);
     }
   }
 
   // 그룹 리더 체크
-  async checkGroupLeader(userId: number, groupId: number) {
+  async checkGroupLeader(userId: number, groupId: number): Promise<void> {
     const checkLeader = await this.groupRepository.foundGroupWithLeader(
       groupId,
     );
