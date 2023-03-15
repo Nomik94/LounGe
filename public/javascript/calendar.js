@@ -33,11 +33,9 @@
       },
       eventChange: function (obj) {
         // 이벤트가 수정되면 발생하는 이벤트
-        console.log(obj);
       },
       eventRemove: function (obj) {
         // 이벤트가 삭제되면 발생하는 이벤트
-        console.log(obj);
       },
       select: function (arg) {
         document.getElementById('event-name').value = '';

@@ -32,14 +32,10 @@ async function readnewsfeedmygroup(page) {
         });
         window.location.href = '/';
       }
-
-      if (err.response.data.statusCode !== 401) {
-        Swal.fire({
-          icon: 'error',
-          title: '알수없는 이유로 실행되지 않았습니다.',
-          text: '관리자에게 문의해 주세요.',
-        });
-      }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
     });
 }
 

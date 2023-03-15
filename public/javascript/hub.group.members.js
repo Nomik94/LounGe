@@ -17,25 +17,25 @@ function managementMemberList() {
     },
   })
     .then(function (res) {
+      console.log(res)
       $('#groupTitle').empty();
-      $('#groupTitle').append(`${res.data.group.groupName}`);
+      $('#groupTitle').append(`${res.data.foundGroup.groupName}`);
       document.getElementById(
         'popupButton',
-      ).innerHTML = `<p class="button secondary full popup-manage-group-trigger-1" onclick="modifyGroup('${res.data.group.groupImage}','${res.data.group.backgroundImage}')">그룹 수정하기</p>`;
+      ).innerHTML = `<p class="button secondary full popup-manage-group-trigger-1" onclick="modifyGroup('${res.data.foundGroup.groupImage}','${res.data.foundGroup.backgroundImage}')">그룹 수정하기</p>`;
       document.getElementById(
         'avatarImg',
-      ).innerHTML = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.group.groupImage}"></div>`;
+      ).innerHTML = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.foundGroup.groupImage}"></div>`;
       document.getElementById(
         'backImg',
-      ).innerHTML = `<img src="/backgroundImage/${res.data.group.backgroundImage}" alt="backgroundImg">`;
+      ).innerHTML = `<img src="/backgroundImage/${res.data.foundGroup.backgroundImage}" alt="backgroundImg">`;
       document.getElementById(
         'groupName',
-      ).value = `${res.data.group.groupName}`;
+      ).value = `${res.data.foundGroup.groupName}`;
       document.getElementById(
         'groupDescription',
-      ).value = `${res.data.group.description}`;
+      ).value = `${res.data.foundGroup.description}`;
       document.getElementById('groupTags').value = `${res.data.tags.join(',')}`;
-
       res.data.members.forEach((data) => {
         if (data.userRole === '회원') {
           let temp_html = `          <!-- 멤버 리스트 추방 -->
@@ -125,6 +125,7 @@ function managementMemberList() {
       $('#managementjs').append(js);
     })
     .catch(async function (error) {
+      console.log(error)
       if (error.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
           toast: true,

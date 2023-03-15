@@ -31,13 +31,10 @@ async function readnewsfeedmylist(page) {
           title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
         });
       }
-      if (err.response.data.statusCode !== 401) {
-        Swal.fire({
-          icon: 'error',
-          title: '알수없는 이유로 실행되지 않았습니다.',
-          text: '관리자에게 문의해 주세요.',
-        });
-      }
+      Swal.fire({
+        icon: 'error',
+        text: `${err.response.data.message}`,
+      });
     });
 }
 
