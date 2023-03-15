@@ -85,7 +85,7 @@ function emailVerify() {
   const email = $('#register-email').val();
   if (!email) {
     Swal.fire({
-      icon: 'false',
+      icon: 'error',
       text: `이메일을 입력해주세요.`,
     });
   } else {
@@ -113,7 +113,7 @@ function emailCheck() {
   const checkNumber = $('#certification_number').val();
   if (!checkNumber) {
     Swal.fire({
-      icon: 'false',
+      icon: 'error',
       text: `번호를 입력해주세요.`,
     });
   } else {
