@@ -8,7 +8,7 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     super(NewsFeed, dataSource.createEntityManager());
   }
 
-  async checkNewsfeed(id:number){
+  async checkNewsfeed(id:number):Promise<NewsFeed>{
     return await this.findOne({
       relations: ['user'],
       where: {id:id}

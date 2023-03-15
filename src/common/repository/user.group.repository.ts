@@ -18,7 +18,7 @@ export class UserGroupRepository extends Repository<UserGroup> {
     })
   }
 
-  async getMemberList(groupId) {
+  async getMemberList(groupId):Promise<UserGroup[]>{
     return await this.find({
       where: { groupId, role: Not('가입대기') },
       relations: ['user'],
@@ -26,7 +26,7 @@ export class UserGroupRepository extends Repository<UserGroup> {
     });
   }
 
-  async getGroupJoinRequestList(groupId) {
+  async getGroupJoinRequestList(groupId):Promise<UserGroup[]>{
     return await this.find({
       where: { groupId, role: '가입대기' },
       select: ['userId', 'groupId'],
