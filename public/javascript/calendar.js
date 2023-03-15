@@ -115,7 +115,6 @@
 })();
 
 function listRender(data) {
-  console.log(data);
   data.forEach((event) => {
     const getDate = event.start.split(' ')[0].split('-');
     let temp_html;

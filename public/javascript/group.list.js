@@ -1,17 +1,49 @@
+let page = 1;
 $(document).ready(async function () {
   await restoreToken();
-  getGroupList();
-});
 
-async function getGroupList() {
+  getGroupList(page);
+});
+history.pushState(null, null, `/groups?page=${page}`);
+
+async function limitscroll() {
+  if (window.location.href.split('?')[1].split('=')[0] !== 'page') return;
+  page++;
+  history.pushState(null, null, `/groups?page=${page}`);
+  getGroupList(page);
+}
+
+function debounce(callback, limit = 500) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback.apply(this, args);
+    }, limit);
+  };
+}
+
+document.addEventListener(
+  'scroll',
+  debounce((e) => {
+    const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
+    if (clientHeight + scrollTop >= scrollHeight) {
+      limitscroll();
+    }
+  }, 500),
+);
+async function getGroupList(page) {
   axios({
-    url: '/api/groups',
+    url: `/api/groups/${page}`,
     method: 'get',
     headers: {
       Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(function (res) {
+      if(res.data.length <9) {
+        document.getElementById('loader').innerHTML = ''
+      }
       groupList(res.data);
     })
     .catch(async function (error) {
@@ -90,7 +122,7 @@ function searchGroups(tag) {
     tag = document.getElementById('groups-search').value;
   }
   document.getElementById('groups-search').value = '';
-
+  history.pushState(null, null, `/groups?search=${tag}`);
   if (!tag.length) {
     Swal.fire({
       icon: 'false',
@@ -186,17 +218,7 @@ async function groupList(list) {
   
         <!-- USER STATS -->
         <div class="user-stats" style="height: 100px;">
-        <!-- USER STAT -->
-          <div class="user-stat">
-            <!-- USER STAT TITLE -->
-            <p class="user-stat-title">23k</p>
-            <!-- /USER STAT TITLE -->
-    
-            <!-- USER STAT TEXT -->
-            <p class="user-stat-text">members</p>
-            <!-- /USER STAT TEXT -->
-          </div>
-        <!-- /USER STAT -->
+
         <!-- TAG LIST -->
           <div class="tag-list">
             ${data.tagGroups

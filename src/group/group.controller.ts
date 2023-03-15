@@ -1,4 +1,4 @@
-import { Body, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
   Delete,
@@ -26,11 +26,14 @@ export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   // 전체 그룹 리스트 API
-  @Get()
+  @Get('/:page')
   @UseGuards(JwtAuthGuard)
-  async getAllGroupList(@GetUser() user: IUser): Promise<IMapGroups[]> {
+  async getAllGroupList(
+    @Param('page') page: number,
+    @GetUser() user: IUser,
+  ): Promise<IMapGroups[]> {
     const userId: number = user.id;
-    return await this.groupService.getAllGroupList(userId);
+    return await this.groupService.getAllGroupList(userId, page);
   }
 
   // 그룹 태그 검색 리스트 API
@@ -44,19 +47,25 @@ export class GroupController {
   }
 
   // 소속된 그룹 리스트 API
-  @Get('/joined/list')
+  @Get('/joined/list/:page')
   @UseGuards(JwtAuthGuard)
-  async getMyGroupList(@GetUser() user: IUser): Promise<IMyGroupList[]> {
+  async getMyGroupList(
+    @GetUser() user: IUser,
+    @Param('page') page: number,
+  ): Promise<IMyGroupList[]> {
     const userId: number = user.id;
-    return await this.groupService.getMyGroupList(userId);
+    return await this.groupService.getMyGroupList(userId, page);
   }
 
   // 그룹 관리 리스트 API
-  @Get('/created/list')
+  @Get('/created/list/:page')
   @UseGuards(JwtAuthGuard)
-  async getGroupManagementList(@GetUser() user: IUser): Promise<Group[]> {
+  async getGroupManagementList(
+    @GetUser() user: IUser,
+    @Param('page') page: number,
+  ): Promise<Group[]> {
     const userId: number = user.id;
-    return await this.groupService.getGroupManagementList(userId);
+    return await this.groupService.getGroupManagementList(userId, page);
   }
 
   // 그룹 멤버 리스트 API

@@ -21,7 +21,6 @@ function deleteUserEvent(eventId, eventName) {
           window.location.reload()
         })
         .catch(async function (error) {
-          console.log(error)
           if (error.response.data.statusCode === 401) {
             const Toast = Swal.mixin({
               toast: true,
@@ -68,7 +67,6 @@ function deleteGroupEvent(eventId, eventName) {
           window.location.replace('/events');
         })
         .catch(async function (error) {
-          console.log(error)
           if (error.response.data.statusCode === 401) {
             const Toast = Swal.mixin({
               toast: true,
