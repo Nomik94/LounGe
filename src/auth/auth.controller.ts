@@ -12,7 +12,7 @@ import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { AuthService } from './auth.service';
 import { AuthDTO, KakaoLoginDTO, LogInBodyDTO } from './dto/auth.dto';
 import { JwtRefreshGuard } from './guards/jwt.refresh.guard';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { LocalAuthGuard } from './guards/local.auth.guard';
 
 @Controller('api/auth')
 export class AuthController {

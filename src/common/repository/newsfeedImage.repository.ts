@@ -7,4 +7,24 @@ export class NewsfeedImageRepository extends Repository<NewsFeedImage> {
   constructor(private dataSource: DataSource) {
     super(NewsFeedImage, dataSource.createEntityManager());
   }
+
+  deleteNewsfeedImage(id:number) {
+    return this.delete({
+      newsFeed: {id:id}
+    })
+  }
+
+  createNewsfeedImage(filename,newsfeedId){
+    return this.save({
+      image: filename,
+      newsFeed: {id:newsfeedId.id}
+    })
+  }
+
+  modifyNewsfeedImage(filename:any,id:number){
+    return this.save({
+      image: filename,
+      newsFeed: {id:id}
+    })
+  }
 }

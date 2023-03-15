@@ -51,7 +51,7 @@ describe('NewsfeedService', () => {
     );
   });
 
-  describe('postnewsfeed', () => {
+  describe('createNewsfeed', () => {
     it('should create a newsfeed successfully', async () => {
       const newsfeed = {
         content: "테스트",
@@ -70,7 +70,7 @@ describe('NewsfeedService', () => {
       const tagFindOneSpy = jest.spyOn(tagRepository, 'findOne');
       const newsfeedTagSaveSpy = jest.spyOn(newsfeedTagRepository, 'save');
 
-      await newsfeedService.postnewsfeed(newsfeed);
+      await newsfeedService.createNewsfeed(newsfeed);
 
       expect(newsfeedSaveSpy).toBeCalledTimes(1);
       expect(tagFindOneBySpy).toBeCalledTimes(2);

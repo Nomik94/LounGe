@@ -38,13 +38,13 @@ async function newsfeedlist(data) {
         <!-- SIMPLE DROPDOWN -->
         <div class="simple-dropdown widget-box-post-settings-dropdown" style="width:60px">
           <!-- SIMPLE DROPDOWN LINK -->
-          <p class="simple-dropdown-link" onclick="modinewsfeed(${
+          <p class="simple-dropdown-link" onclick="modifyNewsfeed(${
             data.id
           })">수정</p>
           <!-- /SIMPLE DROPDOWN LINK -->
 
           <!-- SIMPLE DROPDOWN LINK -->
-          <p class="simple-dropdown-link" onclick="deletenewsfeed(${
+          <p class="simple-dropdown-link" onclick="deleteNewsfeed(${
             data.id
           })">삭제</p>
           <!-- /SIMPLE DROPDOWN LINK -->
@@ -163,7 +163,7 @@ function popupNewsfeed(src) {
 }
 
 // 뉴스피드 삭제하기
-async function deletenewsfeed(newsfeedId) {
+async function deleteNewsfeed(newsfeedId) {
   await Swal.fire({
     title: '해당 뉴스피드를 지울까요?',
     text: "삭제된 뉴스피드는 복구되지 않습니다.",
@@ -231,7 +231,7 @@ let selectedTags = [];
 let selectedImages =[];
 
 // 뉴스피드 수정하기
-async function modinewsfeed(id){
+async function modifyNewsfeed(id){
   let popupHtml = '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
   popupHtml += '<h2>뉴스피드 수정하기</h2>';
   popupHtml += '<form>';
@@ -256,7 +256,6 @@ async function modinewsfeed(id){
     
   const files = document.getElementById('imageUpload');
   selectedImages = files.files
-  console.log("이미지 파일 길이",selectedImages.length);
 
   const formData = new FormData();
   formData.append('content', newsfeedcontent.value)
@@ -292,7 +291,6 @@ async function modinewsfeed(id){
         window.location.reload()
       })
       .catch((err) => {
-        console.log(err);
         if(err.response.data.statusCode === 400) {
           Swal.fire({
             icon: 'error',

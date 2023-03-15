@@ -7,4 +7,15 @@ export class UserGroupRepository extends Repository<UserGroup> {
   constructor(private dataSource: DataSource) {
     super(UserGroup, dataSource.createEntityManager());
   }
+
+  checkJoinGroup(userId:number,groupId:number) {
+    return this.find({where: {userId: userId, groupId:groupId}})
+  }
+
+  checkUserStatus(userId:number){
+    return this.find({
+      where: [{userId:userId, role:'그룹장'}, {userId:userId, role:'회원'}]
+    })
+  }
+
 }

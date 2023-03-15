@@ -29,7 +29,7 @@ describe('NewsfeedController (e2e)', () => {
           image:"테스트"
       };
 
-      jest.spyOn(newsfeedService, 'postnewsfeed').mockResolvedValue();
+      jest.spyOn(newsfeedService, 'createNewsfeed').mockResolvedValue();
 
       const res = await request(app.getHttpServer())
         .post('/api/newsfeed/newsfeed')
@@ -39,7 +39,7 @@ describe('NewsfeedController (e2e)', () => {
       expect(res.body).toEqual({});
     });
 
-    it('should call newsfeedService.postnewsfeed method with correct data', async () => {
+    it('should call newsfeedService.createNewsfeed method with correct data', async () => {
       const newsfeedData: newsfeedCheckDto = {
         content: "테스트",
         userId: 1,
@@ -47,14 +47,14 @@ describe('NewsfeedController (e2e)', () => {
        image:"테스트"
       };
 
-      const postnewsfeedSpy = jest.spyOn(newsfeedService, 'postnewsfeed');
+      const createNewsfeedSpy = jest.spyOn(newsfeedService, 'createNewsfeed');
 
       await request(app.getHttpServer())
         .post('/api/newsfeed/newsfeed')
         .send(newsfeedData)
         .expect(201);
 
-      expect(postnewsfeedSpy).toHaveBeenCalledWith(newsfeedData);
+      expect(createNewsfeedSpy).toHaveBeenCalledWith(newsfeedData);
     });
   });
 

@@ -2,6 +2,14 @@ import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsFormDataModule } from 'nestjs-form-data';
+import { GroupNewsfeedRepository } from 'src/common/repository/group.newsfeed.repository';
+import { GroupRepository } from 'src/common/repository/group.repository';
+import { NewsfeedRepository } from 'src/common/repository/newsfeed.repository';
+import { NewsfeedTagRepository } from 'src/common/repository/newsfeed.tag.repository';
+import { NewsfeedImageRepository } from 'src/common/repository/newsfeedImage.repository';
+import { TagRepository } from 'src/common/repository/tag.repository';
+import { UserGroupRepository } from 'src/common/repository/user.group.repository';
+import { UserRepository } from 'src/common/repository/user.repository';
 import { GroupNewsFeed } from 'src/database/entities/group-newsfeed.entity';
 import { Group } from 'src/database/entities/group.entity';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
@@ -20,6 +28,16 @@ import { newsfeedImageFactory } from './utills/newsfeed.img.multer';
     MulterModule.registerAsync({ useFactory: newsfeedImageFactory }),
     TypeOrmModule.forFeature([NewsFeed,Tag,NewsFeedTag,NewsFeedImage,User,Group,UserGroup,GroupNewsFeed])],
   controllers: [NewsfeedController],
-  providers: [NewsfeedService]
+  providers: [
+    NewsfeedService,
+    NewsfeedRepository,
+    TagRepository,
+    NewsfeedTagRepository,
+    NewsfeedImageRepository,
+    UserRepository,
+    GroupRepository,
+    UserGroupRepository,
+    GroupNewsfeedRepository,
+  ]
 })
 export class NewsfeedModule {}

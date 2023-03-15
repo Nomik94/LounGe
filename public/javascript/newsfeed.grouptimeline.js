@@ -15,7 +15,6 @@ function readnewsfeedgrouptimeline(id) {
    await newsfeedlist(res.data);
   })
   .catch(async(err) => {
-    console.log(err);
     await Swal.fire({
       icon: 'error',
       title: '알수없는 이유로 실행되지 않았습니다.',
@@ -65,65 +64,70 @@ function serchtag(tag) {
 }
 
 // 뉴스피드 작성하기
-async function postnewsfeed() {
+async function createNewsfeed() {
   const content = document.getElementById("quick-post-text").value;
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
   const formData = new FormData();
-  if(selectedTags.length !== 0) {
-    formData.append('newsfeedTags', selectedTags)
-  }
-  formData.append('content', content)
-    for(let i = 0; i < selectedImages.length; i++) {
-      formData.append('newsfeedImage',selectedImages[i])
+  if (!content) {
+    await Swal.fire({
+      icon: 'error',
+      title: '빈 내용은 작성할 수 없습니다!',
+      text: '뭐라도 좋으니 내용을 입력해주세요 T^T',
+    });
+  } else if (selectedImages.length > 5){
+    await Swal.fire({
+      icon: 'error',
+      title: '사진은 최대 5장만 입력 가능합니다!',
+      text: '소중한 사진을 많이 처리하지 못해 죄송합니다 T^T',
+    });
+  } else {
+    if(selectedTags.length !== 0) {
+      formData.append('newsfeedTags', selectedTags)
     }
-    if (!content) {
-      await Swal.fire({
-        icon: 'error',
-        title: '빈 내용은 작성할 수 없습니다!',
-        text: '뭐라도 좋으니 내용을 입력해주세요 T^T',
-      });
-    } else{
-      axios({
-        url: `/api/newsfeed/newsfeed/${groupId}`,
-        method: 'post',
-        headers : {
-          Authorization: `${getCookie('accessToken')}`,
-        },
-        data: formData
-      })
-      .then(async (res) => {
-        await Swal.fire({
-          icon: 'success',
-          title: '뉴스피드 작성 완료!',
-          text: '잠시 후 새로고침 됩니다.',
-        });
-        window.location.reload()
-      })
-      .catch((err) => {
-        console.log(err);
-        if(err.response.data.statusCode === 400) {
-          Swal.fire({
-            icon: 'error',
-            title: '사진은 최대 5장까지만 등록 가능합니다.',
-            text: "죄송합니다.",
+    formData.append('content', content)
+      for(let i = 0; i < selectedImages.length; i++) {
+        formData.append('newsfeedImage',selectedImages[i])
+      }
+        axios({
+          url: `/api/newsfeed/newsfeed/${groupId}`,
+          method: 'post',
+          headers : {
+            Authorization: `${getCookie('accessToken')}`,
+          },
+          data: formData
+        })
+        .then(async (res) => {
+          await Swal.fire({
+            icon: 'success',
+            title: '뉴스피드 작성 완료!',
+            text: '잠시 후 새로고침 됩니다.',
           });
-        } else if (err.response.data.statusCode === 401) {
-          Swal.fire({
-            icon: 'error',
-            title: '로그인 정보가 일치하지 않습니다.',
-            text: "다시 로그인해주세요.",
-          })
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: '알수없는 이유로 실행되지 않았습니다.',
-            text: "관리자에게 문의해 주세요.",
-          })
-        }
-      })
-    }
-}
+          window.location.reload()
+        })
+        .catch((err) => {
+          if(err.response.data.statusCode === 400) {
+            Swal.fire({
+              icon: 'error',
+              title: '사진은 최대 5장까지만 등록 가능합니다.',
+              text: "죄송합니다.",
+            });
+          } else if (err.response.data.statusCode === 401) {
+            Swal.fire({
+              icon: 'error',
+              title: '로그인 정보가 일치하지 않습니다.',
+              text: "다시 로그인해주세요.",
+            })
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: '알수없는 이유로 실행되지 않았습니다.',
+              text: "관리자에게 문의해 주세요.",
+            })
+          }
+        })
+      }
+  }
 
 // 뉴스피드 작성할때 태그 입력
 async function getTags() {
