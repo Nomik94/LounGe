@@ -32,10 +32,7 @@ export class AuthController {
   // 로그인 API
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@Body() user: LogInBodyDTO): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  async login(@Body() user: LogInBodyDTO): Promise<ITokens> {
     return await this.authService.login(user);
   }
 
@@ -43,19 +40,16 @@ export class AuthController {
   @Get('login/kakao')
   @UseGuards(AuthGuard('kakao'))
   @Render('kakao')
-  async kakaoLogin(@GetUser() user: KakaoLoginDTO): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  async kakaoLogin(@GetUser() user: KakaoLoginDTO): Promise<ITokens> {
     return await this.authService.kakaoLogin(user);
   }
 
   // 엑세스토큰 재발급 API
   @Post('restore/accessToken')
   @UseGuards(JwtRefreshGuard)
-  async restoreAccessToken(@Body() body: RefreshTokenDTO): Promise<{
-    accessToken: string;
-  }> {
+  async restoreAccessToken(
+    @Body() body: RefreshTokenDTO,
+  ): Promise<IAccessToken> {
     const refreshToken = body.refreshToken;
     return await this.authService.restoreAccessToken(refreshToken);
   }

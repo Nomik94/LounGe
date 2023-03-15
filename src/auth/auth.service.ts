@@ -53,10 +53,7 @@ export class AuthService {
   }
 
   // 로그인
-  async login(user: LogInBodyDTO): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  async login(user: LogInBodyDTO): Promise<ITokens> {
     const userEmail = user.email;
     const loginUser = await this.userService.getByEmail(userEmail);
     const userId = loginUser.id;
@@ -65,10 +62,7 @@ export class AuthService {
   }
 
   // 카카오로그인
-  async kakaoLogin(user: KakaoLoginDTO): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  async kakaoLogin(user: KakaoLoginDTO): Promise<ITokens> {
     const email = user.email;
     const nickname = user.username;
 
@@ -90,13 +84,7 @@ export class AuthService {
   }
 
   // 엑세스토큰 및 리프레시토큰 발급
-  async getTokens(
-    userEmail: string,
-    userId: number,
-  ): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  async getTokens(userEmail: string, userId: number): Promise<ITokens> {
     const accessToken = await this.getAccessToken(userEmail, userId);
     const refreshToken = await this.getRefreshToken(userEmail, userId);
 
@@ -138,9 +126,7 @@ export class AuthService {
   }
 
   // 엑세스토큰 재발급
-  async restoreAccessToken(refreshToken: string): Promise<{
-    accessToken: string;
-  }> {
+  async restoreAccessToken(refreshToken: string): Promise<IAccessToken> {
     const userEmail: string = await this.cacheManager.get(refreshToken);
 
     if (_.isNil(userEmail)) {
