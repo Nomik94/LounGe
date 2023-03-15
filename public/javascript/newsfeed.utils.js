@@ -1,3 +1,6 @@
+let selectedTags = [];
+let selectedImages =[];
+
 // 유저 쿠키
 function getCookie(name) {
   let matches = document.cookie.match(
@@ -225,9 +228,6 @@ function clearnewsfeed(){
   $('#newsfeedbox').empty();
 }
 
-let selectedTags = [];
-let selectedImages =[];
-
 // 뉴스피드 수정하기
 async function modifyNewsfeed(id){
   let popupHtml = '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
@@ -324,3 +324,23 @@ async function modifyNewsfeed(id){
    document.body.removeChild(popup)
   })
 }
+
+// 무한 스크롤 설정
+function debounce(callback, limit = 500) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback.apply(this, args);
+    }, limit);
+  };
+}
+document.addEventListener(
+  'scroll',
+  debounce((e) => {
+    const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
+    if (clientHeight + scrollTop >= scrollHeight) {
+      limitscroll();
+    }
+  }, 500),
+);

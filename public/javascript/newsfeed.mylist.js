@@ -41,31 +41,11 @@ async function readnewsfeedmylist(page) {
     });
 }
 
+// 무한 스크롤
 async function limitscroll() {
   page++
   readnewsfeedmylist(page)
   }
-  
-  function debounce(callback, limit = 500) {
-    let timeout;
-    return function (...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        callback.apply(this, args);
-      }, limit);
-    };
-  }
-  
-  document.addEventListener(
-    'scroll',
-    debounce((e) => {
-      const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
-      if (clientHeight + scrollTop >= scrollHeight) {
-        limitscroll();
-      }
-    }, 500),
-  );
-
 
 // 내 뉴스피드에서 태그 정렬
 async function serchtag(tag) {
