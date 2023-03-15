@@ -17,7 +17,6 @@ function managementMemberList() {
     },
   })
     .then(function (res) {
-      console.log(res);
       $('#groupTitle').empty();
       $('#groupTitle').append(`${res.data.group.groupName}`);
       // const avatarPopup = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.group.groupImage}"></div>`
@@ -165,7 +164,6 @@ function managementApplyList() {
     },
   })
     .then(function (res) {
-      console.log(res.data);
       res.data.forEach((data) => {
         let temp_html = `          <!-- 가입 신청자 수락 거절 -->
         <div class="notification-box" id="acceptdeletebox${data.userId}">
@@ -275,9 +273,6 @@ function managementApplyList() {
 }
 
 function applyJoin(groupId, memberId, userName) {
-  console.log(groupId);
-  console.log(memberId);
-  console.log(userName);
   Swal.fire({
     text: `${userName}님의 가입신청을 수락하시겠습니까?`,
     icon: 'question',
@@ -324,9 +319,6 @@ function applyJoin(groupId, memberId, userName) {
 }
 
 function groupTransfer(groupId, memberId, userName) {
-  console.log(groupId);
-  console.log(memberId);
-  console.log(userName);
   Swal.fire({
     text: `${userName}님께 그룹을 양도하시겠습니까?`,
     icon: 'question',
@@ -373,9 +365,6 @@ function groupTransfer(groupId, memberId, userName) {
 }
 
 function kickOutGroup(groupId, memberId, userName) {
-  console.log(groupId);
-  console.log(memberId);
-  console.log(userName);
   Swal.fire({
     text: `${userName}님을 그룹에서 추방하시겠습니까?`,
     icon: 'question',

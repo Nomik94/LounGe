@@ -80,7 +80,6 @@ function createGroup() {
 }
 
 function leaderGroupList(page) {
-  console.log(page)
   axios({
     url: `/api/groups/created/list/${page}`,
     method: 'get',
