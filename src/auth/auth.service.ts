@@ -15,7 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import _ from 'lodash';
 import { UserService } from 'src/user/user.service';
-import { AuthDTO, KakaoLoginDTO } from './dto/auth.dto';
+import { AuthDTO, KakaoLoginDTO, LogInBodyDTO } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,7 @@ export class AuthService {
   ) {}
 
   // 회원가입
-  async register(authDTO: AuthDTO, file): Promise<void> {
+  async register(authDTO: AuthDTO, file: Express.Multer.File): Promise<void> {
     let filename = 'userImage_logo.png';
     if (file) {
       filename = file.filename;
@@ -53,12 +53,13 @@ export class AuthService {
   }
 
   // 로그인
-  async login(user): Promise<{
+  async login(user: LogInBodyDTO): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
     const userEmail = user.email;
-    const userId = user.id;
+    const loginUser = await this.userService.getByEmail(userEmail);
+    const userId = loginUser.id;
 
     return await this.getTokens(userEmail, userId);
   }

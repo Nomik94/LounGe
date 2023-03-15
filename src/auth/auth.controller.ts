@@ -32,7 +32,7 @@ export class AuthController {
   // 로그인 API
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@GetUser() user: LogInBodyDTO): Promise<{
+  async login(@Body() user: LogInBodyDTO): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
