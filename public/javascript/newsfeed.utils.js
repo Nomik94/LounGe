@@ -12,9 +12,8 @@ function getCookie(name) {
 
 // 뉴스피드 리스트 불러와서 뿌려주기
 async function newsfeedlist(data) {
-  data.reverse().forEach((data) => {
+  data.forEach((data) => {
     const creadteDate = new Date(data.createAt);
-    // const updateDate = new Date(data.updateAt)
     const timeOptions = {
       hour12: false,
       hour: '2-digit',
@@ -24,7 +23,6 @@ async function newsfeedlist(data) {
       'Ko-KR',
       timeOptions,
     );
-    // const updateDateFormat = updateDate.toLocaleDateString("Ko-KR",timeOptions)
     let temp_html = `
     <br>
     <div class="widget-box no-padding">

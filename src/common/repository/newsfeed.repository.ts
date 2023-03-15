@@ -39,19 +39,25 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     })
   }
 
-  async findnewsfeedByNewsfeedId(newsfeedIds:number[]):Promise<NewsFeed[]>{
+  async findnewsfeedByNewsfeedId(newsfeedIds:number[],page:number,pageSize:number):Promise<NewsFeed[]>{
     return await this.find({
       relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
       select: ['id', 'content', 'createdAt', 'updatedAt'],
-      where: { id: In(newsfeedIds), deletedAt: null }
+      where: { id: In(newsfeedIds), deletedAt: null },
+      order: {createdAt: 'desc' },
+      take: pageSize,
+      skip: pageSize * (page - 1)
     })
   }
 
-  async findnewsfeedByUserId(userId:number):Promise<NewsFeed[]>{
+  async findnewsfeedByUserId(userId:number,page:number,pageSize:number):Promise<NewsFeed[]>{
     return await this.find({
       relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
       select: ['id','content','createdAt','updatedAt'],
-      where:{'user' : {id:userId}, deletedAt: null}
+      where:{'user' : {id:userId}, deletedAt: null},
+      order: {createdAt: 'desc' },
+      take: pageSize,
+      skip: pageSize * (page - 1)
     })
   }
 

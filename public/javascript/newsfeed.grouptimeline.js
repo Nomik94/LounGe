@@ -1,15 +1,17 @@
+let page = 1;
 $(document).ready(async function(){
   await restoreToken()
-  const urlParams = new URLSearchParams(window.location.search);
-  const groupId = urlParams.get('groupId');
-  readnewsfeedgrouptimeline(groupId)
+  readnewsfeedgrouptimeline(page)
 });
+const contents = document.querySelector('#newsfeedbox');
 
 // 특정 그룹의 뉴스피드 가져오기
-function readnewsfeedgrouptimeline(id) {
+function readnewsfeedgrouptimeline(page){
+  const urlParams = new URLSearchParams(window.location.search);
+  const groupId = urlParams.get('groupId');
   axios({
     method: 'get',
-    url: `/api/newsfeed/group/${id}`,
+    url: `/api/newsfeed/group/${groupId}/${page}`,
   })
   .then(async(res) => {
    await newsfeedlist(res.data);
@@ -22,6 +24,31 @@ function readnewsfeedgrouptimeline(id) {
     })
   })
 }
+
+async function limitscroll() {
+  page++
+  readnewsfeedgrouptimeline(page)
+  }
+  
+  function debounce(callback, limit = 500) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        callback.apply(this, args);
+      }, limit);
+    };
+  }
+  
+  document.addEventListener(
+    'scroll',
+    debounce((e) => {
+      const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
+      if (clientHeight + scrollTop >= scrollHeight) {
+        limitscroll();
+      }
+    }, 500),
+  );
 
 // 특정 그룹에서 뉴스피드 태그로 검색하기
 function serchtag(tag) {
@@ -197,3 +224,4 @@ async function getImages() {
 
 
 }
+

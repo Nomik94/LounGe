@@ -19,7 +19,7 @@ export class NewsfeedService {
         private readonly groupNewsfeedRepository: GroupNewsfeedRepository,
         private readonly userGroupRepository: UserGroupRepository
     ) {}
-
+    pageSize = 10;
     // 뉴스피드 작성
     async createNewsfeed(file,data,userId:number,groupId:number): Promise<void> {
         const content = data.content;
@@ -230,11 +230,11 @@ export class NewsfeedService {
     }
 
     // 뉴스피드 읽기 (특정 그룹)
-    async readNewsfeedGroup(groupId:number):Promise<ISerchNewsfeedList[]>{
+    async readNewsfeedGroup(groupId:number,page:number):Promise<ISerchNewsfeedList[]>{
         try {
             const newsfeed = await this.groupNewsfeedRepository.serchNewsfeedIdByGroupId(groupId)
             const newsfeedIds = newsfeed.map(Newsfeed => Newsfeed.newsFeedId)
-            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds)
+            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds,page,this.pageSize)
             const result = findNewsfeed.map(feed => {
                 const userName = feed.user.username;
                 const userImage = feed.user.image;
@@ -262,9 +262,9 @@ export class NewsfeedService {
     }
 
     // 뉴스피드 읽기 (내 뉴스피드)
-    async readNewsfeedMyList(userId:number):Promise<ISerchNewsfeedList[]>{
+    async readNewsfeedMyList(userId:number,page:number):Promise<ISerchNewsfeedList[]>{
         try {
-            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByUserId(userId)
+            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByUserId(userId,page,this.pageSize)
                 const result = findNewsfeed.map(feed => {
                     const userName = feed.user.username;
                     const userImage = feed.user.image;
@@ -289,18 +289,19 @@ export class NewsfeedService {
                 })
             return result
         } catch(err) {
+            console.log("에러코드 ! ",err);
             throw new Error(err)
         }
     }
 
     // 뉴스피드 읽기 (소속 그룹 뉴스피드)
-    async readNewsfeedMyGroup(userId:number):Promise<ISerchNewsfeedList[]>{
+    async readNewsfeedMyGroup(userId:number,page:number):Promise<ISerchNewsfeedList[]>{
         try {
             const findGroup = await this.userGroupRepository.checkUserStatus(userId)
             const groupIds = findGroup.map(group => group.groupId);
             const findNewsfeed = await this.groupNewsfeedRepository.serchNewsfeedIdByGroupIdArray(groupIds)
             const newsfeedIds = findNewsfeed.map(item => item.newsFeedId)
-            const findNewsfeedId = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds)
+            const findNewsfeedId = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds,page,this.pageSize)
               const result = findNewsfeedId.map(feed => {
                 const userName = feed.user.username;
                 const userImage = feed.user.image;
