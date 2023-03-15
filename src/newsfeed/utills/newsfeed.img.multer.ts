@@ -11,7 +11,6 @@ const mkdir = (directory:string) => {
     // process.cwd는 절대경로. 즉 뒤의 + 퍼블릭과 함께해서 절대경로에서 퍼블릭 폴더에
     // 파일을 읽어들여라.
   } catch(err) {
-    console.log('해당 경로에 폴더가 존재하지 않아 폴더를 생성합니다.');
     fs.mkdirSync(path.join(process.cwd()+'/public/', directory));
     // 해당 절대 경로에 폴더가 없을 경우 캐치문으로 빠져나간다 = 폴더가 없다
     // 그러면 해당 절대 경로에 폴더를 새로 만들어라.

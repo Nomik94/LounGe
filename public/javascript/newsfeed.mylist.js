@@ -13,7 +13,6 @@ async function readnewsfeedmylist() {
     },
   })
     .then(async (res) => {
-      // clearnewsfeed();
      await newsfeedlist(res.data);
     })
     .catch( (err) => {
@@ -29,9 +28,7 @@ async function readnewsfeedmylist() {
           icon: 'error',
           title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
         });
-        
       }
-
       if (err.response.data.statusCode !== 401) {
         Swal.fire({
           icon: 'error',
@@ -47,7 +44,7 @@ async function serchtag(tag) {
   const test = tag;
   axios({
     method: 'get',
-    url: '/api/newsfeed/tagmylist',
+    url: '/api/newsfeed/tag/newsfeed/list',
     params: {
       tag: test,
     },

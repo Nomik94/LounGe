@@ -7,117 +7,105 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { NewsFeed } from 'src/database/entities/newsFeed.entity';
-import { newsfeedCheckDto } from './dto/newsfeed-check.dto';
-import { modiNewsfeedCheckDto } from './dto/modinewsfeed-check.dto';
+import { newsfeedCheckDto } from './dto/newsfeed.check.dto';
+import { modifyNewsfeedCheckDto } from './dto/modifynewsfeed.check.dto';
 import { NewsfeedService } from './newsfeed.service';
-import { serchtagnewsfeedCheckDto } from './dto/serchtagnewsfeed.dto';
-import {
-  FileFieldsInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
+import {FilesInterceptor,} from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { GetUser } from 'src/common/decorator/get.user.decorator';
-import { group } from 'console';
+import { ISerchTagNewsfeed } from './interface/serch.tag.newsfeed.interface';
+import { ISerchTagMyNewsfeed } from './interface/serch.tag.mynewsfeed.interface';
+import { ISerchNewsfeedList } from './interface/serch.newsfeed.list.interface';
 
 @Controller('api/newsfeed')
 export class NewsfeedController {
   constructor(private readonly newsfeedService: NewsfeedService) {}
 
-  // 뉴스피드 작성
+  // 뉴스피드 작성 API
   @Post('/newsfeed/:groupId')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5))
-  async postnewsfeed(
+  async createNewsfeed(
     @Param('groupId') groupId: number,
-    @GetUser() user,
+    @GetUser() user: IUser,
     @UploadedFiles() file: Array<Express.Multer.File>,
     @Body() data: newsfeedCheckDto,
-  ) {
+  ): Promise<void> {
     const userId = user.id;
-    await this.newsfeedService.postnewsfeed(file, data, userId, groupId);
+    return await this.newsfeedService.createNewsfeed(file, data, userId, groupId);
   }
 
-  // 뉴스피드 삭제
-  @Delete('newsfeed/:newsfeedid')
+  // 뉴스피드 삭제 API
+  @Delete('newsfeed/:newsfeedId')
   @UseGuards(JwtAuthGuard)
-  async deletenewsfeed(
-    @GetUser() user,
-    @Param('newsfeedid') newsfeedid: number,
-  ) {
+  async deleteNewsfeed(
+    @GetUser() user: IUser,
+    @Param('newsfeedId') newsfeedId: number,
+  ):Promise<void> {
     const userId = user.id;
-    return await this.newsfeedService.deletenewsfeed(userId, newsfeedid);
+    return await this.newsfeedService.deleteNewsfeed(userId, newsfeedId);
   }
 
-  // 뉴스피드 수정
-  @Put('newsfeed/:newsfeedid')
+  // 뉴스피드 수정 API
+  @Put('newsfeed/:newsfeedId')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5))
-  async modinewsfeed(
-    @GetUser() user,
+  async modifyNewsfeed(
+    @GetUser() user: IUser,
     @UploadedFiles() file: Array<Express.Multer.File>,
-    @Param('newsfeedid') newsfeedid: number,
-    @Body() data: modiNewsfeedCheckDto,
-  ) {
+    @Param('newsfeedId') newsfeedId: number,
+    @Body() data: modifyNewsfeedCheckDto,
+  ):Promise<void>{
     const userId = user.id;
-
-    await this.newsfeedService.modinewsfeed(file, newsfeedid, data, userId);
+    await this.newsfeedService.modifyNewsfeed(file, newsfeedId, data, userId);
   }
 
-  // 태그로 내가 소속된 모든 뉴스피드 검색
+  // 태그 검색 (소속 그룹 뉴스피드) API
   @Get('tag/newsfeed')
-  async serchtagnewsfeed(@Query() data) {
-    const { tag } = data;
-    return await this.newsfeedService.serchtagnewsfeed(tag);
+  async serchTagNewsfeed(@Query('tag') data:string):Promise<ISerchTagNewsfeed[]> {
+    return await this.newsfeedService.serchTagNewsfeed(data);
   }
 
-  // 태그로 특정 그룹에서 뉴스피드 검색
+  // 태그 검색 (특정 그룹) API
   @Get('tag/:groupId')
-  async serchtagnewsfeedgroup(
-    @Query() data,
+  async serchTagNewsfeedGroup(
+    @Query('tag') data: string,
     @Param('groupId') groupId: number,
-  ) {
-    return await this.newsfeedService.serchtagnewsfeedgroup(data, groupId);
+  ):Promise<ISerchTagNewsfeed[]> {
+    return await this.newsfeedService.serchTagNewsfeedGroup(data, groupId);
   }
 
-  // 태그로 내가 쓴 뉴스피드 검색
-  @Get('tagmylist')
+  // 태그 검색 (내 뉴스피드) API
+  @Get('tag/newsfeed/list')
   @UseGuards(JwtAuthGuard)
-  async serchtagmynewsfeed(@Query('tag') data: string, @GetUser() user) {
+  async serchTagMyNewsfeed(@Query('tag') data: string, @GetUser() user: IUser):Promise<ISerchTagMyNewsfeed[]>{
     const userId = user.id;
-
-    return await this.newsfeedService.serchtagmynewsfeed(data, userId);
+    return await this.newsfeedService.serchTagMyNewsfeed(data, userId);
   }
 
-  // 뉴스피드 읽기 (특정 그룹에 소속된 모든 뉴스피드)
+  // 뉴스피드 읽기 (특정 그룹) API
   @Get('group/:id')
-  async readnewsfeedgroup(@Param('id') groupId: number) {
-    return await this.newsfeedService.readnewsfeedgroup(groupId);
+  async readNewsfeedGroup(@Param('id') groupId: number):Promise<ISerchNewsfeedList[]> {
+    return await this.newsfeedService.readNewsfeedGroup(groupId);
   }
 
-  // 뉴스피드 읽기 (내가 쓴 뉴스피드만)
+  // 뉴스피드 읽기 (내 뉴스피드) API
   @Get('newsfeed')
   @UseGuards(JwtAuthGuard)
-  async readnewsfeedmy(@GetUser() user) {
+  async readNewsfeedMyList(@GetUser() user: IUser):Promise<ISerchNewsfeedList[]>{
     const userId = user.id;
-    console.log('유저아이디', userId);
-
-    return await this.newsfeedService.readnewsfeedmy(userId);
+    return await this.newsfeedService.readNewsfeedMyList(userId);
   }
 
-  // 뉴스피드 읽기 (내가 소속된 모든 그룹의 뉴스피드)
-  @Get('newsfeed/mygroup')
+  // 뉴스피드 읽기 (소속 그룹 뉴스피드) API
+  @Get('newsfeed/groups')
   @UseGuards(JwtAuthGuard)
-  async readnewsfeedmygroup(@GetUser() user) {
+  async readNewsfeedMyGroup(@GetUser() user:IUser):Promise<ISerchNewsfeedList[]>{
     const userId = user.id;
-    return await this.newsfeedService.readnewsfeedmygroup(userId);
+    return await this.newsfeedService.readNewsfeedMyGroup(userId);
   }
-}
-function UploadFiles() {
-  throw new Error('Function not implemented.');
 }

@@ -7,13 +7,12 @@ $(document).ready(async function () {
 async function readnewsfeedmygroup() {
   axios({
     method: 'get',
-    url: '/api/newsfeed/newsfeed/mygroup',
+    url: '/api/newsfeed/newsfeed/groups',
     headers: {
       Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(async(res) => {
-      // clearnewsfeed();
      await newsfeedlist(res.data);
     })
     .catch((err) => {
@@ -29,7 +28,7 @@ async function readnewsfeedmygroup() {
           icon: 'error',
           title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
         });
-        // window.location.href = '/';
+        window.location.href = '/';
       }
 
       if (err.response.data.statusCode !== 401) {
@@ -53,7 +52,6 @@ async function serchtag(tag) {
     },
   })
     .then(async (res) => {
-      // console.log(res.data);
       clearnewsfeed();
       newsfeedlist(res.data);
     })
