@@ -1,13 +1,15 @@
+let page = 1;
 $(document).ready(async function () {
   await restoreToken();
-  readnewsfeedmygroup(); // 내가 가입한 모든 그룹의 뉴스피드 보기
+  readnewsfeedmygroup(page); // 내가 가입한 모든 그룹의 뉴스피드 보기
 });
+const contents = document.querySelector('#newsfeedbox');
 
 // 내가 가입한 모든 그룹의 뉴스피드 보기
-async function readnewsfeedmygroup() {
+async function readnewsfeedmygroup(page) {
   axios({
     method: 'get',
-    url: '/api/newsfeed/newsfeed/groups',
+    url: `/api/newsfeed/newsfeed/groups/${page}`,
     headers: {
       Authorization: `${getCookie('accessToken')}`,
     },
@@ -41,6 +43,12 @@ async function readnewsfeedmygroup() {
     });
 }
 
+// 무한 스크롤
+async function limitscroll() {
+  page++
+  readnewsfeedmygroup(page)
+  }
+  
 // 태그 클릭 시 해당 태그로 작성된 뉴스피드 검색
 async function serchtag(tag) {
   const test = tag;

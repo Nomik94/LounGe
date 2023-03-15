@@ -1,13 +1,15 @@
+let page = 1;
 $(document).ready(async function () {
   await restoreToken();
-  readnewsfeedmylist();
+  readnewsfeedmylist(page);
 });
+const contents = document.querySelector('#newsfeedbox');
 
 // 내가 쓴 뉴스피드만 불러오기
-async function readnewsfeedmylist() {
+async function readnewsfeedmylist(page) {
   axios({
     method: 'get',
-    url: '/api/newsfeed/newsfeed',
+    url: `/api/newsfeed/newsfeed/${page}`,
     headers: {
       Authorization: `${getCookie('accessToken')}`,
     },
@@ -38,6 +40,12 @@ async function readnewsfeedmylist() {
       }
     });
 }
+
+// 무한 스크롤
+async function limitscroll() {
+  page++
+  readnewsfeedmylist(page)
+  }
 
 // 내 뉴스피드에서 태그 정렬
 async function serchtag(tag) {

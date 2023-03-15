@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { GroupNewsfeedRepository } from 'src/common/repository/group.newsfeed.repository';
 import { NewsfeedRepository } from 'src/common/repository/newsfeed.repository';
 import { NewsfeedTagRepository } from 'src/common/repository/newsfeed.tag.repository';
@@ -19,7 +19,7 @@ export class NewsfeedService {
         private readonly groupNewsfeedRepository: GroupNewsfeedRepository,
         private readonly userGroupRepository: UserGroupRepository
     ) {}
-
+    pageSize = 10;
     // 뉴스피드 작성
     async createNewsfeed(file,data,userId:number,groupId:number): Promise<void> {
         const content = data.content;
@@ -30,30 +30,34 @@ export class NewsfeedService {
         if(checkJoinGroup[0].role !== "그룹장" && checkJoinGroup[0].role !== "회원") {
             throw new ForbiddenException('그룹 가입 신청 중입니다.');
         }
-        const newsfeedId = await this.newsfeedRepository.createNewsfeed(content,userId)
-        if (data.newsfeedTags){
-            const tag = data.newsfeedTags.split(',')
-            for(const i of tag) {
-                if (!await this.tagRepository.serchTagOne(i)) {
-                    await this.tagRepository.createTag(i)
+        try {
+            const newsfeedId = await this.newsfeedRepository.createNewsfeed(content,userId)
+            if (data.newsfeedTags){
+                const tag = data.newsfeedTags.split(',')
+                for(const i of tag) {
+                    if (!await this.tagRepository.serchTagOne(i)) {
+                        await this.tagRepository.createTag(i)
+                    }
+                }
+                const serchTag = [];
+                for (const i of tag) {
+                    const a = await this.tagRepository.serchTagOneForNewsfeed(i)
+                    serchTag.push(a.id);
+                }
+                for (const i of serchTag) {
+                    await this.newsfeedTagRepository.createNewsfeed(i,newsfeedId.id)
                 }
             }
-            const serchTag = [];
-            for (const i of tag) {
-                const a = await this.tagRepository.serchTagOneForNewsfeed(i)
-                serchTag.push(a.id);
+            if (file.length !== 0) {
+                const fileNames = file.map(file => file.filename)
+                const promises = fileNames.map(filename => this.newsfeedImageRepository.createNewsfeedImage(filename,newsfeedId.id))
+                await Promise.all(promises)
             }
-            for (const i of serchTag) {
-                await this.newsfeedTagRepository.createNewsfeed(i,newsfeedId.id)
-            }
+            await this.groupNewsfeedRepository.createNewsfeed(newsfeedId.id,groupId)
+            return
+        } catch(err) {
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
         }
-        if (file.length !== 0) {
-            const fileNames = file.map(file => file.filename)
-            const promises = fileNames.map(filename => this.newsfeedImageRepository.createNewsfeedImage(filename,newsfeedId.id))
-            await Promise.all(promises)
-        }
-        await this.groupNewsfeedRepository.createNewsfeed(newsfeedId.id,groupId)
-        return
         }
 
     // 뉴스피드 삭제
@@ -72,7 +76,7 @@ export class NewsfeedService {
             await this.newsfeedTagRepository.deleteNewsfeedTag(id)
             await this.newsfeedImageRepository.deleteNewsfeedImage(id)
         } catch (err){
-            throw new Error(err)
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
         }
     }
 
@@ -114,7 +118,7 @@ export class NewsfeedService {
             }
             return
         } catch (err){
-            throw new Error(err)
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
         }
     }
 
@@ -150,7 +154,7 @@ export class NewsfeedService {
             }
             return result
         } catch(err) {
-            throw new Error(err)
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
         }
     }
 
@@ -187,7 +191,7 @@ export class NewsfeedService {
             const filteredResult = result.filter(obj => obj.groupId.includes(groupId));
             return filteredResult
         } catch(err){
-            throw new Error(err)
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
         }
     }
 
@@ -225,16 +229,16 @@ export class NewsfeedService {
             const filteredResult = result.filter(obj => obj.userId === userId);
             return filteredResult
         } catch(err){
-            throw new Error(err)
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
         }
     }
 
     // 뉴스피드 읽기 (특정 그룹)
-    async readNewsfeedGroup(groupId:number):Promise<ISerchNewsfeedList[]>{
+    async readNewsfeedGroup(groupId:number,page:number):Promise<ISerchNewsfeedList[]>{
         try {
             const newsfeed = await this.groupNewsfeedRepository.serchNewsfeedIdByGroupId(groupId)
             const newsfeedIds = newsfeed.map(Newsfeed => Newsfeed.newsFeedId)
-            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds)
+            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds,page,this.pageSize)
             const result = findNewsfeed.map(feed => {
                 const userName = feed.user.username;
                 const userImage = feed.user.image;
@@ -257,14 +261,14 @@ export class NewsfeedService {
             })
         return result
         } catch(err){
-            throw new Error(err)
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
         }
     }
 
     // 뉴스피드 읽기 (내 뉴스피드)
-    async readNewsfeedMyList(userId:number):Promise<ISerchNewsfeedList[]>{
+    async readNewsfeedMyList(userId:number,page:number):Promise<ISerchNewsfeedList[]>{
         try {
-            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByUserId(userId)
+            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByUserId(userId,page,this.pageSize)
                 const result = findNewsfeed.map(feed => {
                     const userName = feed.user.username;
                     const userImage = feed.user.image;
@@ -289,18 +293,18 @@ export class NewsfeedService {
                 })
             return result
         } catch(err) {
-            throw new Error(err)
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
         }
     }
 
     // 뉴스피드 읽기 (소속 그룹 뉴스피드)
-    async readNewsfeedMyGroup(userId:number):Promise<ISerchNewsfeedList[]>{
+    async readNewsfeedMyGroup(userId:number,page:number):Promise<ISerchNewsfeedList[]>{
         try {
             const findGroup = await this.userGroupRepository.checkUserStatus(userId)
             const groupIds = findGroup.map(group => group.groupId);
             const findNewsfeed = await this.groupNewsfeedRepository.serchNewsfeedIdByGroupIdArray(groupIds)
             const newsfeedIds = findNewsfeed.map(item => item.newsFeedId)
-            const findNewsfeedId = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds)
+            const findNewsfeedId = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds,page,this.pageSize)
               const result = findNewsfeedId.map(feed => {
                 const userName = feed.user.username;
                 const userImage = feed.user.image;
@@ -327,7 +331,7 @@ export class NewsfeedService {
             })
         return result
         } catch (err){
-            throw new Error(err)
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
         }
     }
 }

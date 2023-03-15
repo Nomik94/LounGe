@@ -1,15 +1,17 @@
+let page = 1;
 $(document).ready(async function(){
   await restoreToken()
-  const urlParams = new URLSearchParams(window.location.search);
-  const groupId = urlParams.get('groupId');
-  readnewsfeedgrouptimeline(groupId)
+  readnewsfeedgrouptimeline(page)
 });
+const contents = document.querySelector('#newsfeedbox');
 
 // 특정 그룹의 뉴스피드 가져오기
-function readnewsfeedgrouptimeline(id) {
+function readnewsfeedgrouptimeline(page){
+  const urlParams = new URLSearchParams(window.location.search);
+  const groupId = urlParams.get('groupId');
   axios({
     method: 'get',
-    url: `/api/newsfeed/group/${id}`,
+    url: `/api/newsfeed/group/${groupId}/${page}`,
   })
   .then(async(res) => {
    await newsfeedlist(res.data);
@@ -22,6 +24,12 @@ function readnewsfeedgrouptimeline(id) {
     })
   })
 }
+
+// 무한 스크롤
+async function limitscroll() {
+  page++
+  readnewsfeedgrouptimeline(page)
+  }
 
 // 특정 그룹에서 뉴스피드 태그로 검색하기
 function serchtag(tag) {
@@ -148,10 +156,6 @@ async function getTags() {
     }
   });
    let tagHtml = `
-   </div>
-   <svg class="quick-post-footer-action-icon icon-tags">
-   <use xlink:href="#svg-tags"></use>
-    </svg>
    <div class="tag-list">
     ${tags.value.map(tag => `
     <a class="tag-item secondary">${tag}</a>
@@ -197,3 +201,4 @@ async function getImages() {
 
 
 }
+

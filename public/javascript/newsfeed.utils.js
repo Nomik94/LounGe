@@ -1,3 +1,6 @@
+let selectedTags = [];
+let selectedImages =[];
+
 // 유저 쿠키
 function getCookie(name) {
   let matches = document.cookie.match(
@@ -12,9 +15,8 @@ function getCookie(name) {
 
 // 뉴스피드 리스트 불러와서 뿌려주기
 async function newsfeedlist(data) {
-  data.reverse().forEach((data) => {
+  data.forEach((data) => {
     const creadteDate = new Date(data.createAt);
-    // const updateDate = new Date(data.updateAt)
     const timeOptions = {
       hour12: false,
       hour: '2-digit',
@@ -24,7 +26,6 @@ async function newsfeedlist(data) {
       'Ko-KR',
       timeOptions,
     );
-    // const updateDateFormat = updateDate.toLocaleDateString("Ko-KR",timeOptions)
     let temp_html = `
     <br>
     <div class="widget-box no-padding">
@@ -227,9 +228,6 @@ function clearnewsfeed(){
   $('#newsfeedbox').empty();
 }
 
-let selectedTags = [];
-let selectedImages =[];
-
 // 뉴스피드 수정하기
 async function modifyNewsfeed(id){
   let popupHtml = '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
@@ -326,3 +324,23 @@ async function modifyNewsfeed(id){
    document.body.removeChild(popup)
   })
 }
+
+// 무한 스크롤 설정
+function debounce(callback, limit = 500) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback.apply(this, args);
+    }, limit);
+  };
+}
+document.addEventListener(
+  'scroll',
+  debounce((e) => {
+    const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
+    if (clientHeight + scrollTop >= scrollHeight) {
+      limitscroll();
+    }
+  }, 500),
+);
