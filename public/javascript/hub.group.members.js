@@ -19,10 +19,6 @@ function managementMemberList() {
     .then(function (res) {
       $('#groupTitle').empty();
       $('#groupTitle').append(`${res.data.group.groupName}`);
-      // const avatarPopup = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.group.groupImage}"></div>`
-      // const backPopup = `<img src="/backgroundImage/${res.data.group.backgroundImage}" alt="backgroundImg">`
-      // $('#avatarImg').append(avatarPopup);
-      // $('#backImg').append(backPopup)
       document.getElementById(
         'popupButton',
       ).innerHTML = `<p class="button secondary full popup-manage-group-trigger-1" onclick="modifyGroup('${res.data.group.groupImage}','${res.data.group.backgroundImage}')">그룹 수정하기</p>`;

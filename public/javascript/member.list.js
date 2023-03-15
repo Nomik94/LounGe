@@ -17,12 +17,13 @@ function managementMemberList() {
     },
   })
     .then(function (res) {
+      console.log(res)
       res.data.members.forEach((data) => {
         let temp_html = `        <!-- USER PREVIEW -->
         <div class="user-preview">
           <!-- USER PREVIEW COVER -->
           <figure class="user-preview-cover liquid">
-            <img src="/backgroundImage/${res.data.group.backgroundImage}" alt="cover-04">
+            <img src="/backgroundImage/${res.data.foundGroup.backgroundImage}" alt="cover-04">
           </figure>
           <!-- /USER PREVIEW COVER -->
       
