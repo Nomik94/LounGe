@@ -8,47 +8,47 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     super(NewsFeed, dataSource.createEntityManager());
   }
 
-  checkNewsfeed(id:number){
-    return this.findOne({
+  async checkNewsfeed(id:number){
+    return await this.findOne({
       relations: ['user'],
       where: {id:id}
   })
   }   
 
-  deleteNewsfeed(id:number){
-    return this.softDelete(id)
+  async deleteNewsfeed(id:number):Promise<void>{
+    await this.softDelete(id)
   }
 
-  createNewsfeed(content:string,userId:number){
-    return this.save({
+  async createNewsfeed(content:string,userId:number):Promise<NewsFeed>{
+    return await this.save({
       content:content,
       user: {id : userId},
     })
   }
 
-  modifyNewsfeedContent(id:number,content:string){
-    return this.update(id,
+  async modifyNewsfeedContent(id:number,content:string):Promise<void>{
+    await this.update(id,
       {content:content}
   );
   }
 
-  findNewsfeedByTag(numberingId:object[]){
-    return this.find({
+  async findNewsfeedByTag(numberingId:object[]):Promise<NewsFeed[]>{
+    return await this.find({
       relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
       where: numberingId
     })
   }
 
-  findnewsfeedByNewsfeedId(newsfeedIds:number[]){
-    return this.find({
+  async findnewsfeedByNewsfeedId(newsfeedIds:number[]):Promise<NewsFeed[]>{
+    return await this.find({
       relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
       select: ['id', 'content', 'createdAt', 'updatedAt'],
       where: { id: In(newsfeedIds), deletedAt: null }
     })
   }
 
-  findnewsfeedByUserId(userId:number){
-    return this.find({
+  async findnewsfeedByUserId(userId:number):Promise<NewsFeed[]>{
+    return await this.find({
       relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
       select: ['id','content','createdAt','updatedAt'],
       where:{'user' : {id:userId}, deletedAt: null}

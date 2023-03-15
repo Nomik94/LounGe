@@ -8,21 +8,21 @@ export class NewsfeedImageRepository extends Repository<NewsFeedImage> {
     super(NewsFeedImage, dataSource.createEntityManager());
   }
 
-  deleteNewsfeedImage(id:number) {
-    return this.delete({
+  async deleteNewsfeedImage(id:number):Promise<void>{
+    await this.delete({
       newsFeed: {id:id}
     })
   }
 
-  createNewsfeedImage(filename:string,newsfeedId:number){
-    return this.save({
+  async createNewsfeedImage(filename:string,newsfeedId:number):Promise<NewsFeedImage>{
+    return await this.save({
       image: filename,
       newsFeed: {id:newsfeedId}
     })
   }
 
-  modifyNewsfeedImage(filename:string,id:number){
-    return this.save({
+  async modifyNewsfeedImage(filename:string,id:number):Promise<NewsFeedImage>{
+    return await this.save({
       image: filename,
       newsFeed: {id:id}
     })

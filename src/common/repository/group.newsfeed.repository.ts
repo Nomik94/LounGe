@@ -8,26 +8,26 @@ export class GroupNewsfeedRepository extends Repository<GroupNewsFeed> {
     super(GroupNewsFeed, dataSource.createEntityManager());
   }
 
-  deleteNewsfeedGroup(id:number){
-    return this.delete({newsFeedId:id})
+  async deleteNewsfeedGroup(id:number):Promise<void> {
+    await this.delete({newsFeedId:id})
   }
 
-  createNewsfeed(newsfeedId:number,groupId:number){
-    return this.insert({
+  async createNewsfeed(newsfeedId:number,groupId:number):Promise<void>{
+    await this.insert({
       newsFeedId: newsfeedId,
       groupId: groupId
   })
   }
 
-  serchNewsfeedIdByGroupId(groupId:number){
-    return this.find({
+  async serchNewsfeedIdByGroupId(groupId:number):Promise<Array<{newsFeedId:number}>>{
+    return await this.find({
       where: {'groupId' :groupId},
       select: ['newsFeedId']
     })
   }
 
-  serchNewsfeedIdByGroupIdArray(groupIds:number[]){
-    return this.find({
+  async serchNewsfeedIdByGroupIdArray(groupIds:number[]):Promise<Array<{newsFeedId:number}>>{
+    return await this.find({
       where: { groupId: In(groupIds) },
       select: ['newsFeedId']
     })

@@ -8,12 +8,12 @@ export class UserGroupRepository extends Repository<UserGroup> {
     super(UserGroup, dataSource.createEntityManager());
   }
 
-  checkJoinGroup(userId:number,groupId:number) {
-    return this.find({where: {userId: userId, groupId:groupId}})
+  async checkJoinGroup(userId:number,groupId:number):Promise<UserGroup[]>{
+    return await this.find({where: {userId: userId, groupId:groupId}})
   }
 
-  checkUserStatus(userId:number){
-    return this.find({
+  async checkUserStatus(userId:number):Promise<UserGroup[]>{
+    return await this.find({
       where: [{userId:userId, role:'그룹장'}, {userId:userId, role:'회원'}]
     })
   }

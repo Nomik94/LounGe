@@ -66,15 +66,14 @@ export class NewsfeedController {
 
   // 태그 검색 (소속 그룹 뉴스피드) API
   @Get('tag/newsfeed')
-  async serchTagNewsfeed(@Query() data):Promise<ISerchTagNewsfeed[]> {
-    const { tag } = data;
-    return await this.newsfeedService.serchTagNewsfeed(tag);
+  async serchTagNewsfeed(@Query('tag') data:string):Promise<ISerchTagNewsfeed[]> {
+    return await this.newsfeedService.serchTagNewsfeed(data);
   }
 
   // 태그 검색 (특정 그룹) API
   @Get('tag/:groupId')
   async serchTagNewsfeedGroup(
-    @Query() data,
+    @Query('tag') data: string,
     @Param('groupId') groupId: number,
   ):Promise<ISerchTagNewsfeed[]> {
     return await this.newsfeedService.serchTagNewsfeedGroup(data, groupId);

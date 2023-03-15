@@ -1,9 +1,9 @@
-import { CreateDateColumn, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { BaseEntity, CreateDateColumn, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Group } from './group.entity';
 import { NewsFeed } from './newsFeed.entity';
 
 @Entity()
-export class GroupNewsFeed {
+export class GroupNewsFeed extends BaseEntity  {
   @PrimaryColumn()
   groupId: number;
 

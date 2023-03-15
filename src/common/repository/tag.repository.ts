@@ -8,23 +8,23 @@ export class TagRepository extends Repository<Tag> {
     super(Tag, dataSource.createEntityManager());
   }
 
-  serchTagOne(tag:string) {
-    return this.findOneBy({tagName:tag})
+  async serchTagOne(tag:string):Promise<Tag>{
+    return await this.findOneBy({tagName:tag})
   }
 
-  createTag(tag:string) {
-    return this.insert({tagName:tag})
+  async createTag(tag:string):Promise<void>{
+    await this.insert({tagName:tag})
   }
 
-  serchTagOneForNewsfeed(tag:string){
-    return this.findOne({
+  async serchTagOneForNewsfeed(tag:string):Promise<Tag>{
+    return await this.findOne({
       where: {tagName:tag},
       select: ["id"]}
       )
   }
 
-  serchTagWord(tag:string) {
-    return this.find({
+  async serchTagWord(tag:string):Promise<Tag[]>{
+    return await this.find({
       where: { tagName: Like(`%${tag}%`) },
       select: ['id']
     })
