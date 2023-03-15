@@ -25,7 +25,7 @@ export class CalendarService {
     private readonly userGroupRepository: Repository<UserGroup>,
   ) {}
 
-  // 전체 이벤트 리스트 API
+  // 전체 이벤트 리스트
   async getAllEvent(userId: number): Promise<IAllEventList[]> {
     const myGroupList = await this.userGroupRepository.find({
       where: { userId, role: Not('가입대기') },
@@ -86,7 +86,7 @@ export class CalendarService {
     return joinEvents;
   }
 
-  // 유저 이벤트 생성 API
+  // 유저 이벤트 생성
   async createUserEvent(userId: number, data: UserEventDto): Promise<void> {
     await this.userEventRepository.insert({
       eventName: data.eventName,
@@ -100,7 +100,7 @@ export class CalendarService {
     });
   }
 
-  // 그룹 이벤트 생성 API
+  // 그룹 이벤트 생성
   async createGroupEvent(
     userId: number,
     groupId: number,
@@ -125,7 +125,7 @@ export class CalendarService {
     });
   }
 
-  // 그룹 이벤트 리스트 API
+  // 그룹 이벤트 리스트
   async getGroupEvent(
     userId: number,
     groupId: number,
@@ -135,7 +135,6 @@ export class CalendarService {
       where: { id: groupId, user: { id: userId } },
     });
     let role = false;
-    console.log(checkRole);
     if (checkRole) {
       role = true;
     }
@@ -159,7 +158,7 @@ export class CalendarService {
     });
   }
 
-  // 유저 이벤트 상세 보기 API
+  // 유저 이벤트 상세 보기
   async getUserEventDetail(
     userId: number,
     currId: number,
@@ -171,13 +170,13 @@ export class CalendarService {
     return await this.userEventRepository.findOneBy({ id: eventId });
   }
 
-  // 유저 이벤트 삭제 API
+  // 유저 이벤트 삭제
   async deleteUserEvent(userId: number, eventId: number): Promise<void> {
     await this.checkUser(userId, eventId);
     await this.userEventRepository.softDelete(eventId);
   }
 
-  // 그룹 이벤트 삭제 API
+  // 그룹 이벤트 삭제
   async deleteGroupEvent(userId: number, eventId: number): Promise<void> {
     const checkGroupLeader = await this.groupEventRepository.findOne({
       where: { group: { user: { id: userId } }, id: eventId },
@@ -188,48 +187,7 @@ export class CalendarService {
     await this.groupEventRepository.softDelete(eventId);
   }
 
-  // async updateUserEvent(
-  //   userId: number,
-  //   eventId: number,
-  //   data: UpdateUserEventDto,
-  // ) {
-  //   const userEvent = await this.userEventRepository.findOne({
-  //     where: { id: eventId },
-  //     select: ['user', 'id', 'eventName', 'eventContent', 'start', 'end'],
-  //     relations: ['user'],
-  //   });
-  //   if (_.isNil(userEvent)) {
-  //     throw new NotFoundException(`event를 찾을 수 없습니다. id:${userId}`);
-  //   }
-  //   if (userEvent.user.id !== userId) {
-  //     throw new UnauthorizedException(
-  //       `이 이벤트를 게시한 유저가 아닙니다: ${userId}`,
-  //     );
-  //   }
-  //   this.userEventRepository.update(userEvent.id, data);
-  // }
-
-
-  // async updateGroupEvent(
-  //   GroupId: number,
-  //   eventId: number,
-  //   data: UpdateGroupEventDto,
-  // ) {
-  //   const groupEvent = await this.groupEventRepository.findOne({
-  //     where: { id: eventId },
-  //     select: ['group', 'id', 'eventName', 'eventContent', 'start', 'end'],
-  //     relations: ['user'],
-  //   });
-  //   if (_.isNil(groupEvent)) {
-  //     throw new NotFoundException(`event를 찾을 수 없습니다. id:${eventId}`);
-  //   }
-  //   if (groupEvent.group.id !== GroupId) {
-  //     throw new UnauthorizedException(
-  //       `이 이벤트를 게시한 그룹이 아닙니다: ${GroupId}`,
-  //     );
-  //   }
-  //   this.groupEventRepository.update(groupEvent.id, data);
-  // }
+  // 유저 체크
   async checkUser(userId: number, eventId: number): Promise<void> {
     const userEvent = await this.userEventRepository.findOne({
       where: { id: eventId, user: { id: userId } },
@@ -238,7 +196,8 @@ export class CalendarService {
       throw new ForbiddenException(`권한이 존재하지 않습니다.`);
     }
   }
-  
+
+  // 멤버 체크 
   async checkMember(userId: number, groupId: number): Promise<void> {
     const memberCheck = await this.userGroupRepository.findOneBy({
       userId,

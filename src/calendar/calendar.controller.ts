@@ -87,7 +87,6 @@ export class CalendarController {
     @Param('currId') currId: number,
   ): Promise<UserEvent> {
     const userId: number = user.id;
-    console.log(userId, currId);
     return await this.calendarService.getUserEventDetail(
       userId,
       currId,
@@ -103,7 +102,6 @@ export class CalendarController {
     @Param('eventId') eventId: number,
   ): Promise<void> {
     const userId = user.id;
-    console.log(userId, eventId);
     await this.calendarService.deleteUserEvent(userId, eventId);
   }
 
@@ -115,16 +113,6 @@ export class CalendarController {
     @Param('eventId') eventId: number,
   ): Promise<void> {
     const userId = user.id;
-    console.log(userId, eventId);
     await this.calendarService.deleteGroupEvent(userId, eventId);
   }
-
-  // @Put('/uevents/:id')
-  // updateUserEvent(
-  //   @Param('id') eventId: number,
-  //   @Body() data: UpdateUserEventDto,
-  // ) {
-  //   const userId = 1;
-  //   return this.calendarService.updateUserEvent(userId, eventId, data);
-  // }
 }
