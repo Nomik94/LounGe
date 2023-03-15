@@ -1,17 +1,11 @@
 import _ from 'lodash';
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
 import { Not, Repository } from 'typeorm';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
-import { UserEventDto } from './dto/userEvent.dto';
-import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
-import { GroupEventDto } from './dto/groupEvent.dto';
-import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
+import { UserEventDto } from './dto/event.user.dto';
+import { GroupEventDto } from './dto/event.group.dto';
 import { Group } from 'src/database/entities/group.entity';
 import { ForbiddenException } from '@nestjs/common/exceptions';
 import { UserGroup } from 'src/database/entities/user-group.entity';
@@ -84,7 +78,9 @@ export class CalendarService {
     }));
 
     const joinEvents = mapGroupEvents.concat(mapUserEvents);
-    joinEvents.sort((a, b) =>  new Date(a.start).getTime() - new Date(b.start).getTime());
+    joinEvents.sort(
+      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+    );
     return joinEvents;
   }
 
@@ -126,15 +122,19 @@ export class CalendarService {
   // 그룹 이벤트 리스트 API
   async getGroupEvent(userId, groupId) {
     await this.memberCheck(userId, groupId);
-    const checkRole = await this.groupRepository.findOne({where : { id: groupId , user : {id : userId}}})
-    let role = false
-    console.log(checkRole)
-    if(checkRole) {
-      role = true
+    const checkRole = await this.groupRepository.findOne({
+      where: { id: groupId, user: { id: userId } },
+    });
+    let role = false;
+    console.log(checkRole);
+    if (checkRole) {
+      role = true;
     }
 
-    const groupInfo = await this.groupEventRepository.findBy({ group: { id: groupId } });
-    return {groupInfo, role}
+    const groupInfo = await this.groupEventRepository.findBy({
+      group: { id: groupId },
+    });
+    return { groupInfo, role };
   }
 
   // 그룹 이벤트 상세 보기 API
@@ -163,10 +163,10 @@ export class CalendarService {
   // 그룹 이벤트 삭제 API
   async deleteGroupEvent(userId: number, eventId: number) {
     const checkGroupLeader = await this.groupEventRepository.findOne({
-      where: { group: { user: { id: userId } } ,id : eventId},
+      where: { group: { user: { id: userId } }, id: eventId },
     });
-    if(!checkGroupLeader) {
-      throw new ForbiddenException('권한이 존재하지 않습니다.')
+    if (!checkGroupLeader) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
     await this.groupEventRepository.softDelete(eventId);
   }

@@ -1,10 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { UserGroup } from 'src/database/entities/user-group.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class UserGroupRepository extends Repository<UserGroup> {
   constructor(private dataSource: DataSource) {
     super(UserGroup, dataSource.createEntityManager());
+  }
+
+  async getMemberList(groupId) {
+    return await this.find({
+      where: { groupId, role: Not('가입대기') },
+      relations: ['user'],
+      order: { role: 'ASC' },
+    });
+  }
+
+  async getGroupJoinRequestList(groupId) {
+    return await this.find({
+      where: { groupId, role: '가입대기' },
+      select: ['userId', 'groupId'],
+      relations: ['user'],
+    });
   }
 }
