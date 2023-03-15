@@ -1,20 +1,16 @@
 import _ from 'lodash';
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
 import { Not, Repository } from 'typeorm';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
-import { UserEventDto } from './dto/userEvent.dto';
-import { UpdateUserEventDto } from './dto/updateUserEvent.dto';
-import { GroupEventDto } from './dto/groupEvent.dto';
-import { UpdateGroupEventDto } from './dto/updategroupEvent.dto';
+import { UserEventDto } from './dto/user.event.dto';
+import { GroupEventDto } from './dto/group.event.dto';
 import { Group } from 'src/database/entities/group.entity';
 import { ForbiddenException } from '@nestjs/common/exceptions';
 import { UserGroup } from 'src/database/entities/user-group.entity';
+import { IAllEventList } from './interface/event.list.interface';
+import { IGroupEventList } from './interface/group.event.list.interface';
 
 @Injectable()
 export class CalendarService {
@@ -30,7 +26,7 @@ export class CalendarService {
   ) {}
 
   // 전체 이벤트 리스트 API
-  async getAllEvent(userId) {
+  async getAllEvent(userId: number): Promise<IAllEventList[]> {
     const myGroupList = await this.userGroupRepository.find({
       where: { userId, role: Not('가입대기') },
       select: ['groupId', 'userId'],
@@ -84,12 +80,14 @@ export class CalendarService {
     }));
 
     const joinEvents = mapGroupEvents.concat(mapUserEvents);
-    joinEvents.sort((a, b) =>  new Date(a.start).getTime() - new Date(b.start).getTime());
+    joinEvents.sort(
+      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+    );
     return joinEvents;
   }
 
   // 유저 이벤트 생성 API
-  async createUserEvent(userId: number, data: UserEventDto) {
+  async createUserEvent(userId: number, data: UserEventDto): Promise<void> {
     await this.userEventRepository.insert({
       eventName: data.eventName,
       eventContent: data.eventContent,
@@ -103,7 +101,11 @@ export class CalendarService {
   }
 
   // 그룹 이벤트 생성 API
-  async createGroupEvent(userId: number, groupId: number, data: GroupEventDto) {
+  async createGroupEvent(
+    userId: number,
+    groupId: number,
+    data: GroupEventDto,
+  ): Promise<void> {
     const checkLeader = await this.groupRepository.findOneBy({
       user: { id: userId },
       id: groupId,
@@ -124,22 +126,33 @@ export class CalendarService {
   }
 
   // 그룹 이벤트 리스트 API
-  async getGroupEvent(userId, groupId) {
-    await this.memberCheck(userId, groupId);
-    const checkRole = await this.groupRepository.findOne({where : { id: groupId , user : {id : userId}}})
-    let role = false
-    console.log(checkRole)
-    if(checkRole) {
-      role = true
+  async getGroupEvent(
+    userId: number,
+    groupId: number,
+  ): Promise<IGroupEventList> {
+    await this.checkMember(userId, groupId);
+    const checkRole = await this.groupRepository.findOne({
+      where: { id: groupId, user: { id: userId } },
+    });
+    let role = false;
+    console.log(checkRole);
+    if (checkRole) {
+      role = true;
     }
 
-    const groupInfo = await this.groupEventRepository.findBy({ group: { id: groupId } });
-    return {groupInfo, role}
+    const groupInfo = await this.groupEventRepository.findBy({
+      group: { id: groupId },
+    });
+    return { groupInfo, role };
   }
 
   // 그룹 이벤트 상세 보기 API
-  async getGroupEventDetail(userId, groupId, eventId) {
-    await this.memberCheck(userId, groupId);
+  async getGroupEventDetail(
+    userId: number,
+    groupId: number,
+    eventId: number,
+  ): Promise<GroupEvent> {
+    await this.checkMember(userId, groupId);
     return await this.groupEventRepository.findOne({
       where: { id: eventId },
       relations: ['group'],
@@ -147,26 +160,30 @@ export class CalendarService {
   }
 
   // 유저 이벤트 상세 보기 API
-  async getUserEventDetail(userId, currId, eventId) {
-    if (!currId === userId) {
+  async getUserEventDetail(
+    userId: number,
+    currId: number,
+    eventId: number,
+  ): Promise<UserEvent> {
+    if (currId !== userId) {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
     return await this.userEventRepository.findOneBy({ id: eventId });
   }
 
   // 유저 이벤트 삭제 API
-  async deleteUserEvent(userId: number, eventId: number) {
+  async deleteUserEvent(userId: number, eventId: number): Promise<void> {
     await this.checkUser(userId, eventId);
     await this.userEventRepository.softDelete(eventId);
   }
 
   // 그룹 이벤트 삭제 API
-  async deleteGroupEvent(userId: number, eventId: number) {
+  async deleteGroupEvent(userId: number, eventId: number): Promise<void> {
     const checkGroupLeader = await this.groupEventRepository.findOne({
-      where: { group: { user: { id: userId } } ,id : eventId},
+      where: { group: { user: { id: userId } }, id: eventId },
     });
-    if(!checkGroupLeader) {
-      throw new ForbiddenException('권한이 존재하지 않습니다.')
+    if (!checkGroupLeader) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
     await this.groupEventRepository.softDelete(eventId);
   }
@@ -192,14 +209,7 @@ export class CalendarService {
   //   this.userEventRepository.update(userEvent.id, data);
   // }
 
-  async checkUser(userId: number, eventId: number) {
-    const userEvent = await this.userEventRepository.findOne({
-      where: { id: eventId, user: { id: userId } },
-    });
-    if (!userEvent) {
-      throw new ForbiddenException(`권한이 존재하지 않습니다.`);
-    }
-  }
+
   // async updateGroupEvent(
   //   GroupId: number,
   //   eventId: number,
@@ -220,8 +230,16 @@ export class CalendarService {
   //   }
   //   this.groupEventRepository.update(groupEvent.id, data);
   // }
-
-  async memberCheck(userId, groupId) {
+  async checkUser(userId: number, eventId: number): Promise<void> {
+    const userEvent = await this.userEventRepository.findOne({
+      where: { id: eventId, user: { id: userId } },
+    });
+    if (!userEvent) {
+      throw new ForbiddenException(`권한이 존재하지 않습니다.`);
+    }
+  }
+  
+  async checkMember(userId: number, groupId: number): Promise<void> {
     const memberCheck = await this.userGroupRepository.findOneBy({
       userId,
       groupId,
