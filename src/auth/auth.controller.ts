@@ -24,7 +24,7 @@ export class AuthController {
   @UseInterceptors(FileInterceptor('userImage'))
   register(
     @Body() authDTO: AuthDTO,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.MulterS3.File,
   ): Promise<void> {
     return this.authService.register(authDTO, file);
   }

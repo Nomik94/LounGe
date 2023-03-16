@@ -27,17 +27,17 @@ function getUserImageAndUsername() {
     },
   }).then((res) => {
     let fullSideBar_html = `  <!-- HEXAGON -->
-    <div class="hexagon-image-30-32" data-src="/userImage/${res.data.image}"></div> <!--유저 이미지 뿌려주기-->
+    <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.image}"></div> <!--유저 이미지 뿌려주기-->
     <!-- /HEXAGON -->`;
     let buttonSideBar_html = `<!-- HEXAGON -->
-    <div class="hexagon-image-82-90" data-src="/userImage/${res.data.image}"></div><!--유저 이미지 뿌려주기-->
+    <div class="hexagon-image-82-90" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.image}"></div><!--유저 이미지 뿌려주기-->
     <!-- /HEXAGON -->`;
     let mobileSideBar_html = `  <!-- USER AVATAR -->
     <a class="user-avatar small no-outline">
       <!-- USER AVATAR CONTENT -->
       <div class="user-avatar-content" id="mobileSideBar">
         <!-- HEXAGON -->
-        <div class="hexagon-image-30-32" data-src="/userImage/${res.data.image}"></div> <!--유저 이미지 뿌려주기-->
+        <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.image}"></div> <!--유저 이미지 뿌려주기-->
         <!-- /HEXAGON -->
       </div>
       <!-- /USER AVATAR CONTENT -->
@@ -67,7 +67,7 @@ function getUserImageAndUsername() {
         <!-- USER AVATAR CONTENT -->
         <div class="user-avatar-content" >
           <!-- HEXAGON -->
-<div class="hexagon-image-30-32" data-src="/userImage/${res.data.image}"></div><!-- 유저 이미지 뿌리기-->
+<div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.image}"></div><!-- 유저 이미지 뿌리기-->
 <!-- /HEXAGON -->
         </div>
         <!-- /USER AVATAR CONTENT -->

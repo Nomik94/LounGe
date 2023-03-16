@@ -52,7 +52,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor('userImage'))
   async ModifyUserImage(
     @GetUser() user: IUser,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.MulterS3.File,
   ): Promise<void> {
     return await this.userService.ModifyUserImage(user, file);
   }
