@@ -68,10 +68,10 @@ export class NewsfeedService {
         }
       }
       if (file.length !== 0) {
-        const fileNames = file.map((file) => file.filename);
-        const promises = fileNames.map((filename) =>
+        const fileNames = file.map((file) => file.key);
+        const promises = fileNames.map((key) =>
           this.newsfeedImageRepository.createNewsfeedImage(
-            filename,
+            key,
             newsfeedId.id,
           ),
         );
@@ -142,9 +142,9 @@ export class NewsfeedService {
       }
       if (file.length !== 0) {
         await this.newsfeedImageRepository.deleteNewsfeedImage(id);
-        const fileNames = file.map((file) => file.filename);
-        const promises = fileNames.map((filename) =>
-          this.newsfeedImageRepository.modifyNewsfeedImage(filename, id),
+        const fileNames = file.map((file) => file.key);
+        const promises = fileNames.map((key) =>
+          this.newsfeedImageRepository.modifyNewsfeedImage(key, id),
         );
         await Promise.all(promises);
       }
