@@ -23,10 +23,10 @@ describe('NewsfeedController (e2e)', () => {
   describe('POST /api/newsfeed/newsfeed', () => {
     it('should return 201 status code', async () => {
       const newsfeedData: newsfeedCheckDto = {
-        content: "테스트",
-           userId: 1,
-           tag:"테스트",
-          image:"테스트"
+        content: '테스트',
+        userId: 1,
+        tag: '테스트',
+        image: '테스트',
       };
 
       jest.spyOn(newsfeedService, 'createNewsfeed').mockResolvedValue();
@@ -41,10 +41,10 @@ describe('NewsfeedController (e2e)', () => {
 
     it('should call newsfeedService.createNewsfeed method with correct data', async () => {
       const newsfeedData: newsfeedCheckDto = {
-        content: "테스트",
+        content: '테스트',
         userId: 1,
-        tag:"테스트",
-       image:"테스트"
+        tag: '테스트',
+        image: '테스트',
       };
 
       const createNewsfeedSpy = jest.spyOn(newsfeedService, 'createNewsfeed');

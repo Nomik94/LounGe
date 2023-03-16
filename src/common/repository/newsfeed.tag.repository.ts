@@ -8,30 +8,30 @@ export class NewsfeedTagRepository extends Repository<NewsFeedTag> {
     super(NewsFeedTag, dataSource.createEntityManager());
   }
 
-  async deleteNewsfeedTag(id:number):Promise<void>{
+  async deleteNewsfeedTag(id: number): Promise<void> {
     await this.delete({
-      newsFeedId:id
-    })
+      newsFeedId: id,
+    });
   }
 
-  async createNewsfeed(id:number,newsfeedId:number):Promise<void>{
+  async createNewsfeed(id: number, newsfeedId: number): Promise<void> {
     await this.save({
-      tagId:id,
-      newsFeedId: newsfeedId
-    })
+      tagId: id,
+      newsFeedId: newsfeedId,
+    });
   }
 
-  async modifyNewsfeed(tagId:number,id:number):Promise<void>{
+  async modifyNewsfeed(tagId: number, id: number): Promise<void> {
     await this.save({
-      tagId:tagId,
-      newsFeedId: id
-    })
+      tagId: tagId,
+      newsFeedId: id,
+    });
   }
 
-  async serchTagArray(whereNewsfeedId:object[]):Promise<NewsFeedTag[]>{
+  async serchTagArray(whereNewsfeedId: object[]): Promise<NewsFeedTag[]> {
     return await this.find({
       where: whereNewsfeedId,
-      select: ['newsFeedId']
-    })
+      select: ['newsFeedId'],
+    });
   }
 }

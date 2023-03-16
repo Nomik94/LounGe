@@ -19,7 +19,7 @@ import { NewsFeed } from './database/entities/newsFeed.entity';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfig }),
-    TypeOrmModule.forFeature([Group,UserGroup,NewsFeed]),
+    TypeOrmModule.forFeature([Group, UserGroup, NewsFeed]),
     CacheModule.register({
       isGlobal: true,
       // store: "memory",

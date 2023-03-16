@@ -41,5 +41,5 @@ export class NewsFeed extends BaseEntity {
   newsFeedTags: NewsFeedTag[];
 
   @ManyToOne(() => Group, (group) => group.newsfeed)
-  group: Group
+  group: Group;
 }

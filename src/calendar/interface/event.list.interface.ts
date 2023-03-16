@@ -1,4 +1,4 @@
-export interface IAllEventList{
+export interface IAllEventList {
   id: number;
   where: string;
   name: string;

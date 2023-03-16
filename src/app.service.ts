@@ -14,7 +14,6 @@ export class AppService {
   @InjectRepository(NewsFeed)
   private readonly newsfeedRepository: Repository<NewsFeed>;
 
-
   async groupInfo(groupId) {
     const group = await this.groupRepository.findOne({
       relations: ['user', 'groupEvents'],
@@ -32,7 +31,7 @@ export class AppService {
     });
 
     const newsfeedCount = await this.newsfeedRepository.count({
-      where: { group: {id:groupId}},
+      where: { group: { id: groupId } },
     });
 
     return {
