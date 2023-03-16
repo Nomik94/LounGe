@@ -15,9 +15,9 @@ async function readnewsfeedmylist(page) {
     },
   })
     .then(async (res) => {
-     await newsfeedlist(res.data);
+      await newsfeedlist(res.data);
     })
-    .catch( (err) => {
+    .catch((err) => {
       if (err.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
           toast: true,
@@ -26,15 +26,9 @@ async function readnewsfeedmylist(page) {
           timer: 2000,
           timerProgressBar: true,
         });
-         Toast.fire({
+        Toast.fire({
           icon: 'error',
           title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
-        });
-      } else if (err.response.data.statusCode === 406) {
-        Swal.fire({
-          icon: 'error',
-          title: `작성된 뉴스피드가 없습니다.`,
-          text: '뉴스피드를 작성해 볼까요~?',
         });
       }
       Swal.fire({
@@ -46,9 +40,9 @@ async function readnewsfeedmylist(page) {
 
 // 무한 스크롤
 async function limitscroll() {
-  page++
-  readnewsfeedmylist(page)
-  }
+  page++;
+  readnewsfeedmylist(page);
+}
 
 // 내 뉴스피드에서 태그 정렬
 async function serchtag(tag) {
@@ -80,12 +74,10 @@ async function serchtag(tag) {
           icon: 'error',
           title: '로그인 정보가 일치하지 않습니다.',
         });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: '알수없는 이유로 실행되지 않았습니다.',
-          text: '관리자에게 문의해 주세요.',
-        });
       }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
     });
 }

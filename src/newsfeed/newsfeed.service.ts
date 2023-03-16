@@ -1,10 +1,11 @@
-import { ForbiddenException, Injectable, InternalServerErrorException, NotAcceptableException } from '@nestjs/common';
-import { GroupNewsfeedRepository } from 'src/common/repository/group.newsfeed.repository';
+import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { result } from 'lodash';
 import { NewsfeedRepository } from 'src/common/repository/newsfeed.repository';
 import { NewsfeedTagRepository } from 'src/common/repository/newsfeed.tag.repository';
 import { NewsfeedImageRepository } from 'src/common/repository/newsfeedImage.repository';
 import { TagRepository } from 'src/common/repository/tag.repository';
 import { UserGroupRepository } from 'src/common/repository/user.group.repository';
+import { UserRepository } from 'src/common/repository/user.repository';
 import { ISerchNewsfeedList } from './interface/serch.newsfeed.list.interface';
 import { ISerchTagMyNewsfeed } from './interface/serch.tag.mynewsfeed.interface';
 import { ISerchTagNewsfeed } from './interface/serch.tag.newsfeed.interface';
@@ -16,8 +17,8 @@ export class NewsfeedService {
         private readonly tagRepository: TagRepository,
         private readonly newsfeedTagRepository: NewsfeedTagRepository,
         private readonly newsfeedImageRepository: NewsfeedImageRepository,
-        private readonly groupNewsfeedRepository: GroupNewsfeedRepository,
-        private readonly userGroupRepository: UserGroupRepository
+        private readonly userGroupRepository: UserGroupRepository,
+        private readonly userRepository: UserRepository
     ) {}
     pageSize = 10;
     // 뉴스피드 작성
@@ -31,7 +32,7 @@ export class NewsfeedService {
             throw new ForbiddenException('그룹 가입 신청 중입니다.');
         }
         try {
-            const newsfeedId = await this.newsfeedRepository.createNewsfeed(content,userId)
+            const newsfeedId = await this.newsfeedRepository.createNewsfeed(content,userId,groupId)
             if (data.newsfeedTags){
                 const tag = data.newsfeedTags.split(',')
                 for(const i of tag) {
@@ -53,7 +54,6 @@ export class NewsfeedService {
                 const promises = fileNames.map(filename => this.newsfeedImageRepository.createNewsfeedImage(filename,newsfeedId.id))
                 await Promise.all(promises)
             }
-            await this.groupNewsfeedRepository.createNewsfeed(newsfeedId.id,groupId)
             return
         } catch(err) {
             throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
@@ -72,7 +72,6 @@ export class NewsfeedService {
         }
         try {
             await this.newsfeedRepository.deleteNewsfeed(id);
-            await this.groupNewsfeedRepository.deleteNewsfeedGroup(id)
             await this.newsfeedTagRepository.deleteNewsfeedTag(id)
             await this.newsfeedImageRepository.deleteNewsfeedImage(id)
         } catch (err){
@@ -123,122 +122,19 @@ export class NewsfeedService {
     }
 
     // 태그 검색 (소속 그룹 뉴스피드)
-    async serchTagNewsfeed(data):Promise<ISerchTagNewsfeed[]>{
+    async serchTagNewsfeed(data,userId):Promise<ISerchTagNewsfeed[]>{
         try {
             const tag = data
             const serchTag = await this.tagRepository.serchTagWord(tag)
-            const whereNewsfeedId = serchTag.map((tag) => ({ tagId : tag.id }))
+            const findGroup = await this.userGroupRepository.checkUserStatus(userId)
+            const groupIds = findGroup.map(group => group.groupId);
+            const whereNewsfeedId = serchTag.map((tag) => ({ tagId : tag.id }))  
             const newsfeedTag = await this.newsfeedTagRepository.serchTagArray(whereNewsfeedId)
             const newsfeedSerchId = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
-            const numberingId = newsfeedSerchId.map(id => ({id}))
-            const findNewsfeed = await this.newsfeedRepository.findNewsfeedByTag(numberingId)
-            const result = [];
-            for (const id of newsfeedSerchId) {
-                const feed = findNewsfeed.find(item => item.id ===id);
-                if (feed) {
-                    const obj = {
-                        id: feed.id,
-                        content: feed.content,
-                        createAt: feed.createdAt,
-                        updateAt: feed.updatedAt,
-                        userName: feed.user.username,
-                        userImage: feed.user.image,
-                        userEmail: feed.user.email,
-                        tagsName: feed.newsFeedTags.map(tag => tag.tag.tagName),
-                        newsfeedImage : feed.newsImages.map(image => image.image),
-                        groupId: feed.groupNewsFeeds.map(group => group.group.id),
-                        groupName: feed.groupNewsFeeds.map(group => group.group.groupName)
-                    }
-                    result.push(obj)
-                }
-            }
-            return result
-        } catch(err) {
-            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
-        }
-    }
-
-    // 태그 검색 (특정 그룹 뉴스피드)
-    async serchTagNewsfeedGroup(data,groupId):Promise<ISerchTagNewsfeed[]>{
-        try {
-            const {tag} = data
-            const serchTag = await this.tagRepository.serchTagWord(tag)
-            const whereNewsfeedId = serchTag.map((tag) => ({ tagId : tag.id }))        
-            const newsfeedTag = await this.newsfeedTagRepository.serchTagArray(whereNewsfeedId)
-            const serchNewsfeedId = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
-            const numberingId = serchNewsfeedId.map(id => ({id}))
-            const findNewsfeed = await this.newsfeedRepository.findNewsfeedByTag(numberingId)
-            const result = [];
-            for (const id of serchNewsfeedId) {
-                const feed = findNewsfeed.find(item => item.id ===id);
-                if (feed) {
-                    const obj = {
-                        id: feed.id,
-                        content: feed.content,
-                        createAt: feed.createdAt,
-                        updateAt: feed.updatedAt,
-                        userName: feed.user.username,
-                        userImage: feed.user.image,
-                        userEmail: feed.user.email,
-                        tagsName: feed.newsFeedTags.map(tag => tag.tag.tagName),
-                        newsfeedImage : feed.newsImages.map(image => image.image),
-                        groupId: feed.groupNewsFeeds.map(group => group.group.id),
-                        groupName: feed.groupNewsFeeds.map(group => group.group.groupName)
-                    }
-                    result.push(obj)
-                }
-            }
-            const filteredResult = result.filter(obj => obj.groupId.includes(groupId));
-            return filteredResult
-        } catch(err){
-            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
-        }
-    }
-
-    // 태그 검색 (내 뉴스피드)
-    async serchTagMyNewsfeed(data,userId):Promise<ISerchTagMyNewsfeed[]>{
-        try {
-            const tag = data
-            const serchTag = await this.tagRepository.serchTagWord(tag)
-            const whereNewsfeedId = serchTag.map((tag) => ({ tagId : tag.id }))
-            const newsfeedTag = await this.newsfeedTagRepository.serchTagArray(whereNewsfeedId)
-            const serchNewsfeedId = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
-            const numberingId = serchNewsfeedId.map(id => ({id}))
-            const findNewsfeed = await this.newsfeedRepository.findNewsfeedByTag(numberingId)
-            const result = [];
-            for (const id of serchNewsfeedId) {
-                const feed = findNewsfeed.find(item => item.id ===id);
-                if (feed) {
-                    const obj = {
-                        id: feed.id,
-                        content: feed.content,
-                        createAt: feed.createdAt,
-                        updateAt: feed.updatedAt,
-                        userId: feed.user.id,
-                        userName: feed.user.username,
-                        userImage: feed.user.image,
-                        userEmail: feed.user.email,
-                        tagsName: feed.newsFeedTags.map(tag => tag.tag.tagName),
-                        newsfeedImage : feed.newsImages.map(image => image.image),
-                        groupId: feed.groupNewsFeeds.map(group => group.group.id),
-                        groupName: feed.groupNewsFeeds.map(group => group.group.groupName)
-                    }
-                    result.push(obj)
-                }
-            }
-            const filteredResult = result.filter(obj => obj.userId === userId);
-            return filteredResult
-        } catch(err){
-            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
-        }
-    }
-
-    // 뉴스피드 읽기 (특정 그룹)
-    async readNewsfeedGroup(groupId:number,page:number):Promise<ISerchNewsfeedList[]>{
-        try {
-            const newsfeed = await this.groupNewsfeedRepository.serchNewsfeedIdByGroupId(groupId)
-            const newsfeedIds = newsfeed.map(Newsfeed => Newsfeed.newsFeedId)
-            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds,page,this.pageSize)
+            
+            
+            const findNewsfeed = await this.newsfeedRepository.findNewsfeedByGroupId(newsfeedSerchId,groupIds)
+            
             const result = findNewsfeed.map(feed => {
                 const userName = feed.user.username;
                 const userImage = feed.user.image;
@@ -255,8 +151,115 @@ export class NewsfeedService {
                     userImage: userImage,
                     tagsName: tagsName,
                     newsfeedImage: newsfeedImage,
-                    groupId: feed.groupNewsFeeds.map(group => group.group.id),
-                    groupName: feed.groupNewsFeeds.map(group => group.group.groupName)
+                    groupId: feed.group.id,
+                    groupName: feed.group.groupName
+                }
+            })
+            return result
+        } catch(err) {
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
+        }
+    }
+
+    // 태그 검색 (특정 그룹 뉴스피드)
+    async serchTagNewsfeedGroup(data,groupId):Promise<ISerchTagNewsfeed[]>{
+        try {
+            const tag = data
+            const serchTag = await this.tagRepository.serchTagWord(tag)
+            const whereNewsfeedId = serchTag.map((tag) => ({ tagId : tag.id })) 
+            const newsfeedTag = await this.newsfeedTagRepository.serchTagArray(whereNewsfeedId) 
+            const serchNewsfeedId = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
+            const numberingId = serchNewsfeedId.map(id => ({id}))
+            const numberNewsfeedIdArray = numberingId.map((id) => id.id)
+            const findNewsfeed = await this.newsfeedRepository.findNewsfeedByOneGroupId(numberNewsfeedIdArray,groupId)
+
+            const result = findNewsfeed.map(feed => {
+                const userName = feed.user.username;
+                const userImage = feed.user.image;
+                const userEmail = feed.user.email;
+                const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
+                const newsfeedImage = feed.newsImages.map(image => image.image);
+                return {
+                    id: feed.id,
+                    content: feed.content,
+                    createAt: feed.createdAt,
+                    updateAt: feed.updatedAt,
+                    userName: userName,
+                    userEmail: userEmail,
+                    userImage: userImage,
+                    tagsName: tagsName,
+                    newsfeedImage: newsfeedImage,
+                    groupId: feed.group.id,
+                    groupName: feed.group.groupName
+                }
+            })
+            return result
+        } catch(err){
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
+        }
+    }
+
+    // 태그 검색 (내 뉴스피드)
+    async serchTagMyNewsfeed(data,userId):Promise<ISerchTagMyNewsfeed[]>{
+        try {
+            const findGroup = await this.userGroupRepository.checkUserStatus(userId)
+            const groupIds = findGroup.map(group => group.groupId);
+            const tag = data
+            const serchTag = await this.tagRepository.serchTagWord(tag)
+            const whereNewsfeedId = serchTag.map((tag) => ({ tagId : tag.id }))
+            const newsfeedTag = await this.newsfeedTagRepository.serchTagArray(whereNewsfeedId)
+            const serchNewsfeedId = Array.from(new Set(newsfeedTag.map((tag) => tag.newsFeedId)))
+
+            const findNewsfeed = await this.newsfeedRepository.findNewsfeedByTag(serchNewsfeedId,userId,groupIds)
+
+            const result = findNewsfeed.map(feed => {
+                const userName = feed.user.username;
+                const userImage = feed.user.image;
+                const userEmail = feed.user.email;
+                const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
+                const newsfeedImage = feed.newsImages.map(image => image.image);
+                return {
+                    id: feed.id,
+                    content: feed.content,
+                    createAt: feed.createdAt,
+                    updateAt: feed.updatedAt,
+                    userName: userName,
+                    userEmail: userEmail,
+                    userImage: userImage,
+                    tagsName: tagsName,
+                    newsfeedImage: newsfeedImage,
+                    groupId: feed.group.id,
+                    groupName: feed.group.groupName
+                }
+            })
+            return result
+        } catch(err){
+            throw new InternalServerErrorException("알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.")
+        }
+    }
+
+   // 뉴스피드 읽기 (특정 그룹)
+    async readNewsfeedGroup(groupId:number,page:number):Promise<ISerchNewsfeedList[]>{
+        try {
+            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByNewsfeedId(groupId,page,this.pageSize)
+            const result = findNewsfeed.map(feed => {
+                const userName = feed.user.username;
+                const userImage = feed.user.image;
+                const userEmail = feed.user.email;
+                const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
+                const newsfeedImage = feed.newsImages.map(image => image.image);
+                return {
+                    id: feed.id,
+                    content: feed.content,
+                    createAt: feed.createdAt,
+                    updateAt: feed.updatedAt,
+                    userName: userName,
+                    userEmail: userEmail,
+                    userImage: userImage,
+                    tagsName: tagsName,
+                    newsfeedImage: newsfeedImage,
+                    groupId: feed.group.id,
+                    groupName: feed.group.groupName
                 }
             })
         return result
@@ -268,18 +271,18 @@ export class NewsfeedService {
     // 뉴스피드 읽기 (내 뉴스피드)
     async readNewsfeedMyList(userId:number,page:number):Promise<ISerchNewsfeedList[]>{
         try {
-            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByUserId(userId,page,this.pageSize)
-            if(!findNewsfeed){
-                throw new NotAcceptableException("작성된 뉴스피드가 없습니다.")
-            }
+            const findGroup = await this.userGroupRepository.checkUserStatus(userId)
+            const groupIds = findGroup.map(group => group.groupId);
+            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByUserId(userId,groupIds,page,this.pageSize)
+            
                 const result = findNewsfeed.map(feed => {
                     const userName = feed.user.username;
                     const userImage = feed.user.image;
                     const userEmail = feed.user.email;
                     const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
                     const newsfeedImage = feed.newsImages.map(image => image.image);
-                    const groupName = feed.groupNewsFeeds.map(group => group.group.groupName)
-                    const groupId = feed.groupNewsFeeds.map(group => group.groupId)
+                    const groupName = feed.group.groupName;
+                    const groupId = feed.group.id;
                     return {
                         id: feed.id,
                         content: feed.content,
@@ -305,18 +308,16 @@ export class NewsfeedService {
         try {
             const findGroup = await this.userGroupRepository.checkUserStatus(userId)
             const groupIds = findGroup.map(group => group.groupId);
-            const findNewsfeed = await this.groupNewsfeedRepository.serchNewsfeedIdByGroupIdArray(groupIds)
-            const newsfeedIds = findNewsfeed.map(item => item.newsFeedId)
-            const findNewsfeedId = await this.newsfeedRepository.findnewsfeedByNewsfeedId(newsfeedIds,page,this.pageSize)
-              const result = findNewsfeedId.map(feed => {
+            const findNewsfeed = await this.newsfeedRepository.findnewsfeedByGroupId(groupIds,page,this.pageSize)
+              
+            const result = findNewsfeed.map(feed => {
                 const userName = feed.user.username;
                 const userImage = feed.user.image;
                 const userEmail = feed.user.email;
                 const tagsName = feed.newsFeedTags.map(tag => tag.tag.tagName);
                 const newsfeedImage = feed.newsImages.map(image => image.image);
-                const groupId = feed.groupNewsFeeds.map(group => group.groupId)
-                const groupName = feed.groupNewsFeeds.map(group => group.group.groupName)
-                const groupImage = feed.groupNewsFeeds.map(group => group.group.groupImage)
+                const groupId = feed.group.id;
+                const groupName = feed.group.groupName;
                 return {
                     id: feed.id,
                     content: feed.content,
@@ -329,7 +330,6 @@ export class NewsfeedService {
                     newsfeedImage: newsfeedImage,
                     groupId: groupId,
                     groupName: groupName,
-                    groupImage:groupImage
                 }
             })
         return result

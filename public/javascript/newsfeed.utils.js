@@ -1,5 +1,5 @@
 let selectedTags = [];
-let selectedImages =[];
+let selectedImages = [];
 
 // 유저 쿠키
 function getCookie(name) {
@@ -124,9 +124,13 @@ async function newsfeedlist(data) {
         <!-- /WIDGET BOX STATUS TEXT -->
 
         <div class="newsfeed-image">
-        ${data.newsfeedImage.map(image => `
+        ${data.newsfeedImage
+          .map(
+            (image) => `
           <img class="popup-image" onclick="popupNewsfeed('${image}')" src="/newsfeedImage/${image}">
-        `).join('')}
+        `,
+          )
+          .join('')}
       </div>
 
         <!-- TAG LIST -->
@@ -160,23 +164,22 @@ async function newsfeedlist(data) {
 function popupNewsfeed(src) {
   Swal.fire({
     imageUrl: `/newsfeedImage/${src}`,
-  })
+  });
 }
 
 // 뉴스피드 삭제하기
 async function deleteNewsfeed(newsfeedId) {
   await Swal.fire({
     title: '해당 뉴스피드를 지울까요?',
-    text: "삭제된 뉴스피드는 복구되지 않습니다.",
+    text: '삭제된 뉴스피드는 복구되지 않습니다.',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
     confirmButtonText: '삭제',
-    cancelButtonText: '취소'
-}).then((result) => {
+    cancelButtonText: '취소',
+  }).then((result) => {
     if (result.isConfirmed) {
-      
       axios({
         method: 'Delete',
         url: `/api/newsfeed/newsfeed/${newsfeedId}`,
@@ -184,63 +187,64 @@ async function deleteNewsfeed(newsfeedId) {
           Authorization: `${getCookie('accessToken')}`,
         },
       })
-      .then(async (res) => {
-        await Swal.fire({
-          icon: 'success',
-          title: '삭제되었습니다.',
-          text: '태그 및 이미지도 삭제되었습니다.'
+        .then(async (res) => {
+          await Swal.fire({
+            icon: 'success',
+            title: '삭제되었습니다.',
+            text: '태그 및 이미지도 삭제되었습니다.',
+          });
+          window.location.reload();
         })
-        window.location.reload()
-      })
-      .catch(async (err) => {
-        if(err.response.data.statusCode === 403) {
-          const Toast = Swal.mixin({
-            toast: true,
-            position: 'center-center',
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true,
-          });
-          await Toast.fire({
-            icon: 'error',
-            title: '뉴스피드 삭제 권한이 없습니다.',
-          });
-        } else if(err.response.data.statusCode === 401) {
+        .catch(async (err) => {
+          if (err.response.data.statusCode === 403) {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'center-center',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
+            await Toast.fire({
+              icon: 'error',
+              title: '뉴스피드 삭제 권한이 없습니다.',
+            });
+          } else if (err.response.data.statusCode === 401) {
+            Swal.fire({
+              icon: 'error',
+              title: '로그인 정보가 없습니다.',
+              text: '다시 로그인해 주세요.',
+            });
+          }
           Swal.fire({
             icon: 'error',
-            title: '로그인 정보가 없습니다.',
-            text: "다시 로그인해 주세요.",
-          })
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: '알 수 없는 에러가 발생했습니다.',
-            text: "관리자에게 문의해 주세요.",
-          })
-        }
-      })
+            text: `${error.response.data.message}`,
+          });
+        });
     }
-  })
+  });
 }
 
 // 뉴스피드 목록 비우기
-function clearnewsfeed(){
+function clearnewsfeed() {
   $('#newsfeedbox').empty();
 }
 
 // 뉴스피드 수정하기
-async function modifyNewsfeed(id){
-  let popupHtml = '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
+async function modifyNewsfeed(id) {
+  let popupHtml =
+    '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
   popupHtml += '<h2>뉴스피드 수정하기</h2>';
   popupHtml += '<form>';
   popupHtml += '<label for="newsfeedcontent">내용:</label><br>';
-  popupHtml += '<textarea id="newsfeedcontent" name="newsfeedcontent" rows="4" cols="50"></textarea><br><br>';
+  popupHtml +=
+    '<textarea id="newsfeedcontent" name="newsfeedcontent" rows="4" cols="50"></textarea><br><br>';
   popupHtml += '<label for="tag">태그(태그는 ,로 구분합니다.)</label><br>';
   popupHtml += '<input type="text" id="tag" name="tag"><br><br>';
   popupHtml += '<label for="image">이미지(최대 5장):</label><br>';
-  popupHtml += '<input type="file" id="imageUpload" name="imageUpload" multiple>';
+  popupHtml +=
+    '<input type="file" id="imageUpload" name="imageUpload" multiple>';
   popupHtml += '<input type="submit" value="수정">';
-  popupHtml += '<button type="button" class="cancel">취소</button>'
+  popupHtml += '<button type="button" class="cancel">취소</button>';
   popupHtml += '</form>';
   popupHtml += '</div>';
 
@@ -248,81 +252,77 @@ async function modifyNewsfeed(id){
   popup.innerHTML = popupHtml;
   document.body.appendChild(popup);
 
-  popup.querySelector('form').addEventListener('submit', async function(e) {
+  popup.querySelector('form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    
-  const files = document.getElementById('imageUpload');
-  selectedImages = files.files
+    const files = document.getElementById('imageUpload');
+    selectedImages = files.files;
 
-  const formData = new FormData();
-  formData.append('content', newsfeedcontent.value)
-  if(tag.value.length !== 0) {
-    formData.append('newsfeedTags', tag.value)
-  }
-  if(selectedImages.length !==0) {
-    for(let i = 0; i < selectedImages.length; i++) {
-      formData.append('newsfeedImage',selectedImages[i])
+    const formData = new FormData();
+    formData.append('content', newsfeedcontent.value);
+    if (tag.value.length !== 0) {
+      formData.append('newsfeedTags', tag.value);
     }
-  }
+    if (selectedImages.length !== 0) {
+      for (let i = 0; i < selectedImages.length; i++) {
+        formData.append('newsfeedImage', selectedImages[i]);
+      }
+    }
     if (!newsfeedcontent.value) {
       await Swal.fire({
         icon: 'error',
         title: '빈 내용은 작성할 수 없습니다!',
         text: '뭐라도 좋으니 내용을 입력해주세요 T^T',
       });
-    } else{
+    } else {
       axios({
         url: `/api/newsfeed/newsfeed/${id}`,
         method: 'put',
-        headers : {
+        headers: {
           Authorization: `${getCookie('accessToken')}`,
         },
-        data: formData
+        data: formData,
       })
-      .then(async (res) => {
-        await Swal.fire({
-          icon: 'success',
-          title: '뉴스피드 수정 완료!',
-          text: '잠시 후 새로고침 됩니다.',
-        });
-        window.location.reload()
-      })
-      .catch((err) => {
-        if(err.response.data.statusCode === 400) {
-          Swal.fire({
-            icon: 'error',
-            title: '사진은 최대 5장까지만 등록 가능합니다.',
-            text: "죄송합니다.",
+        .then(async (res) => {
+          await Swal.fire({
+            icon: 'success',
+            title: '뉴스피드 수정 완료!',
+            text: '잠시 후 새로고침 됩니다.',
           });
-        } else if (err.response.data.statusCode === 401){
+          window.location.reload();
+        })
+        .catch((err) => {
+          if (err.response.data.statusCode === 400) {
+            Swal.fire({
+              icon: 'error',
+              title: '사진은 최대 5장까지만 등록 가능합니다.',
+              text: '죄송합니다.',
+            });
+          } else if (err.response.data.statusCode === 401) {
+            Swal.fire({
+              icon: 'error',
+              title: '로그인 정보가 확인되지 않습니다.',
+              text: '로그인 정보를 확인해 주세요.',
+            });
+          } else if (err.response.data.statusCode === 403) {
+            Swal.fire({
+              icon: 'error',
+              title: '권한이 없습니다.',
+            });
+          }
           Swal.fire({
             icon: 'error',
-            title: '권한이 없습니다.',
-            text: "로그인 정보를 확인해 주세요.",
-          })
-        } else if (err.response.data.statusCode === 403) {
-          Swal.fire({
-            icon: 'error',
-            title: '로그인 정보가 일치하지 않습니다.',
-            text: "로그인 정보를 확인해 주세요.",
-          })
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: '알수없는 이유로 실행되지 않았습니다.',
-            text: "관리자에게 문의해 주세요.",
-          })
-        }
-      })
+            text: `${err.response.data.message}`,
+          });
+        });
     }
     document.body.removeChild(popup);
   });
 
-  const cancelButton = popup.querySelector('.cancel')
-  cancelButton.addEventListener('click',() => {
-   document.body.removeChild(popup)
-  })
+  const cancelButton = popup.querySelector('.cancel');
+  cancelButton.addEventListener('click', () => {
+    document.body.removeChild(popup);
+  });
 }
 
 // 무한 스크롤 설정

@@ -19,10 +19,11 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     await this.softDelete(id)
   }
 
-  async createNewsfeed(content:string,userId:number):Promise<NewsFeed>{
+  async createNewsfeed(content:string,userId:number,groupId:number):Promise<NewsFeed>{
     return await this.save({
       content:content,
       user: {id : userId},
+      group: {id: groupId}
     })
   }
 
@@ -32,29 +33,58 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
   );
   }
 
-  async findNewsfeedByTag(numberingId:object[]):Promise<NewsFeed[]>{
+  async findNewsfeedByOneGroupId(numberNewsfeedIdArray:number[],groupId:number):Promise<NewsFeed[]>{
     return await this.find({
-      relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
-      where: numberingId
+      relations: ['newsFeedTags.tag','newsImages','user','group'],
+      order: {createdAt: 'desc' },
+      where: {id:In(numberNewsfeedIdArray) , 'group' : {id:groupId},  deletedAt: null}
     })
   }
 
-  async findnewsfeedByNewsfeedId(newsfeedIds:number[],page:number,pageSize:number):Promise<NewsFeed[]>{
+  async findNewsfeedByTag(serchNewsfeedId:number[],userId:number,groupIds:number[]):Promise<NewsFeed[]>{
     return await this.find({
-      relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
+      relations: ['newsFeedTags.tag','newsImages','user','group'],
+      order: {createdAt: 'desc' },
+      where: {id:In(serchNewsfeedId), 'user':{id:userId}, 'group':{id:In(groupIds)}}
+
+    })
+  }
+
+  async findNewsfeedByGroupId(newsfeedSerchId:number[],groupIds:number[]):Promise<NewsFeed[]>{
+    return await this.find({
+      relations: ['newsFeedTags.tag','newsImages','user','group'],
+      where: {id:In(newsfeedSerchId),'group':{id:In(groupIds)}},
+      order: {createdAt: 'desc' }
+    })
+  }
+
+  async findnewsfeedByNewsfeedId(groupId:number,page:number,pageSize:number):Promise<NewsFeed[]>{
+    return await this.find({
+      relations: ['newsFeedTags.tag','newsImages','user','group'],
       select: ['id', 'content', 'createdAt', 'updatedAt'],
-      where: { id: In(newsfeedIds), deletedAt: null },
+      where: { 'group' : {id:groupId}, deletedAt: null},
       order: {createdAt: 'desc' },
       take: pageSize,
       skip: pageSize * (page - 1)
     })
   }
 
-  async findnewsfeedByUserId(userId:number,page:number,pageSize:number):Promise<NewsFeed[]>{
+  async findnewsfeedByUserId(userId:number,groupIds:number[],page:number,pageSize:number):Promise<NewsFeed[]>{
     return await this.find({
-      relations: ['newsFeedTags.tag','newsImages','user','groupNewsFeeds.group'],
+      relations: ['newsFeedTags.tag','newsImages','user','group'],
       select: ['id','content','createdAt','updatedAt'],
-      where:{'user' : {id:userId}, deletedAt: null},
+      where:{'user' : {id:userId}, 'group' : { id: In(groupIds)}, deletedAt: null},
+      order: {createdAt: 'desc' },
+      take: pageSize,
+      skip: pageSize * (page - 1)
+    })
+  }
+
+  async findnewsfeedByGroupId(groupIds:number[],page:number,pageSize:number) {
+    return await this.find({
+      relations: ['newsFeedTags.tag','newsImages','user','group'],
+      select: ['id','content','createdAt','updatedAt'],
+      where: { group: { id: In(groupIds)}, deletedAt: null },
       order: {createdAt: 'desc' },
       take: pageSize,
       skip: pageSize * (page - 1)
