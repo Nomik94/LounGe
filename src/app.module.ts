@@ -13,12 +13,13 @@ import * as redisStore from 'cache-manager-redis-store';
 import { UserModule } from './user/user.module';
 import { Group } from './database/entities/group.entity';
 import { UserGroup } from './database/entities/user-group.entity';
+import { NewsFeed } from './database/entities/newsFeed.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfig }),
-    TypeOrmModule.forFeature([Group,UserGroup]),
+    TypeOrmModule.forFeature([Group,UserGroup,NewsFeed]),
     CacheModule.register({
       isGlobal: true,
       // store: "memory",
