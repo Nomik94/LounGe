@@ -217,7 +217,7 @@ async function deleteNewsfeed(newsfeedId) {
           }
           Swal.fire({
             icon: 'error',
-            text: `${error.response.data.message}`,
+            text: `${err.response.data.message}`,
           });
         });
     }
@@ -274,7 +274,14 @@ async function modifyNewsfeed(id) {
         title: '빈 내용은 작성할 수 없습니다!',
         text: '뭐라도 좋으니 내용을 입력해주세요 T^T',
       });
-    } else {
+    } else if (selectedImages.length > 5) {
+      await Swal.fire({
+        icon: 'error',
+        title: '사진은 최대 5장만 가능합니다.',
+        text: '많은 추억을 저장하지 못해 죄송합니다 T^T',
+      });
+    }
+    else {
       axios({
         url: `/api/newsfeed/newsfeed/${id}`,
         method: 'put',
