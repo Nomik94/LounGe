@@ -131,7 +131,7 @@ function joinedGroupList(page) {
               <!-- /USER PREVIEW AUTHOR TITLE -->
       
               <!-- USER PREVIEW AUTHOR TEXT -->
-              <p class="user-preview-author-text"><a href="profile-timeline.html">${group.leader}</a></p>
+              <p class="user-preview-author-text">${group.leader}</p>
               <!-- /USER PREVIEW AUTHOR TEXT -->
             </div>
             <!-- /USER PREVIEW AUTHOR -->

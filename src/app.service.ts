@@ -30,7 +30,7 @@ export class AppService {
     // const newsfeedCount = await this.groupNewsfeedRepository.count({
     //   where: { groupId },
     // });
-    console.log(group)
+
     return {
       groupId: group.id,
       groupName: group.groupName,

@@ -33,7 +33,7 @@ async function readnewsfeedmylist(page) {
       }
       Swal.fire({
         icon: 'error',
-        text: `${error.response.data.message}`,
+        text: `${err.response.data.message}`,
       });
     });
 }
