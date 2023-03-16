@@ -14,8 +14,8 @@ async function readnewsfeedmygroup(page) {
       Authorization: `${getCookie('accessToken')}`,
     },
   })
-    .then(async(res) => {
-     await newsfeedlist(res.data);
+    .then(async (res) => {
+      await newsfeedlist(res.data);
     })
     .catch((err) => {
       if (err.response.data.statusCode === 401) {
@@ -31,21 +31,20 @@ async function readnewsfeedmygroup(page) {
           title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
         });
         window.location.href = '/';
-      } else {
-        Swal.fire({
-          icon: 'error',
-          text: `${error.response.data.message}`
-        })
       }
+      Swal.fire({
+        icon: 'error',
+        text: `${err.response.data.message}`,
+      });
     });
 }
 
 // 무한 스크롤
 async function limitscroll() {
-  page++
-  readnewsfeedmygroup(page)
-  }
-  
+  page++;
+  readnewsfeedmygroup(page);
+}
+
 // 태그 클릭 시 해당 태그로 작성된 뉴스피드 검색
 async function serchtag(tag) {
   const test = tag;
@@ -76,11 +75,10 @@ async function serchtag(tag) {
           icon: 'error',
           title: '로그인 정보가 일치하지 않습니다.',
         });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          text: `${error.response.data.message}`
-        })
       }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
     });
 }

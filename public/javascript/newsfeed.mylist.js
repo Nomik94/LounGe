@@ -30,18 +30,11 @@ async function readnewsfeedmylist(page) {
           icon: 'error',
           title: '로그인 정보가 없습니다. <br>로그인이 필요합니다.',
         });
-      } else if (err.response.data.statusCode === 406) {
-        Swal.fire({
-          icon: 'error',
-          title: `작성된 뉴스피드가 없습니다.`,
-          text: '뉴스피드를 작성해 볼까요~?',
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          text: `${error.response.data.message}`
-        })
       }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
     });
 }
 
@@ -81,11 +74,10 @@ async function serchtag(tag) {
           icon: 'error',
           title: '로그인 정보가 일치하지 않습니다.',
         });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          text: `${error.response.data.message}`
-        })
       }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
     });
 }

@@ -214,12 +214,11 @@ async function deleteNewsfeed(newsfeedId) {
               title: '로그인 정보가 없습니다.',
               text: '다시 로그인해 주세요.',
             });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              text: `${error.response.data.message}`
-            })
           }
+          Swal.fire({
+            icon: 'error',
+            text: `${error.response.data.message}`,
+          });
         });
     }
   });
@@ -302,21 +301,19 @@ async function modifyNewsfeed(id) {
           } else if (err.response.data.statusCode === 401) {
             Swal.fire({
               icon: 'error',
-              title: '권한이 없습니다.',
+              title: '로그인 정보가 확인되지 않습니다.',
               text: '로그인 정보를 확인해 주세요.',
             });
           } else if (err.response.data.statusCode === 403) {
             Swal.fire({
               icon: 'error',
-              title: '로그인 정보가 일치하지 않습니다.',
-              text: '로그인 정보를 확인해 주세요.',
+              title: '권한이 없습니다.',
             });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              text: `${error.response.data.message}`
-            })
           }
+          Swal.fire({
+            icon: 'error',
+            text: `${err.response.data.message}`,
+          });
         });
     }
     document.body.removeChild(popup);

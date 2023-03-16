@@ -19,8 +19,8 @@ function readnewsfeedgrouptimeline(page) {
     .catch(async (err) => {
       Swal.fire({
         icon: 'error',
-        text: `${error.response.data.message}`
-      })
+        text: `${error.response.data.message}`,
+      });
     });
 }
 
@@ -60,12 +60,11 @@ function serchtag(tag) {
           icon: 'error',
           title: '로그인 정보가 일치하지 않습니다.',
         });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          text: `${error.response.data.message}`
-        })
       }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
     });
 }
 
@@ -124,12 +123,11 @@ async function createNewsfeed() {
             title: '로그인 정보가 일치하지 않습니다.',
             text: '다시 로그인해주세요.',
           });
-        } else {
-          Swal.fire({
-            icon: 'error',
-            text: `${error.response.data.message}`
-          })
         }
+        Swal.fire({
+          icon: 'error',
+          text: `${error.response.data.message}`,
+        });
       });
   }
 }
