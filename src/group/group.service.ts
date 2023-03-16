@@ -157,10 +157,10 @@ export class GroupService {
     let backgroundImage = '1.png';
 
     if (file.groupImage) {
-      groupImage = file.groupImage[0].filename;
+      groupImage = file.groupImage[0].key;
     }
     if (file.backgroundImage) {
-      backgroundImage = file.backgroundImage[0].filename;
+      backgroundImage = file.backgroundImage[0].key;
     }
 
     const group = this.groupRepository.create({
@@ -209,11 +209,11 @@ export class GroupService {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
     if (file.groupImage) {
-      data.groupImage = file.groupImage[0].filename;
+      data.groupImage = file.groupImage[0].key;
     }
 
     if (file.backgroundImage) {
-      data.backgroundImage = file.backgroundImage[0].filename;
+      data.backgroundImage = file.backgroundImage[0].key;
     }
 
     await this.tagGroupRepository.delete({ groupId });

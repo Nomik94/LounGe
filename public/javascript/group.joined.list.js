@@ -119,7 +119,7 @@ function joinedGroupList(page) {
                 <!-- USER AVATAR CONTENT -->
                 <div class="user-avatar-content">
                   <!-- HEXAGON -->
-                  <div class="hexagon-image-18-20" data-src="/userImage/${group.leaderImage}"></div>
+                  <div class="hexagon-image-18-20" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${group.leaderImage}"></div>
                   <!-- /HEXAGON -->
                 </div>
                 <!-- /USER AVATAR CONTENT -->
