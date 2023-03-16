@@ -19,7 +19,7 @@ function readnewsfeedgrouptimeline(page) {
     .catch(async (err) => {
       Swal.fire({
         icon: 'error',
-        text: `${error.response.data.message}`,
+        text: `${err.response.data.message}`,
       });
     });
 }
@@ -63,7 +63,7 @@ function serchtag(tag) {
       }
       Swal.fire({
         icon: 'error',
-        text: `${error.response.data.message}`,
+        text: `${err.response.data.message}`,
       });
     });
 }
@@ -126,7 +126,7 @@ async function createNewsfeed() {
         }
         Swal.fire({
           icon: 'error',
-          text: `${error.response.data.message}`,
+          text: `${err.response.data.message}`,
         });
       });
   }
