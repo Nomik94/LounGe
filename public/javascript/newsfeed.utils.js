@@ -70,9 +70,7 @@ async function newsfeedlist(data) {
               <!-- USER AVATAR CONTENT -->
               <div class="user-avatar-content">
                 <!-- HEXAGON -->
-                <div class="hexagon-image-30-32" data-src="/userImage/${
-                  data.userImage
-                }"></div>
+                <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.userImage}"></div>
                 <!-- /HEXAGON -->
               </div>
               <!-- /USER AVATAR CONTENT -->
@@ -80,9 +78,7 @@ async function newsfeedlist(data) {
               <!-- USER AVATAR PROGRESS -->
               <div class="user-avatar-progress">
                 <!-- HEXAGON -->
-                <div class="hexagon-image-40-44" data-src="/userImage/${
-                  data.userImage
-                }"></div>
+                <div class="hexagon-image-40-44" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.userImage}"></div>
                 <!-- /HEXAGON -->
               </div>
               <!-- /USER AVATAR PROGRESS -->
@@ -127,7 +123,7 @@ async function newsfeedlist(data) {
         ${data.newsfeedImage
           .map(
             (image) => `
-          <img class="popup-image" onclick="popupNewsfeed('${image}')" src="/newsfeedImage/${image}">
+          <img class="popup-image" onclick="popupNewsfeed('${image}')" src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${image}">
         `,
           )
           .join('')}

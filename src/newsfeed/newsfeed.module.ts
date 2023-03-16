@@ -9,6 +9,7 @@ import { NewsfeedImageRepository } from 'src/common/repository/newsfeedImage.rep
 import { TagRepository } from 'src/common/repository/tag.repository';
 import { UserGroupRepository } from 'src/common/repository/user.group.repository';
 import { UserRepository } from 'src/common/repository/user.repository';
+import { multerOptionsFactory } from 'src/common/utils/multer.options';
 import { Group } from 'src/database/entities/group.entity';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
 import { NewsFeed } from 'src/database/entities/newsFeed.entity';
@@ -18,12 +19,11 @@ import { UserGroup } from 'src/database/entities/user-group.entity';
 import { User } from 'src/database/entities/user.entity';
 import { NewsfeedController } from './newsfeed.controller';
 import { NewsfeedService } from './newsfeed.service';
-import { newsfeedImageFactory } from './utills/newsfeed.img.multer';
 
 @Module({
   imports: [
     NestjsFormDataModule,
-    MulterModule.registerAsync({ useFactory: newsfeedImageFactory }),
+    MulterModule.registerAsync({ useFactory: multerOptionsFactory }),
     TypeOrmModule.forFeature([
       NewsFeed,
       Tag,

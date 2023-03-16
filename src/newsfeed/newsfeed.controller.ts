@@ -32,7 +32,7 @@ export class NewsfeedController {
   async createNewsfeed(
     @Param('groupId') groupId: number,
     @GetUser() user: IUser,
-    @UploadedFiles() file: Array<Express.Multer.File>,
+    @UploadedFiles() file: Express.MulterS3.File,
     @Body() data: newsfeedCheckDto,
   ): Promise<void> {
     const userId = user.id;
@@ -61,7 +61,7 @@ export class NewsfeedController {
   @UseInterceptors(FilesInterceptor('newsfeedImage', 5))
   async modifyNewsfeed(
     @GetUser() user: IUser,
-    @UploadedFiles() file: Array<Express.Multer.File>,
+    @UploadedFiles() file: Express.MulterS3.File,
     @Param('newsfeedId') newsfeedId: number,
     @Body() data: modifyNewsfeedCheckDto,
   ): Promise<void> {

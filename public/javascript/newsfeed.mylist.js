@@ -15,6 +15,9 @@ async function readnewsfeedmylist(page) {
     },
   })
     .then(async (res) => {
+      if(res.data.length < 9) {
+        document.getElementById('loader').innerHTML = ''
+      }
       await newsfeedlist(res.data);
     })
     .catch((err) => {
