@@ -64,7 +64,7 @@ async function newsfeedlist(data) {
         <!-- USER STATUS -->
         <div class="user-status">
           <!-- USER STATUS AVATAR -->
-          <a class="user-status-avatar" href="profile-timeline.html">
+          <a class="user-status-avatar" >
             <!-- USER AVATAR -->
             <div class="user-avatar small no-outline">
               <!-- USER AVATAR CONTENT -->
@@ -102,7 +102,7 @@ async function newsfeedlist(data) {
           <!-- /USER STATUS AVATAR -->
       
           <!-- USER STATUS TITLE -->
-          <p class="user-status-title medium"><a class="bold" href="profile-timeline.html">${
+          <p class="user-status-title medium"><a class="bold" >${
             data.userName
           }</a>님의 뉴스피드</p>
           <!-- /USER STATUS TITLE -->

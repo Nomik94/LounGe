@@ -199,7 +199,7 @@ export class CalendarService {
     }
   }
 
-  // 멤버 체크 
+  // 멤버 체크
   async checkMember(userId: number, groupId: number): Promise<void> {
     const memberCheck = await this.userGroupRepository.findOneBy({
       userId,

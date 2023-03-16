@@ -1,12 +1,12 @@
-import { IsNumber, IsString, IsDate, Min, MinLength, Matches } from 'class-validator';
+import { IsString, MinLength, Matches } from 'class-validator';
 
 export class GroupEventDto {
   @IsString()
-  @MinLength(1, {message : '일정 제목을 입력해주세요.'})
+  @MinLength(1, { message: '일정 제목을 입력해주세요.' })
   eventName: string;
 
   @IsString()
-  @MinLength(1, {message : '일정 내용을 입력해주세요.'})
+  @MinLength(1, { message: '일정 내용을 입력해주세요.' })
   eventContent: string;
 
   @IsString()
@@ -21,12 +21,12 @@ export class GroupEventDto {
   })
   end: string;
 
-  @IsString({message : '모임 장소를 지도에서 클릭해주세요.'})
+  @IsString({ message: '모임 장소를 지도에서 클릭해주세요.' })
   lat: string;
 
-  @IsString({message : '모임 장소를 지도에서 클릭해주세요.'})
+  @IsString({ message: '모임 장소를 지도에서 클릭해주세요.' })
   lng: string;
 
-  @IsString({message : '모임 장소를 지도에서 클릭해주세요.'})
+  @IsString({ message: '모임 장소를 지도에서 클릭해주세요.' })
   location: string;
 }

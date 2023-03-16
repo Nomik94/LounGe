@@ -18,7 +18,6 @@ import { IGroupEventList } from './interface/group.event.list.interface';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
 
-
 @Controller('/api/calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
