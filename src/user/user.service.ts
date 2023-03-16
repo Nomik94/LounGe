@@ -43,10 +43,8 @@ export class UserService {
   // 이메일로 유저 조회
   async getByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { email } });
-    if (!user) {
-      throw new NotFoundException('유저가 존재하지 않습니다.');
-    }
-    return user;
+
+    return user ?? null;
   }
 
   // 유저아이디로 유저 조회
@@ -88,7 +86,7 @@ export class UserService {
     const userId = user.id;
     await this.getById(userId);
 
-    const filename = file.filename;
+    const filename = file.key;
     await this.userRepository.update(userId, { image: filename });
   }
 
