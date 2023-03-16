@@ -81,7 +81,10 @@ export class UserService {
   }
 
   // 유저이미지 수정
-  async ModifyUserImage(user: IUser, file: Express.Multer.File): Promise<void> {
+  async ModifyUserImage(
+    user: IUser,
+    file: Express.MulterS3.File,
+  ): Promise<void> {
     const userId = user.id;
     await this.getById(userId);
 

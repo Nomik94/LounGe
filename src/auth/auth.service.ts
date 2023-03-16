@@ -30,7 +30,7 @@ export class AuthService {
   ) {}
 
   // 회원가입
-  async register(authDTO: AuthDTO, file: Express.Multer.File): Promise<void> {
+  async register(authDTO: AuthDTO, file: Express.MulterS3.File): Promise<void> {
     let filename = 'userImage_logo.png';
     if (file) {
       filename = file.filename;

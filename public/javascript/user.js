@@ -54,7 +54,7 @@ function getUser() {
                 <!-- HEXAGON -->
                 <div
                   class='hexagon-image-68-74' id='userImage'
-                  data-src='/userImage/${res.data.image}'
+                  data-src='https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.image}'
                 ></div>
                 <!-- /HEXAGON -->
               </div>
