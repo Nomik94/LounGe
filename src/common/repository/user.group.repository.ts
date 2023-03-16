@@ -8,17 +8,20 @@ export class UserGroupRepository extends Repository<UserGroup> {
     super(UserGroup, dataSource.createEntityManager());
   }
 
-  async checkJoinGroup(userId:number,groupId:number):Promise<UserGroup[]>{
-    return await this.find({where: {userId: userId, groupId:groupId}})
+  async checkJoinGroup(userId: number, groupId: number): Promise<UserGroup[]> {
+    return await this.find({ where: { userId: userId, groupId: groupId } });
   }
 
-  async checkUserStatus(userId:number):Promise<UserGroup[]>{
+  async checkUserStatus(userId: number): Promise<UserGroup[]> {
     return await this.find({
-      where: [{userId:userId, role:'그룹장'}, {userId:userId, role:'회원'}]
-    })
+      where: [
+        { userId: userId, role: '그룹장' },
+        { userId: userId, role: '회원' },
+      ],
+    });
   }
 
-  async getMemberList(groupId:number):Promise<UserGroup[]>{
+  async getMemberList(groupId: number): Promise<UserGroup[]> {
     return await this.find({
       where: { groupId, role: Not('가입대기') },
       relations: ['user'],
@@ -26,7 +29,7 @@ export class UserGroupRepository extends Repository<UserGroup> {
     });
   }
 
-  async getGroupJoinRequestList(groupId:number):Promise<UserGroup[]>{
+  async getGroupJoinRequestList(groupId: number): Promise<UserGroup[]> {
     return await this.find({
       where: { groupId, role: '가입대기' },
       select: ['userId', 'groupId'],

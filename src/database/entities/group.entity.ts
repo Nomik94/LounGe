@@ -54,5 +54,5 @@ export class Group extends BaseEntity {
   userGroups: UserGroup[];
 
   @OneToMany(() => NewsFeed, (newsfeed) => newsfeed.group)
-  newsfeed: NewsFeed[]
+  newsfeed: NewsFeed[];
 }

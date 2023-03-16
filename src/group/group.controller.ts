@@ -1,4 +1,4 @@
-import { Body, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Get, Post, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
   Delete,

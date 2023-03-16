@@ -21,10 +21,19 @@ import { NewsfeedService } from './newsfeed.service';
 import { newsfeedImageFactory } from './utills/newsfeed.img.multer';
 
 @Module({
-  imports : [
+  imports: [
     NestjsFormDataModule,
     MulterModule.registerAsync({ useFactory: newsfeedImageFactory }),
-    TypeOrmModule.forFeature([NewsFeed,Tag,NewsFeedTag,NewsFeedImage,User,Group,UserGroup])],
+    TypeOrmModule.forFeature([
+      NewsFeed,
+      Tag,
+      NewsFeedTag,
+      NewsFeedImage,
+      User,
+      Group,
+      UserGroup,
+    ]),
+  ],
   controllers: [NewsfeedController],
   providers: [
     NewsfeedService,
@@ -35,6 +44,6 @@ import { newsfeedImageFactory } from './utills/newsfeed.img.multer';
     UserRepository,
     GroupRepository,
     UserGroupRepository,
-  ]
+  ],
 })
 export class NewsfeedModule {}

@@ -1,6 +1,6 @@
-import { GroupEvent } from "src/database/entities/groupEvent.entity";
+import { GroupEvent } from 'src/database/entities/groupEvent.entity';
 
-export interface IGroupEventList{
+export interface IGroupEventList {
   groupInfo: GroupEvent[];
   role: boolean;
 }
