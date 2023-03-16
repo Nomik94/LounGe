@@ -33,7 +33,7 @@ export class AuthService {
   async register(authDTO: AuthDTO, file: Express.MulterS3.File): Promise<void> {
     let filename = 'userImage_logo.png';
     if (file) {
-      filename = file.filename;
+      filename = file.key;
     }
     const { email, username, password } = authDTO;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -62,7 +62,8 @@ export class AuthService {
   }
 
   // 카카오로그인
-  async kakaoLogin(user: KakaoLoginDTO): Promise<ITokens> {
+  async kakaoLogin(user: KakaoLoginDTO) {
+    const filename = 'userImage_logo.png';
     const email = user.email;
     const nickname = user.username;
 
@@ -71,6 +72,7 @@ export class AuthService {
       const newUser = await this.userRepository.save({
         username: nickname,
         email: email,
+        image: filename,
       });
       const userEmail = newUser.email;
       const userId = newUser.id;

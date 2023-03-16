@@ -1,3 +1,15 @@
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const accessToken = urlParams.get('access');
+const refreshToken = urlParams.get('refresh');
+
+if (accessToken && refreshToken) {
+  const accessExpires = accessTokenExpires();
+  const refreshExpires = refreshTokenExpires();
+  document.cookie = `accessToken=Bearer ${accessToken}; path=/; expires=${accessExpires}`;
+  document.cookie = `refreshToken=Bearer ${refreshToken}; path=/; expires=${refreshExpires}`;
+}
+
 $(document).ready(async function () {
   const refreshToken = getCookie('refreshToken');
   const accessToken = getCookie('accessToken');
@@ -64,22 +76,23 @@ async function login() {
   }
 }
 
-function kakaoLogin() {
-  window.open('/api/auth/login/kakao');
-  function loginCallback(event) {
-    if (event.data?.accessToken) {
-      const accessToken = event.data?.accessToken;
-      const refreshToken = event.data?.refreshToken;
-      const accessExpires = accessTokenExpires();
-      const refreshExpires = refreshTokenExpires();
-      document.cookie = `accessToken=Bearer ${accessToken}; path=/; expires=${accessExpires}`;
-      document.cookie = `refreshToken=Bearer ${refreshToken}; path=/; expires=${refreshExpires}`;
-    }
-    window.removeEventListener('message', loginCallback);
-    window.location.href = '/newsfeed';
-  }
-  window.addEventListener('message', loginCallback);
-}
+// function kakaoLogin() {
+//   // window.open('/api/auth/login/kakao');
+//   function loginCallback(event) {
+//     console.log(event);
+//     if (event.data?.accessToken) {
+//       const accessToken = event.data?.accessToken;
+//       const refreshToken = event.data?.refreshToken;
+//       const accessExpires = accessTokenExpires();
+//       const refreshExpires = refreshTokenExpires();
+//       document.cookie = `accessToken=Bearer ${accessToken}; path=/; expires=${accessExpires}`;
+//       document.cookie = `refreshToken=Bearer ${refreshToken}; path=/; expires=${refreshExpires}`;
+//     }
+//     window.removeEventListener('message', loginCallback);
+//     window.location.href = '/newsfeed';
+//   }
+//   window.addEventListener('message', loginCallback);
+// }
 
 function emailVerify() {
   const email = $('#register-email').val();
