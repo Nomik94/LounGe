@@ -13,7 +13,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
 
   async validate(accessToken, refreshToken, profile: Profile) {
     return {
-      username: profile.displayName,
+      username: profile._json.properties.nickname,
       email: profile._json.kakao_account.email,
     };
   }
