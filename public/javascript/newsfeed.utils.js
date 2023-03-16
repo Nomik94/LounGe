@@ -159,7 +159,7 @@ async function newsfeedlist(data) {
 // 뉴스피드 이미지 클릭시 이미지 팝업 띄워주기
 function popupNewsfeed(src) {
   Swal.fire({
-    imageUrl: `/newsfeedImage/${src}`,
+    imageUrl: `https://lounges3.s3.ap-northeast-2.amazonaws.com/${src}`,
   });
 }
 
