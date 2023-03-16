@@ -25,6 +25,10 @@ export class UserService {
       select: ['id', 'email', 'username', 'password'],
     });
 
+    if (!user) {
+      throw new UnauthorizedException('유저가 존재하지 않습니다.');
+    }
+
     const isRegister = await bcrypt.compare(password, user.password);
 
     if (!user || !isRegister) {

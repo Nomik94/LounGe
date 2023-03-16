@@ -193,8 +193,8 @@ async function register() {
       url: '/api/auth/register',
       data: formData,
     })
-      .then((res) => {
-        Swal.fire({
+      .then(async (res) => {
+        await Swal.fire({
           icon: 'success',
           text: '회원가입이 완료되었습니다.',
         });
