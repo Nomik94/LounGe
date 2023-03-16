@@ -25,10 +25,10 @@ function managementMemberList() {
       ).innerHTML = `<p class="button secondary full popup-manage-group-trigger-1" onclick="modifyGroup('${res.data.foundGroup.groupImage}','${res.data.foundGroup.backgroundImage}')">그룹 수정하기</p>`;
       document.getElementById(
         'avatarImg',
-      ).innerHTML = `<div class="hexagon-image-84-92" data-src="/groupImage/${res.data.foundGroup.groupImage}"></div>`;
+      ).innerHTML = `<div class="hexagon-image-84-92" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.foundGroup.groupImage}"></div>`;
       document.getElementById(
         'backImg',
-      ).innerHTML = `<img src="/backgroundImage/${res.data.foundGroup.backgroundImage}" alt="backgroundImg">`;
+      ).innerHTML = `<img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.foundGroup.backgroundImage}" alt="backgroundImg">`;
       document.getElementById(
         'groupName',
       ).value = `${res.data.foundGroup.groupName}`;

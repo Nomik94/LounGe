@@ -54,7 +54,7 @@ function joinedGroupList(page) {
         <div class="user-preview small">
           <!-- USER PREVIEW COVER -->
           <figure class="user-preview-cover liquid">
-            <img src="/backgroundImage/${group.backgroundImage}" alt="${group.backgroundImage}">
+            <img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${group.backgroundImage}" alt="${group.backgroundImage}">
           </figure>
           <!-- /USER PREVIEW COVER -->
       
@@ -76,7 +76,7 @@ function joinedGroupList(page) {
                 <!-- USER AVATAR CONTENT -->
                 <div class="user-avatar-content">
                   <!-- HEXAGON -->
-                  <div class="hexagon-image-84-92" data-src="/groupImage/${group.groupImage}"></div>
+                  <div class="hexagon-image-84-92" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${group.groupImage}"></div>
                   <!-- /HEXAGON -->
                 </div>
                 <!-- /USER AVATAR CONTENT -->

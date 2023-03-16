@@ -142,7 +142,7 @@ export class GroupService {
   }
 
   // 그룹 생성
-  async createGroup(file, data: CreateGroupDto, userId: number): Promise<void> {
+  async createGroup(file: IFile, data: CreateGroupDto, userId: number): Promise<void> {
     const tagArray = data.tag.split(',');
     if (tagArray.find((tag) => tag.length >= 11)) {
       throw new BadRequestException(
@@ -153,7 +153,7 @@ export class GroupService {
       throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
     }
 
-    let groupImage = '1.png';
+    let groupImage = '11.png';
     let backgroundImage = '1.png';
 
     if (file.groupImage) {
