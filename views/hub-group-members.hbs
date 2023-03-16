@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- bootstrap 4.3.1 -->
+  <link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+  <!-- styles -->
+  <link rel="stylesheet" href="/css/styles.min.css">
+  <link rel="stylesheet" href="/css/raw/scroll.css">
+  <!-- simplebar styles -->
+  <link rel="stylesheet" href="/css/vendor/simplebar.css">
+  <!-- favicon -->
+  <link rel="icon" href="/img/favicon.ico">
+ <title>LounGe</title>
+</head>
+<body>
+  {{>loader}}
+  {{>header}}
+  <!-- CONTENT GRID -->
+  <div class="content-grid">
+    <!-- GRID -->
+    <div class="grid grid-3-9 medium-space">
+      <!-- GRID COLUMN -->
+      <div class="account-hub-sidebar">
+      {{>hubsidebar}}
+      </div>
+      <!-- /GRID COLUMN -->
+
+      <!-- GRID COLUMN -->
+      <div class="account-hub-content">
+        <!-- SECTION HEADER -->
+        <div class="section-header">
+          <!-- SECTION HEADER INFO -->
+          <div class="section-header-info">
+            <!-- SECTION PRETITLE -->
+            <p class="section-pretitle">그룹 이름</p>
+            <!-- /SECTION PRETITLE -->
+
+            <!-- SECTION TITLE -->
+            <h2 class="section-title" id="groupTitle"></h2>
+            <!-- /SECTION TITLE -->
+          </div>
+          <!-- /SECTION HEADER INFO -->
+
+          <!-- SECTION HEADER ACTIONS -->
+          <div class="section-header-actions">
+            <!-- SECTION HEADER ACTION -->
+            <p class="section-header-action" onclick="managementMemberList()">멤버 관리</p>
+            <!-- /SECTION HEADER ACTION -->
+      
+            <!-- SECTION HEADER ACTION -->
+            <p class="section-header-action" onclick="managementApplyList()">가입 신청자 관리</p>
+            <!-- /SECTION HEADER ACTION -->
+
+            <!-- SECTION HEADER ACTION -->
+            <p class="section-header-action popup-manage-group-trigger-1"><span style="color:chartreuse;" >그룹 수정</span></p>
+            <!-- /SECTION HEADER ACTION -->
+
+            <!-- SECTION HEADER ACTION -->
+            <p class="section-header-action" onclick="deleteGroup()"><span style="color: red;" >그룹 삭제</span></p>
+            <!-- /SECTION HEADER ACTION -->
+
+          </div>
+          <!-- /SECTION HEADER ACTIONS -->
+        </div>
+        <!-- /SECTION HEADER -->
+
+        <!-- NOTIFICATION BOX LIST -->
+        <div class="notification-box-list">
+
+
+        </div>
+        <!-- /NOTIFICATION BOX LIST -->
+      </div>
+      <!-- /GRID COLUMN -->
+    </div>
+    <!-- /GRID -->
+  </div>
+  <!-- /CONTENT GRID -->
+  <!-- POPUP BOX -->
+  <div class="popup-box mid popup-manage-group-1">
+    <!-- POPUP CLOSE BUTTON -->
+    <div class="popup-close-button popup-manage-group-trigger-1">
+      <!-- POPUP CLOSE BUTTON ICON -->
+      <svg class="popup-close-button-icon icon-cross">
+        <use xlink:href="#svg-cross"></use>
+      </svg>
+      <!-- /POPUP CLOSE BUTTON ICON -->
+    </div>
+    <!-- /POPUP CLOSE BUTTON -->
+
+    <!-- POPUP BOX BODY -->
+    <div class="popup-box-body">
+      <!-- POPUP BOX SIDEBAR -->
+      <div class="popup-box-sidebar">
+        <!-- USER PREVIEW -->
+        <div class="user-preview small">
+          <!-- USER PREVIEW COVER -->
+          <figure class="user-preview-cover liquid" id="backImg">
+          </figure>
+          <!-- /USER PREVIEW COVER -->
+
+          <!-- USER PREVIEW INFO -->
+          <div class="user-preview-info">
+            <!-- USER SHORT DESCRIPTION -->
+            <div class="user-short-description small">
+              <!-- USER SHORT DESCRIPTION AVATAR -->
+              <a class="user-short-description-avatar user-avatar no-stats">
+                <!-- USER AVATAR BORDER -->
+                <div class="user-avatar-border">
+                  <!-- HEXAGON -->
+                  <div class="hexagon-100-108"></div>
+                  <!-- /HEXAGON -->
+                </div>
+                <!-- /USER AVATAR BORDER -->
+            
+                <!-- USER AVATAR CONTENT -->
+                <div class="user-avatar-content" id="avatarImg">
+                </div>
+                <!-- /USER AVATAR CONTENT -->
+              </a>
+              <!-- /USER SHORT DESCRIPTION AVATAR -->
+        
+              <!-- USER SHORT DESCRIPTION TITLE -->
+              <p class="user-short-description-title small">그룹 이미지</p>
+              <!-- /USER SHORT DESCRIPTION TITLE -->
+        
+              <!-- USER SHORT DESCRIPTION TEXT -->
+              <p class="user-short-description-text regular">이미지는 선택 사항 입니다.<br> 미선택 시 위의 그룹 이미지가 유지됩니다.</p>
+              <!-- /USER SHORT DESCRIPTION TEXT -->
+            </div>
+            <!-- /USER SHORT DESCRIPTION -->
+          </div>
+          <!-- /USER PREVIEW INFO -->
+        </div>
+        <!-- /USER PREVIEW -->
+
+        <!-- SIDEBAR MENU ITEM -->
+        <div class="sidebar-menu-item">
+          <!-- SIDEBAR MENU BODY -->
+          <div class="sidebar-menu-body secondary">
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link active">예시</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 이름 : LounGe</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 태그 : 노드,개발자,내배캠</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 설명 : 개발자 모임</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 대표 이미지 : 선택</p>
+            <!-- /SIDEBAR MENU LINK -->
+
+            <!-- SIDEBAR MENU LINK -->
+            <p class="sidebar-menu-link">그룹 배경 이미지 : 선택</p>
+            <!-- /SIDEBAR MENU LINK -->
+          </div>
+          <!-- /SIDEBAR MENU BODY -->
+        </div>
+        <!-- /SIDEBAR MENU ITEM -->
+
+        <!-- POPUP BOX SIDEBAR FOOTER -->
+        <div class="popup-box-sidebar-footer" id="popupButton">
+          <!-- BUTTON -->
+
+          <!-- /BUTTON -->
+
+        </div>
+        <!-- /POPUP BOX SIDEBAR FOOTER -->
+      </div>
+      <!-- /POPUP BOX SIDEBAR -->
+  
+      <!-- POPUP BOX CONTENT -->
+      <div class="popup-box-content">
+        <!-- WIDGET BOX -->
+        <div class="widget-box">
+          <!-- WIDGET BOX TITLE -->
+          <p class="widget-box-title">그룹 정보</p>
+          <!-- /WIDGET BOX TITLE -->
+      
+          <!-- WIDGET BOX CONTENT -->
+          <div class="widget-box-content">
+            <!-- FORM -->
+            <form class="form">
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small active">
+                    <label for="groupName">그룹 이름</label>
+                    <input type="text" id="groupName" name="groupName" placeholder="최대 제한 15글자">
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small active">
+                    <label for="groupTags">태그</label>
+                    <input type="text" id="groupTags" name="groupTags" placeholder="하나의 태그당 10글자 제한, 최대 3개">
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small mid-textarea">
+                    <textarea id="groupDescription" name="groupDescription" placeholder="그룹에 대한 설명을 입력해주세요. 최대 제한 50글자"></textarea>
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small active">
+                    <label for="groupImage">그룹 대표이미지</label>
+                    <input type='file' class='form-control' id='groupImage' />
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+              <!-- FORM ROW -->
+              <div class="form-row">
+                <!-- FORM ITEM -->
+                <div class="form-item">
+                  <!-- FORM INPUT -->
+                  <div class="form-input small active">
+                  <label for='backgroundImage'>그룹 배경이미지</label>
+                  <input type='file' class='form-control' id='backgroundImage' />
+                  </div>
+                  <!-- /FORM INPUT -->
+                </div>
+                <!-- /FORM ITEM -->
+              </div>
+              <!-- /FORM ROW -->
+
+            </form>
+            <!-- /FORM -->
+          </div>
+          <!-- WIDGET BOX CONTENT -->
+        </div>
+        <!-- /WIDGET BOX -->
+      </div>
+      <!-- /POPUP BOX CONTENT -->
+    </div>
+    <!-- /POPUP BOX BODY -->
+  </div>
+  <!-- /POPUP BOX -->
+<!-- app -->
+<script src="/js/utils/app.js"></script>
+<!-- page loader -->
+<script src="/js/utils/page-loader.js"></script>
+<!-- simplebar -->
+<script src="/js/vendor/simplebar.min.js"></script>
+<!-- liquidify -->
+<script src="/js/utils/liquidify.js"></script>
+<!-- XM_Plugins -->
+<script src="/js/vendor/xm_plugins.min.js"></script>
+<!-- global.hexagons -->
+<script src="/js/global/global.hexagons.js"></script>
+<!-- global.tooltips -->
+<script src="/js/global/global.tooltips.js"></script>
+<!-- global.accordions -->
+<script src="/js/global/global.accordions.js"></script>
+<!-- global.popups -->
+<!-- header -->
+<script src="/js/header/header.js"></script>
+<!-- sidebar -->
+<script src="/js/sidebar/sidebar.js"></script>
+<!-- content -->
+<script src="/js/content/content.js"></script>
+<!-- form.utils -->
+<script src="/js/form/form.utils.js"></script>
+<!-- SVG icons -->
+<script src="/js/utils/svg-loader.js"></script>
+<!-- GH -->
+<script src="/javascript/hub.group.members.js"></script>
+<div id="managementjs">
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- bootstrap 4.3.1 -->
+  <link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+  <!-- styles -->
+  <link rel="stylesheet" href="/css/styles.min.css">
+  <link rel="stylesheet" href="/css/raw/scroll.css">
+  <!-- simplebar styles -->
+  <link rel="stylesheet" href="/css/vendor/simplebar.css">
+  <!-- tiny-slider styles -->
+  <link rel="stylesheet" href="/css/vendor/tiny-slider.css">
+  <!-- favicon -->
+  <link rel="icon" href="/img/favicon.ico">
+  <style>
+  .map_wrap {position:relative;width:100%;height:350px;}
+  .title {font-weight:bold;display:block;}
+  .hAddr {position:absolute;left:10px;top:10px;border-radius: 2px;background:#fff;background:rgba(255,255,255,0.8);z-index:1;padding:5px;}
+  #centerAddr {display:block;margin-top:2px;font-weight: normal;}
+  .bAddr {padding:5px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+  </style>
+  <title>LounGe</title>
+</head>
+<body>
+  {{>loader}}
+  {{>header}}
+
+  <!-- CONTENT GRID -->
+  <div class="content-grid">
+    {{>groupsectionnav}}
+    <div class="popup-box-actions medium void" id='createButton'>
+        <!-- POPUP BOX ACTION -->
+        <button class="popup-box-action full button secondary popup-event-information-trigger" type="submit" onclick="createEventMap()">일정 생성하기</button>
+        <!-- /POPUP BOX ACTION -->
+    </div>
+    <!-- GRID -->
+    <div class="grid grid-3-3-3-3 centered-on-mobile" id="groupEventList">
+    </div>
+    <!-- /GRID -->
+  </div>
+  <!-- /CONTENT GRID -->
+  <!-- POPUP EVENT 이벤트 클릭 박스 -->
+  <div class="popup-event popup-event-information">
+    <!-- POPUP CLOSE BUTTON -->
+    <div class="popup-close-button popup-event-information-trigger">
+      <!-- POPUP CLOSE BUTTON ICON -->
+      <svg class="popup-close-button-icon icon-cross">
+        <use xlink:href="#svg-cross"></use>
+      </svg>
+      <!-- /POPUP CLOSE BUTTON ICON -->
+    </div>
+    <!-- /POPUP CLOSE BUTTON -->
+    <!-- POPUP EVENT INFO -->
+    <div class="popup-event-info">
+
+    <!-- FORM -->
+    <form class="form">
+
+      <!-- FORM ROW -->
+      <div class="form-row">
+        <!-- FORM ITEM -->
+        <div class="form-item">
+          <!-- FORM INPUT -->
+          <div class="form-input small">
+            <label for="event-name">일정 이름</label>
+            <input type="text" id="event-name" name="event_name">
+          </div>
+          <!-- /FORM INPUT -->
+        </div>
+        <!-- /FORM ITEM -->
+      </div>
+      <!-- /FORM ROW -->
+      <!-- FORM ROW -->
+      <div class="form-row">
+        <!-- FORM ITEM -->
+        <div class="form-item">
+          <!-- FORM INPUT -->
+          <div class="form-input small">
+            <label for="event-description">일정 내용</label>
+            <textarea id="event-description" name="event_description"></textarea>
+          </div>
+          <!-- /FORM INPUT -->
+        </div>
+        <!-- /FORM ITEM -->
+      </div>
+      <!-- /FORM ROW -->
+
+      <!-- FORM ROW -->
+      <div class="form-row">
+        <!-- FORM ITEM -->
+        <div class="form-item">
+          <!-- FORM INPUT DECORATED -->
+          <div class="form-input-decorated">
+            <!-- FORM INPUT -->
+            <div class="form-input small">
+              <input type="text" id="event-startdate" name="event_startdate" >
+            </div>
+            <!-- /FORM INPUT -->
+            <!-- FORM INPUT ICON -->
+            <svg class="form-input-icon icon-events">
+              <use xlink:href="#svg-events"></use>
+            </svg>
+            <!-- /FORM INPUT ICON -->
+          </div>
+          <!-- /FORM INPUT DECORATED -->
+        </div>
+        <!-- /FORM ITEM -->
+      </div>
+      <!-- /FORM ROW -->
+      <!-- FORM ROW -->
+      <div class="form-row" >
+        <!-- FORM ITEM -->
+        <div class="form-item">
+          <!-- FORM INPUT DECORATED -->
+          <div class="form-input-decorated" id="endempty">
+            <!-- FORM INPUT -->
+            <div class="form-input small">
+              <input type="text" id="event-enddate" name="event_enddate" >
+            </div>
+            <!-- /FORM INPUT -->
+            <!-- FORM INPUT ICON -->
+            <svg class="form-input-icon icon-events">
+              <use xlink:href="#svg-events"></use>
+            </svg>
+            <!-- /FORM INPUT ICON -->
+          </div>
+          <!-- /FORM INPUT DECORATED -->
+        </div>
+        <!-- /FORM ITEM -->
+      </div>
+      <!-- /FORM ROW -->
+      <!-- FORM ROW -->
+      <div class="form-row">
+        <!-- FORM ITEM -->
+        <div class="form-item split join-on-mobile medium">
+          <!-- FORM SELECT -->
+          <div class="form-select">
+            <label for="event-time-start">Start Time</label>
+            <select id="event-time-start" name="event_time-start">
+              <option value="00:00">00:00</option>
+              <option value="01:00">01:00</option>
+              <option value="02:00">02:00</option>
+              <option value="03:00">03:00</option>
+              <option value="04:00">04:00</option>
+              <option value="05:00">05:00</option>
+              <option value="06:00">06:00</option>
+              <option value="07:00">07:00</option>
+              <option value="08:00">08:00</option>
+              <option value="09:00">09:00</option>
+              <option value="10:00">10:00</option>
+              <option value="11:00">11:00</option>
+              <option value="12:00">12:00</option>
+              <option value="13:00">13:00</option>
+              <option value="14:00">14:00</option>
+              <option value="15:00">15:00</option>
+              <option value="16:00">16:00</option>
+              <option value="17:00">17:00</option>
+              <option value="18:00">18:00</option>
+              <option value="19:00">19:00</option>              
+              <option value="20:00">20:00</option>
+              <option value="21:00">21:00</option>
+              <option value="22:00">22:00</option>
+              <option value="23:00">23:00</option>
+            </select>
+            <!-- FORM SELECT ICON -->
+            <svg class="form-select-icon icon-small-arrow">
+              <use xlink:href="#svg-small-arrow"></use>
+            </svg>
+            <!-- /FORM SELECT ICON -->
+          </div>
+          <!-- /FORM SELECT -->
+
+          <!-- FORM SELECT -->
+          <div class="form-select">
+            <label for="event-time-end">End Time</label>
+            <select id="event-time-end" name="event_time-end" disabled>
+              <option value="00:00">00:00</option>
+              <option value="01:00">01:00</option>
+              <option value="02:00">02:00</option>
+              <option value="03:00">03:00</option>
+              <option value="04:00">04:00</option>
+              <option value="05:00">05:00</option>
+              <option value="06:00">06:00</option>
+              <option value="07:00">07:00</option>
+              <option value="08:00">08:00</option>
+              <option value="09:00">09:00</option>
+              <option value="10:00">10:00</option>
+              <option value="11:00">11:00</option>
+              <option value="12:00">12:00</option>
+              <option value="13:00">13:00</option>
+              <option value="14:00">14:00</option>
+              <option value="15:00">15:00</option>
+              <option value="16:00">16:00</option>
+              <option value="17:00">17:00</option>
+              <option value="18:00">18:00</option>
+              <option value="19:00">19:00</option>              
+              <option value="20:00">20:00</option>
+              <option value="21:00">21:00</option>
+              <option value="22:00">22:00</option>
+              <option value="23:00">23:00</option>
+            </select>
+            <!-- FORM SELECT ICON -->
+            <svg class="form-select-icon icon-small-arrow">
+              <use xlink:href="#svg-small-arrow"></use>
+            </svg>
+            <!-- /FORM SELECT ICON -->
+          </div>
+          <!-- /FORM SELECT -->
+        </div>
+        <!-- /FORM ITEM -->
+      </div>
+      <!-- /FORM ROW -->
+      <!-- CHECKBOX WRAP -->
+      <br>
+      <div class="checkbox-wrap">
+        <input type="checkbox" id="event-add-end-time" name="event_add-end-time" onclick="checkDayEvent()" value="true">
+        <!-- CHECKBOX BOX -->
+        <div class="checkbox-box">
+          <!-- ICON CROSS -->
+          <svg class="icon-cross">
+            <use xlink:href="#svg-cross"></use>
+          </svg>
+          <!-- /ICON CROSS -->
+        </div>
+        <!-- /CHECKBOX BOX -->
+        <label for="event-add-end-time">하루 일정</label>
+      </div>
+      <!-- /CHECKBOX WRAP -->      
+      <!-- POPUP EVENT SUBTITLE -->
+      <p class="popup-event-subtitle">모임 장소를 지도에서 선택하세요.</p>
+      <!-- /POPUP EVENT SUBTITLE -->
+      <div class="map_wrap g-map">  
+        <div id="createMap" style="width:100%;height:100% ;position:relative;overflow:hidden;"></div>
+            <div class="hAddr">
+            <span id="centerAddr"></span>
+          </div>
+        </div>
+      </div>
+      <!-- FORM ROW -->
+      <div class="form-row">
+        <!-- FORM ITEM -->
+        <div class="form-item">
+          <!-- FORM INPUT DECORATED -->
+          <div class="form-input-decorated">
+            <!-- FORM INPUT -->
+            <div class="form-input small">
+              <input type="text" id="event-location" name="event_location">
+            </div>
+            <!-- /FORM INPUT -->
+
+            <!-- FORM INPUT ICON -->
+            <svg class="form-input-icon icon-pin">
+              <use xlink:href="#svg-pin"></use>
+            </svg>
+            <!-- /FORM INPUT ICON -->
+          </div>
+          <!-- /FORM INPUT DECORATED -->
+        </div>
+        <!-- /FORM ITEM -->
+      </div>
+      <br>
+      <!-- /FORM ROW -->
+            <!-- FORM ROW -->
+      <div class="form-row">
+        <!-- FORM ITEM -->
+        <div class="form-item">
+          <!-- FORM INPUT DECORATED -->
+          <div class="form-input-decorated">
+            <!-- FORM INPUT -->
+            <div class="form-input small">
+              <input type="text" id="event-latlng" name="event_latlng" readonly>
+            </div>
+            <!-- /FORM INPUT -->
+
+            <!-- FORM INPUT ICON -->
+            <svg class="form-input-icon icon-pin">
+              <use xlink:href="#svg-pin"></use>
+            </svg>
+            <!-- /FORM INPUT ICON -->
+          </div>
+          <!-- /FORM INPUT DECORATED -->
+        </div>
+        <!-- /FORM ITEM -->
+      </div>
+      <br>
+      <!-- /FORM ROW -->
+    </form>
+    <!-- /FORM -->
+     <!-- POPUP BOX ACTIONS -->
+      <div class="popup-box-actions medium void">
+        <!-- POPUP BOX ACTION -->
+        <button class="popup-box-action full button secondary popup-event-information-trigger" type="submit" onclick="createGroupEvent()">일정 생성하기</button>
+        <!-- /POPUP BOX ACTION -->
+      </div>
+      <!-- /POPUP BOX ACTIONS -->    
+    <!-- /POPUP EVENT INFO -->
+  </div>
+  <!-- /POPUP EVENT -->
+  <!-- POPUP EVENT -->
+  <div class="popup-event popup-event-information-1">
+    <!-- POPUP CLOSE BUTTON -->
+    <div class="popup-close-button popup-event-information-trigger-1">
+      <!-- POPUP CLOSE BUTTON ICON -->
+      <svg class="popup-close-button-icon icon-cross">
+        <use xlink:href="#svg-cross"></use>
+      </svg>
+      <!-- /POPUP CLOSE BUTTON ICON -->
+    </div>
+    <!-- /POPUP CLOSE BUTTON -->
+
+    <!-- POPUP EVENT COVER -->
+    <figure class="popup-event-cover liquid">
+      <img src="/backgroundImage/1.png" alt="cover-33">
+    </figure>
+    <!-- /POPUP EVENT COVER -->
+
+    <!-- POPUP EVENT INFO -->
+    <div class="popup-event-info">
+      <!-- POPUP EVENT TITLE -->
+      <p class="popup-event-title" id="uptitle"></p>
+      <!-- /POPUP EVENT TITLE -->
+
+      <!-- DECORATED FEATURE LIST -->
+      <div class="decorated-feature-list">
+        <!-- DECORATED FEATURE -->
+        <div class="decorated-feature">
+          <!-- DECORATED FEATURE ICON -->
+          <svg class="decorated-feature-icon icon-events">
+            <use xlink:href="#svg-events"></use>
+          </svg>
+          <!-- /DECORATED FEATURE ICON -->
+
+          <!-- DECORATED FEATURE INFO -->
+          <div class="decorated-feature-info">
+            <!-- DECORATED FEATURE TITLE -->
+            <p class="decorated-feature-title" id="uptime"></p>
+            <!-- /DECORATED FEATURE TITLE -->
+          </div>
+          <!-- /DECORATED FEATURE INFO -->
+        </div>
+        <!-- /DECORATED FEATURE -->
+
+        <!-- DECORATED FEATURE -->
+        <div class="decorated-feature">
+          <!-- DECORATED FEATURE ICON -->
+          <svg class="decorated-feature-icon icon-pin">
+            <use xlink:href="#svg-pin"></use>
+          </svg>
+          <!-- /DECORATED FEATURE ICON -->
+
+          <!-- DECORATED FEATURE INFO -->
+          <div class="decorated-feature-info">
+            <!-- DECORATED FEATURE TITLE -->
+            <p class="decorated-feature-title" id="upaddress"></p>
+            <!-- /DECORATED FEATURE TITLE -->
+
+            <!-- DECORATED FEATURE TEXT -->
+            <p class="decorated-feature-text" id="upxy"></p>
+            <!-- /DECORATED FEATURE TEXT -->
+          </div>
+          <!-- /DECORATED FEATURE INFO -->
+        </div>
+        <!-- /DECORATED FEATURE -->
+
+        <!-- DECORATED FEATURE -->
+        <div class="decorated-feature">
+        </div>
+        <!-- /DECORATED FEATURE -->
+      </div>
+      <!-- /DECORATED FEATURE LIST -->
+
+      <!-- POPUP EVENT SUBTITLE -->
+      <p class="popup-event-subtitle" >일정 내용</p>
+      <!-- /POPUP EVENT SUBTITLE -->
+
+      <!-- POPUP EVENT TEXT -->
+      <p class="popup-event-text" id="updesc"></p>
+      <!-- /POPUP EVENT TEXT -->
+      <!-- POPUP EVENT SUBTITLE -->
+      <p class="popup-event-subtitle">모임 장소</p>
+      <!-- /POPUP EVENT SUBTITLE -->
+
+      <!-- GOOGLE MAP -->
+      <div class="map_wrap g-map">  
+        <div id="leadMap" style="width:100%;height:100% ;position:relative;overflow:hidden;"></div>
+            <div class="hAddr">
+            <span id="centerAddr"></span>
+          </div>
+        </div>
+      </div>
+      <!-- /GOOGLE MAP -->
+
+    </div>
+    <!-- /POPUP EVENT INFO -->
+  </div>
+  <!-- /POPUP EVENT -->
+<div id="groupeventjs">
+<!-- app -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=97c647a5cc142b450cfd21889a93d716&libraries=services"></script>
+<script src="/js/utils/app.js"></script>
+<!-- page loader -->
+<script src="/js/utils/page-loader.js"></script>
+<!-- simplebar -->
+<script src="/js/vendor/simplebar.min.js"></script>
+<!-- XM_Plugins -->
+<script src="/js/vendor/xm_plugins.min.js"></script>
+<!-- tiny-slider -->
+<script src="/js/vendor/tiny-slider.min.js"></script>
+<!-- global.tooltips -->
+<script src="/js/global/global.tooltips.js"></script>
+<!-- header -->
+<script src="/js/header/header.js"></script>
+<!-- sidebar -->
+<script src="/js/sidebar/sidebar.js"></script>
+<!-- content -->
+<script src="/js/content/content.js"></script>
+<!-- form.utils -->
+<script src="/js/form/form.utils.js"></script>
+<!-- SVG icons -->
+<script src="/js/utils/svg-loader.js"></script>
+<script src="/javascript/map.js"></script>
+<script src="/javascript/create.event.js"></script>
+<script src="/javascript/group.event.list.js"></script>
+<script src="/javascript/delete.event.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- bootstrap 4.3.1 -->
+  <link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+  <!-- styles -->
+  <link rel="stylesheet" href="/css/styles.min.css">
+  <link rel="stylesheet" href="/css/raw/scroll.css">
+  <!-- simplebar styles -->
+  <link rel="stylesheet" href="/css/vendor/simplebar.css">
+  <!-- favicon -->
+  <link rel="icon" href="/img/favicon.ico">
+  <title>LounGe</title>
+</head>
+<body>
+  {{>loader}}
+  {{>header}}
+  <!-- CONTENT GRID -->
+  <div class="content-grid">
+
+    <!-- SECTION FILTERS BAR -->
+    <div class="section-filters-bar v1">
+      <!-- SECTION FILTERS BAR ACTIONS -->
+      <div class="section-filters-bar-actions">
+        <!-- FORM -->
+        <div class="form">
+          <!-- FORM INPUT -->
+          <div class="form-input small with-button">
+            <label for="groups-search">Search Tag By Groups</label>
+            <input type="text" id="groups-search" name="tag">
+            <!-- BUTTON -->
+            <button class="button primary" onclick="searchGroups()">
+              <!-- ICON MAGNIFYING GLASS -->
+              <svg class="icon-magnifying-glass">
+                <use xlink:href="#svg-magnifying-glass"></use>
+              </svg>
+              <!-- /ICON MAGNIFYING GLASS -->
+            </button>
+            <!-- /BUTTON -->
+          </div>
+          <!-- /FORM INPUT -->
+        </div>
+        <!-- /FORM -->
+        
+      </div>
+      <!-- /SECTION FILTERS BAR ACTIONS -->
+    </div>
+    <!-- /SECTION FILTERS BAR -->
+
+    <!-- GRID -->
+    <div class="grid grid-4-4-4 centered" id="groupList">
+    </div>
+    <!-- /GRID -->
+  </div>
+  <!-- /CONTENT GRID -->
+  <div class="loader-bars" id="loader">
+    <div class="loader-bar"></div>
+    <div class="loader-bar"></div>
+    <div class="loader-bar"></div>
+    <div class="loader-bar"></div>
+    <div class="loader-bar"></div>
+    <div class="loader-bar"></div>
+    <div class="loader-bar"></div>
+    <div class="loader-bar"></div>
+  </div>
+<!-- app -->
+<script src="/js/utils/app.js"></script>
+<!-- page loader -->
+<script src="/js/utils/page-loader.js"></script>
+<!-- simplebar -->
+<script src="/js/vendor/simplebar.min.js"></script>
+
+<!-- XM_Plugins -->
+<script src="/js/vendor/xm_plugins.min.js"></script>
+<!-- global.tooltips -->
+<script src="/js/global/global.tooltips.js"></script>
+<!-- header -->
+<script src="/js/header/header.js"></script>
+<!-- sidebar -->
+<script src="/js/sidebar/sidebar.js"></script>
+<!-- content -->
+<script src="/js/content/content.js"></script>
+<!-- form.utils -->
+<script src="/js/form/form.utils.js"></script>
+<!-- SVG icons -->
+<script src="/js/utils/svg-loader.js"></script>
+
+<!-- GH script-->
+<script src="/javascript/group.list.js"></script>
+<div id="groupjs">
+</body>
+</html>
