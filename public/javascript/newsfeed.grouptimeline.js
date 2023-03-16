@@ -17,11 +17,10 @@ function readnewsfeedgrouptimeline(page) {
       await newsfeedlist(res.data);
     })
     .catch(async (err) => {
-      await Swal.fire({
+      Swal.fire({
         icon: 'error',
-        title: '알수없는 이유로 실행되지 않았습니다.',
-        text: '관리자에게 문의해 주세요.',
-      });
+        text: `${error.response.data.message}`
+      })
     });
 }
 
@@ -64,9 +63,8 @@ function serchtag(tag) {
       } else {
         Swal.fire({
           icon: 'error',
-          title: '알수없는 이유로 실행되지 않았습니다.',
-          text: '관리자에게 문의해 주세요.',
-        });
+          text: `${error.response.data.message}`
+        })
       }
     });
 }
@@ -129,9 +127,8 @@ async function createNewsfeed() {
         } else {
           Swal.fire({
             icon: 'error',
-            title: '알수없는 이유로 실행되지 않았습니다.',
-            text: '관리자에게 문의해 주세요.',
-          });
+            text: `${error.response.data.message}`
+          })
         }
       });
   }

@@ -36,13 +36,11 @@ async function readnewsfeedmylist(page) {
           title: `작성된 뉴스피드가 없습니다.`,
           text: '뉴스피드를 작성해 볼까요~?',
         });
-      }
-      if (err.response.data.statusCode !== 401) {
+      } else {
         Swal.fire({
           icon: 'error',
-          title: '알수없는 이유로 실행되지 않았습니다.',
-          text: '관리자에게 문의해 주세요.',
-        });
+          text: `${error.response.data.message}`
+        })
       }
     });
 }
@@ -86,9 +84,8 @@ async function serchtag(tag) {
       } else {
         Swal.fire({
           icon: 'error',
-          title: '알수없는 이유로 실행되지 않았습니다.',
-          text: '관리자에게 문의해 주세요.',
-        });
+          text: `${error.response.data.message}`
+        })
       }
     });
 }

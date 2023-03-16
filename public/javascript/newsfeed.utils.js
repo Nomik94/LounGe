@@ -217,9 +217,8 @@ async function deleteNewsfeed(newsfeedId) {
           } else {
             Swal.fire({
               icon: 'error',
-              title: '알 수 없는 에러가 발생했습니다.',
-              text: '관리자에게 문의해 주세요.',
-            });
+              text: `${error.response.data.message}`
+            })
           }
         });
     }
@@ -315,9 +314,8 @@ async function modifyNewsfeed(id) {
           } else {
             Swal.fire({
               icon: 'error',
-              title: '알수없는 이유로 실행되지 않았습니다.',
-              text: '관리자에게 문의해 주세요.',
-            });
+              text: `${error.response.data.message}`
+            })
           }
         });
     }
