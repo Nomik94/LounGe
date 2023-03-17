@@ -23,7 +23,7 @@ function managementMemberList() {
         <div class="user-preview">
           <!-- USER PREVIEW COVER -->
           <figure class="user-preview-cover liquid">
-            <img src="/backgroundImage/${res.data.foundGroup.backgroundImage}" alt="cover-04">
+            <img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.foundGroup.backgroundImage}" alt="cover-04">
           </figure>
           <!-- /USER PREVIEW COVER -->
       
@@ -44,7 +44,7 @@ function managementMemberList() {
                 <!-- USER AVATAR CONTENT -->
                 <div class="user-avatar-content">
                   <!-- HEXAGON -->
-                  <div class="hexagon-image-82-90" data-src="/userImage/${data.userImage}"></div>
+                  <div class="hexagon-image-82-90" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.userImage}"></div>
                   <!-- /HEXAGON -->
                 </div>
                 <!-- /USER AVATAR CONTENT -->

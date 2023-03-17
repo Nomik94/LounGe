@@ -68,10 +68,10 @@ export class NewsfeedService {
         }
       }
       if (file.length !== 0) {
-        const fileNames = file.map((file) => file.filename);
-        const promises = fileNames.map((filename) =>
+        const fileNames = file.map((file) => file.key);
+        const promises = fileNames.map((key) =>
           this.newsfeedImageRepository.createNewsfeedImage(
-            filename,
+            key,
             newsfeedId.id,
           ),
         );
@@ -142,9 +142,9 @@ export class NewsfeedService {
       }
       if (file.length !== 0) {
         await this.newsfeedImageRepository.deleteNewsfeedImage(id);
-        const fileNames = file.map((file) => file.filename);
-        const promises = fileNames.map((filename) =>
-          this.newsfeedImageRepository.modifyNewsfeedImage(filename, id),
+        const fileNames = file.map((file) => file.key);
+        const promises = fileNames.map((key) =>
+          this.newsfeedImageRepository.modifyNewsfeedImage(key, id),
         );
         await Promise.all(promises);
       }
@@ -424,6 +424,52 @@ export class NewsfeedService {
       });
       return result;
     } catch (err) {
+      throw new InternalServerErrorException(
+        '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
+      );
+    }
+  }
+
+  // 서치바에서 뉴스피드 태그 검색
+  async serchBarTagNewsfeed(data, userId:number) : Promise<ISerchNewsfeedList[]> {
+    try{
+      const tag = data;
+      const serchTag = await this.tagRepository.serchTagWord(tag);
+      const findGroup = await this.userGroupRepository.checkUserStatus(userId);
+      const groupIds = findGroup.map((group) => group.groupId);
+      const whereNewsfeedId = serchTag.map((tag) => ({ tagId: tag.id }));
+      const newsfeedTag = await this.newsfeedTagRepository.serchTagArray(
+        whereNewsfeedId,
+      );
+      const newsfeedSerchId = Array.from(
+        new Set(newsfeedTag.map((tag) => tag.newsFeedId)),
+      );
+      const findNewsfeed = await this.newsfeedRepository.findNewsfeedByGroupId(
+        newsfeedSerchId,
+        groupIds,
+      );
+      const result = findNewsfeed.map((feed) => {
+        const userName = feed.user.username;
+        const userImage = feed.user.image;
+        const userEmail = feed.user.email;
+        const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
+        const newsfeedImage = feed.newsImages.map((image) => image.image);
+        return {
+          id: feed.id,
+          content: feed.content,
+          createAt: feed.createdAt,
+          updateAt: feed.updatedAt,
+          userName: userName,
+          userEmail: userEmail,
+          userImage: userImage,
+          tagsName: tagsName,
+          newsfeedImage: newsfeedImage,
+          groupId: feed.group.id,
+          groupName: feed.group.groupName,
+        };
+      });
+      return result;
+    } catch(err) {
       throw new InternalServerErrorException(
         '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
       );

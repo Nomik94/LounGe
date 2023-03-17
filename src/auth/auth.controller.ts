@@ -1,6 +1,7 @@
 import {
   Get,
-  Render,
+  HttpCode,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -8,6 +9,7 @@ import {
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { AuthService } from './auth.service';
 import { AuthDTO, KakaoLoginDTO, LogInBodyDTO } from './dto/auth.dto';
@@ -24,7 +26,7 @@ export class AuthController {
   @UseInterceptors(FileInterceptor('userImage'))
   register(
     @Body() authDTO: AuthDTO,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.MulterS3.File,
   ): Promise<void> {
     return this.authService.register(authDTO, file);
   }
@@ -38,10 +40,14 @@ export class AuthController {
 
   // 카카오로그인 API
   @Get('login/kakao')
+  @HttpCode(200)
   @UseGuards(AuthGuard('kakao'))
-  @Render('kakao')
-  async kakaoLogin(@GetUser() user: KakaoLoginDTO): Promise<ITokens> {
-    return await this.authService.kakaoLogin(user);
+  async kakaoLogin(@GetUser() user: KakaoLoginDTO, @Res() res: Response) {
+    const tokens = await this.authService.kakaoLogin(user);
+
+    res.redirect(
+      `http://localhost:3000?access=${tokens.accessToken}&refresh=${tokens.refreshToken}`,
+    );
   }
 
   // 엑세스토큰 재발급 API

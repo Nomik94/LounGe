@@ -169,7 +169,7 @@ async function groupList(list) {
     <div class="user-preview">
       <!-- USER PREVIEW COVER -->
       <figure class="user-preview-cover liquid">
-      <img src="/backgroundImage/${
+      <img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
         data.backgroundImage
       }" alt="backgroundImage-${data.id}">
       </figure>
@@ -194,7 +194,7 @@ async function groupList(list) {
             <!-- USER AVATAR CONTENT -->
             <div class="user-avatar-content">
               <!-- HEXAGON -->
-              <div class="hexagon-image-100-110" data-src="/groupImage/${
+              <div class="hexagon-image-100-110" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
                 data.groupImage
               }"></div>
               <!-- /HEXAGON -->

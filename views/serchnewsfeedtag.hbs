@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -19,33 +19,25 @@
 <body>
   {{>loader}}
   {{>header}}
-
   <style>
-    .newsfeed-image {
+.newsfeed-image {
   display: flex;
   gap: 1rem;
   width: 200px;
   height: 80px;
 }
   </style>
-
   <!-- CONTENT GRID -->
   <div class="content-grid">
-
     <!-- GRID -->
     <div class="grid grid-1-8-1 mobile-prefer-content">
-
-
       <!-- GRID COLUMN -->
       <div class="grid-column">
-
-
       <!-- 뉴스피드 목록 -->
       <div class="newsfeedbox" id="newsfeedbox">
       </div>
-
         <!-- LOADER BARS -->
-        <div class="loader-bars">
+        {{!-- <div class="loader-bars" id="loader">
           <div class="loader-bar"></div>
           <div class="loader-bar"></div>
           <div class="loader-bar"></div>
@@ -54,19 +46,14 @@
           <div class="loader-bar"></div>
           <div class="loader-bar"></div>
           <div class="loader-bar"></div>
-        </div>
+        </div> --}}
         <!-- /LOADER BARS -->
       </div>
       <!-- /GRID COLUMN -->
-
-
     </div>
     <!-- /GRID -->
   </div>
   <!-- /CONTENT GRID -->
-
-
-
 <!-- app -->
 <script src="/js/utils/app.js"></script>
 <!-- page loader -->
@@ -81,8 +68,6 @@
 <script src="/js/vendor/tiny-slider.min.js"></script>
 <!-- chartJS -->
 <script src="/js/vendor/Chart.bundle.min.js"></script>
-<!-- global.hexagons -->
-<script src="/js/global/global.hexagons.js"></script>
 <!-- global.tooltips -->
 <script src="/js/global/global.tooltips.js"></script>
 <!-- global.popups -->
@@ -104,8 +89,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/javascript/newsfeed.mylist.js"></script>
-<script src="/javascript/newsfeed.utils.js"></script>
+<script src="/javascript/header.js"></script>
+<script src="/javascript/serchnewsfeedtag.js"></script>
 <div id="ddd"></div>
 </body>
 </html>

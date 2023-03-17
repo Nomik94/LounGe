@@ -142,7 +142,7 @@ export class GroupService {
   }
 
   // 그룹 생성
-  async createGroup(file, data: CreateGroupDto, userId: number): Promise<void> {
+  async createGroup(file: IFile, data: CreateGroupDto, userId: number): Promise<void> {
     const tagArray = data.tag.split(',');
     if (tagArray.find((tag) => tag.length >= 11)) {
       throw new BadRequestException(
@@ -153,14 +153,14 @@ export class GroupService {
       throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
     }
 
-    let groupImage = '1.png';
+    let groupImage = '11.png';
     let backgroundImage = '1.png';
 
     if (file.groupImage) {
-      groupImage = file.groupImage[0].filename;
+      groupImage = file.groupImage[0].key;
     }
     if (file.backgroundImage) {
-      backgroundImage = file.backgroundImage[0].filename;
+      backgroundImage = file.backgroundImage[0].key;
     }
 
     const group = this.groupRepository.create({
@@ -209,11 +209,11 @@ export class GroupService {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
     if (file.groupImage) {
-      data.groupImage = file.groupImage[0].filename;
+      data.groupImage = file.groupImage[0].key;
     }
 
     if (file.backgroundImage) {
-      data.backgroundImage = file.backgroundImage[0].filename;
+      data.backgroundImage = file.backgroundImage[0].key;
     }
 
     await this.tagGroupRepository.delete({ groupId });
