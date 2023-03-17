@@ -25,7 +25,7 @@ export class CalendarController {
   // 전체 이벤트 리스트 API
   @Get('/events/:startStr/:endStr')
   @UseGuards(JwtAuthGuard)
-  async getAllEvent(@GetUser() user: IUser, @Param('startStr') startStr,@Param('endStr') endStr ): Promise<IAllEventList[]> {
+  async getAllEvent(@GetUser() user: IUser, @Param('startStr') startStr,@Param('endStr') endStr ) {
     const userId = user.id;
     return await this.calendarService.getAllEvent(userId,startStr,endStr);
   }
