@@ -24,7 +24,7 @@ function groupEventList() {
           <div class="event-preview">
             <!-- EVENT PREVIEW COVER -->
             <figure class="event-preview-cover liquid">
-              <img src="/backgroundImage/1.png" alt="cover-33">
+              <img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/1.png" alt="cover-33">
             </figure>
             <!-- /EVENT PREVIEW COVER -->
     
@@ -90,7 +90,7 @@ function groupEventList() {
         <div class="event-preview">
           <!-- EVENT PREVIEW COVER -->
           <figure class="event-preview-cover liquid">
-            <img src="/backgroundImage/1.png" alt="cover-33">
+            <img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/1.png" alt="cover-33">
           </figure>
           <!-- /EVENT PREVIEW COVER -->
   
