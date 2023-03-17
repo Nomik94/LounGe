@@ -121,7 +121,7 @@ function listRender(data) {
     <div class="event-preview">
       <!-- EVENT PREVIEW COVER -->
       <figure class="event-preview-cover liquid">
-        <img src="/backgroundImage/${event.backgroundImage}" alt="cover-33">
+        <img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${event.backgroundImage}" alt="cover-33">
       </figure>
       <!-- /EVENT PREVIEW COVER -->
 
@@ -186,7 +186,7 @@ function listRender(data) {
       <div class="event-preview">
         <!-- EVENT PREVIEW COVER -->
         <figure class="event-preview-cover liquid">
-          <img src="/backgroundImage/${event.backgroundImage}" alt="cover-33">
+          <img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${event.backgroundImage}" alt="cover-33">
         </figure>
         <!-- /EVENT PREVIEW COVER -->
   
@@ -305,15 +305,15 @@ async function popupdata(where, eventId, tableId) {
       marker.setMap(map);
       document.getElementById(
         'imgurl',
-      ).style.backgroundImage = `url("/backgroundImage/1.png")`;
-      document.getElementById('backImg').src = `/backgroundImage/1.png`;
+      ).style.backgroundImage = `url("https://lounges3.s3.ap-northeast-2.amazonaws.com/1.png")`;
+      document.getElementById('backImg').src = `https://lounges3.s3.ap-northeast-2.amazonaws.com/1.png`;
       if (Object.keys(res.data).includes('group')) {
         document.getElementById(
           'imgurl',
-        ).style.backgroundImage = `url("/backgroundImage/${res.data.group.backgroundImage}")`;
+        ).style.backgroundImage = `url("https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.group.backgroundImage}")`;
         document.getElementById(
           'backImg',
-        ).src = `/backgroundImage/${res.data.group.backgroundImage}`;
+        ).src = `https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.group.backgroundImage}`;
       }
       document.getElementById('uptitle').innerHTML = res.data.eventName;
       document.getElementById(
