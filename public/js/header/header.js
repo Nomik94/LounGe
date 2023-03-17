@@ -123,3 +123,31 @@ app.plugins.createProgressBar({
   linkUnits: 'exp',
   invertedProgress: true
 });
+
+async function serchTagNewsfeed(){
+  const text = document.getElementById('search-main').value;
+  if (!text) {
+    alert("빈 칸은 입력할 수 없습니다 T^T")
+  } else {
+    axios({
+      method: 'get',
+      url: '/api/newsfeed/serchbar/tag',
+      params: {
+        tag: text,
+      },
+      headers: {
+        Authorization: `${getCookie('accessToken')}`,
+      },
+    })
+      .then((res) => {
+        localStorage.setItem('searchResults', JSON.stringify(res.data));
+        window.location.href = '/serchbar/tag';
+      })
+      .catch(async (err) => {
+        if (err.response.data.statusCode === 401) {
+          alert("로그인 정보가 확인되지 않습니다.")
+        }
+        alert(err.response.data.message)
+      });
+  }
+}

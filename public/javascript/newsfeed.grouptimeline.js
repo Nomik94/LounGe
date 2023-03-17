@@ -14,6 +14,9 @@ function readnewsfeedgrouptimeline(page) {
     url: `/api/newsfeed/group/${groupId}/${page}`,
   })
     .then(async (res) => {
+      if(res.data.length < 9) {
+        document.getElementById('loader').innerHTML = ''
+      }
       await newsfeedlist(res.data);
     })
     .catch(async (err) => {
