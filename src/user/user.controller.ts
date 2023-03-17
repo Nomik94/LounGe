@@ -65,6 +65,7 @@ export class UserController {
     @Body() data: ModifyPasswordDTO,
   ): Promise<void> {
     const userId = user.id;
+
     await this.userService.ModifyPassword(userId, data);
   }
 
