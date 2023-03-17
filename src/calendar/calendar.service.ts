@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
-import { Not, Repository } from 'typeorm';
+import { Between, Not, Repository } from 'typeorm';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
 import { UserEventDto } from './dto/user.event.dto';
 import { GroupEventDto } from './dto/group.event.dto';
@@ -26,11 +26,20 @@ export class CalendarService {
   ) {}
 
   // 전체 이벤트 리스트
-  async getAllEvent(userId: number): Promise<IAllEventList[]> {
+  async getAllEvent(
+    userId: number,
+    startStr,
+    endStr,
+  ) {
     const myGroupList = await this.userGroupRepository.find({
-      where: { userId, role: Not('가입대기') },
+      where: {
+        userId,
+        role: Not('가입대기'),
+        group: { groupEvents: { start: Between(startStr, endStr) } },
+      },
       select: ['groupId', 'userId'],
     });
+    console.log(myGroupList)
     const myGroupIds = myGroupList.map((ids) => ({
       group: { id: ids.groupId },
     }));
@@ -59,7 +68,7 @@ export class CalendarService {
     }
 
     const myUserEvents = await this.userEventRepository.find({
-      where: { user: { id: userId } },
+      where: { user: { id: userId } , start: Between(startStr,endStr)},
       relations: ['user'],
     });
 
