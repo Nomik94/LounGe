@@ -23,11 +23,11 @@ export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   // 전체 이벤트 리스트 API
-  @Get('/events')
+  @Get('/events/:startStr/:endStr')
   @UseGuards(JwtAuthGuard)
-  async getAllEvent(@GetUser() user: IUser): Promise<IAllEventList[]> {
+  async getAllEvent(@GetUser() user: IUser, @Param('startStr') startStr,@Param('endStr') endStr ): Promise<IAllEventList[]> {
     const userId = user.id;
-    return await this.calendarService.getAllEvent(userId);
+    return await this.calendarService.getAllEvent(userId,startStr,endStr);
   }
 
   // 유저 이벤트 생성 API

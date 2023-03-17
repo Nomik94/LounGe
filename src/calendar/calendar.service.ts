@@ -26,7 +26,7 @@ export class CalendarService {
   ) {}
 
   // 전체 이벤트 리스트
-  async getAllEvent(userId: number): Promise<IAllEventList[]> {
+  async getAllEvent(userId: number,startStr,endStr): Promise<IAllEventList[]> {
     const myGroupList = await this.userGroupRepository.find({
       where: { userId, role: Not('가입대기') },
       select: ['groupId', 'userId'],
