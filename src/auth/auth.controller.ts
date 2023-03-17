@@ -46,7 +46,7 @@ export class AuthController {
     const tokens = await this.authService.kakaoLogin(user);
 
     res.redirect(
-      `http://localhost:3000?access=${tokens.accessToken}&refresh=${tokens.refreshToken}`,
+      `http://loungegroup.site?access=${tokens.accessToken}&refresh=${tokens.refreshToken}`,
     );
   }
 
