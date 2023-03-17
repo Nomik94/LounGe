@@ -245,7 +245,7 @@ async function findPassword() {
           icon: 'success',
           text: `비밀번호가 변경되었습니다.`,
         });
-        window.location.href('/');
+        window.location.replace('/');
       })
       .catch(async (error) => {
         Swal.fire({
