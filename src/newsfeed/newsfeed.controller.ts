@@ -131,4 +131,15 @@ export class NewsfeedController {
     const userId = user.id;
     return await this.newsfeedService.readNewsfeedMyGroup(userId, page);
   }
+
+  // 헤더에서 뉴스피드 내용 검색
+  @Get('serchbar/tag')
+  @UseGuards(JwtAuthGuard)
+  async serchBarTagNewsfeed(
+    @Query('tag') data: string,
+    @GetUser() user: IUser,
+  ): Promise<ISerchNewsfeedList[]> {
+    const userId = user.id;
+    return await this.newsfeedService.serchBarTagNewsfeed(data, userId);
+  }
 }
