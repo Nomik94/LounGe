@@ -15,6 +15,9 @@ async function readnewsfeedmygroup(page) {
     },
   })
     .then(async (res) => {
+      if(res.data.length >= 1) {
+        $('#firstnewsfeed').empty();
+      }
       if(res.data.length < 9) {
         document.getElementById('loader').innerHTML = ''
       }
