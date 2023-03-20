@@ -77,17 +77,19 @@ export class NewsfeedController {
     @GetUser() user: IUser,
   ): Promise<ISerchTagNewsfeed[]> {
     const userId = user.id;
-
     return await this.newsfeedService.serchTagNewsfeed(data, userId);
   }
 
   // 태그 검색 (특정 그룹) API
   @Get('tag/:groupId')
+  @UseGuards(JwtAuthGuard)
   async serchTagNewsfeedGroup(
     @Query('tag') data: string,
     @Param('groupId') groupId: number,
+    @GetUser() user: IUser,
   ): Promise<ISerchTagNewsfeed[]> {
-    return await this.newsfeedService.serchTagNewsfeedGroup(data, groupId);
+    const userId = user.id;
+    return await this.newsfeedService.serchTagNewsfeedGroup(data, groupId, userId);
   }
 
   // 태그 검색 (내 뉴스피드) API
@@ -103,11 +105,14 @@ export class NewsfeedController {
 
   // 뉴스피드 읽기 (특정 그룹) API
   @Get('group/:id/:page')
+  @UseGuards(JwtAuthGuard)
   async readNewsfeedGroup(
+    @GetUser() user: IUser,
     @Param('id') groupId: number,
     @Param('page') page: number,
   ): Promise<ISerchNewsfeedList[]> {
-    return await this.newsfeedService.readNewsfeedGroup(groupId, page);
+    const userId = user.id;
+    return await this.newsfeedService.readNewsfeedGroup(groupId, page, userId);
   }
 
   // 뉴스피드 읽기 (내 뉴스피드) API
@@ -141,5 +146,16 @@ export class NewsfeedController {
   ): Promise<ISerchNewsfeedList[]> {
     const userId = user.id;
     return await this.newsfeedService.serchBarTagNewsfeed(data, userId);
+  }
+
+  // 수정 시 컨텐츠 내용 가져오기
+  @Get('content/:id')
+  @UseGuards(JwtAuthGuard)
+  async getNewsfeedContent(
+    @GetUser() user: IUser,
+    @Param('id') id: number,
+  ) {
+    const userId = user.id;
+    return await this.newsfeedService.getNewsfeedContent(id,userId)
   }
 }

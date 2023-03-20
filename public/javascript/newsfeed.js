@@ -15,10 +15,13 @@ async function readnewsfeedmygroup(page) {
     },
   })
     .then(async (res) => {
+      if(res.data.length >= 1) {
+        $('#firstnewsfeed').empty();
+      }
       if(res.data.length < 9) {
         document.getElementById('loader').innerHTML = ''
       }
-      await newsfeedlist(res.data);
+       await newsfeedlist(res.data);
     })
     .catch((err) => {
       if (err.response.data.statusCode === 401) {
@@ -43,7 +46,7 @@ async function readnewsfeedmygroup(page) {
 }
 
 // 무한 스크롤
-async function limitscroll() {
+function limitscroll() {
   page++;
   readnewsfeedmygroup(page);
 }
