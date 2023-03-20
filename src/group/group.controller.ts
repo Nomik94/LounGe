@@ -25,7 +25,7 @@ import { IGroupWithMemberIdsStr } from './interface/member.group.ids.interface';
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
-  // 전체 그룹 리스트 API
+  // 미가입 그룹 리스트 API
   @Get('/:page')
   @UseGuards(JwtAuthGuard)
   async getAllGroupList(
@@ -34,6 +34,17 @@ export class GroupController {
   ): Promise<IMapGroups[]> {
     const userId: number = user.id;
     return await this.groupService.getAllGroupList(userId, page);
+  }
+
+  // 가입 신청 그룹 리스트 API
+  @Get('/joined/requests/:page')
+  @UseGuards(JwtAuthGuard)
+  async getGroupJoinList(
+    @Param('page') page: number,
+    @GetUser() user: IUser,
+  ): Promise<IMapGroups[]> {
+    const userId: number = user.id;
+    return await this.groupService.getGroupJoinList(userId, page);
   }
 
   // 그룹 태그 검색 리스트 API
