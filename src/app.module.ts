@@ -14,6 +14,7 @@ import { UserModule } from './user/user.module';
 import { Group } from './database/entities/group.entity';
 import { UserGroup } from './database/entities/user-group.entity';
 import { NewsFeed } from './database/entities/newsFeed.entity';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { NewsFeed } from './database/entities/newsFeed.entity';
     EmailModule,
     CalendarModule,
     UserModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

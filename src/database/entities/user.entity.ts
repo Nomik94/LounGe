@@ -8,6 +8,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { Comment } from './comment.entity';
 import { Group } from './group.entity';
 import { NewsFeed } from './newsFeed.entity';
 import { UserGroup } from './user-group.entity';
@@ -48,4 +49,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => UserGroup, (userGroup) => userGroup.user)
   userGroups: UserGroup[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comment: Comment;
 }

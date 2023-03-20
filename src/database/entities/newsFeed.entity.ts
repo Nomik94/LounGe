@@ -13,6 +13,7 @@ import { NewsFeedImage } from './newsFeedImage.entity';
 import { NewsFeedTag } from './newsFeed-Tag.entity';
 import { User } from './user.entity';
 import { Group } from './group.entity';
+import { Comment } from './comment.entity';
 
 @Entity()
 export class NewsFeed extends BaseEntity {
@@ -42,4 +43,7 @@ export class NewsFeed extends BaseEntity {
 
   @ManyToOne(() => Group, (group) => group.newsfeed)
   group: Group;
+
+  @OneToMany(() => Comment, (comment) => comment.newsfeed)
+  comment: Comment;
 }

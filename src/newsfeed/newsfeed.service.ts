@@ -70,10 +70,7 @@ export class NewsfeedService {
       if (file.length !== 0) {
         const fileNames = file.map((file) => file.key);
         const promises = fileNames.map((key) =>
-          this.newsfeedImageRepository.createNewsfeedImage(
-            key,
-            newsfeedId.id,
-          ),
+          this.newsfeedImageRepository.createNewsfeedImage(key, newsfeedId.id),
         );
         await Promise.all(promises);
       }
@@ -431,8 +428,11 @@ export class NewsfeedService {
   }
 
   // 서치바에서 뉴스피드 태그 검색
-  async serchBarTagNewsfeed(data, userId:number) : Promise<ISerchNewsfeedList[]> {
-    try{
+  async serchBarTagNewsfeed(
+    data,
+    userId: number,
+  ): Promise<ISerchNewsfeedList[]> {
+    try {
       const tag = data;
       const serchTag = await this.tagRepository.serchTagWord(tag);
       const findGroup = await this.userGroupRepository.checkUserStatus(userId);
@@ -469,7 +469,7 @@ export class NewsfeedService {
         };
       });
       return result;
-    } catch(err) {
+    } catch (err) {
       throw new InternalServerErrorException(
         '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
       );
