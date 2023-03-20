@@ -46,7 +46,7 @@ async function readnewsfeedmygroup(page) {
 }
 
 // 무한 스크롤
-async function limitscroll() {
+function limitscroll() {
   page++;
   readnewsfeedmygroup(page);
 }

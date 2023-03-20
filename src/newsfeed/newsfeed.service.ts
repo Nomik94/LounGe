@@ -412,7 +412,6 @@ export class NewsfeedService {
         page,
         this.pageSize,
       );
-      
       const result = findNewsfeed.map((feed) => {
         const userName = feed.user.username;
         const userImage = feed.user.image;

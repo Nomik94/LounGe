@@ -451,7 +451,7 @@ async function modifyNewsfeed(id) {
 }
 
 // 무한 스크롤 설정
-function debounce(callback, limit = 300) {
+function debounce(callback, limit = 500) {
   let timeout;
   return function (...args) {
     clearTimeout(timeout);
@@ -464,8 +464,8 @@ document.addEventListener(
   'scroll',
   debounce((e) => {
     const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
-    if (clientHeight + scrollTop >= scrollHeight) {
+    if (clientHeight + scrollTop + 10 >= scrollHeight) {
       limitscroll();
     }
-  }, 300),
+  }, 500),
 );
