@@ -12,6 +12,9 @@ function readnewsfeedgrouptimeline(page) {
   axios({
     method: 'get',
     url: `/api/newsfeed/group/${groupId}/${page}`,
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
   })
     .then(async (res) => {
       if(res.data.length < 9) {
@@ -44,6 +47,9 @@ function serchtag(tag) {
     url: `/api/newsfeed/tag/${groupId}`,
     params: {
       tag: test,
+    },
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
     },
   })
     .then(async (res) => {

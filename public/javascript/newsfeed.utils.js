@@ -26,31 +26,136 @@ async function newsfeedlist(data) {
       'Ko-KR',
       timeOptions,
     );
-    let temp_html = `
+    if (data.userIdentify === 1) {
+      let temp_html = `
+      <br>
+      <div class="widget-box no-padding">
+      <!-- WIDGET BOX SETTINGS -->
+      <div class="widget-box-settings">
+        <!-- POST SETTINGS WRAP -->
+        <div class="post-settings-wrap">
+  
+          <!-- SIMPLE DROPDOWN -->
+          <div class="simple-dropdown widget-box-post-settings-dropdown" style="width:60px">
+            <!-- SIMPLE DROPDOWN LINK -->
+            <p class="simple-dropdown-link" onclick="modifyNewsfeed(${
+              data.id
+            })">수정</p>
+            <!-- /SIMPLE DROPDOWN LINK -->
+  
+            <!-- SIMPLE DROPDOWN LINK -->
+            <p class="simple-dropdown-link" onclick="deleteNewsfeed(${
+              data.id
+            })">삭제</p>
+            <!-- /SIMPLE DROPDOWN LINK -->
+  
+          </div>
+          <!-- /SIMPLE DROPDOWN -->
+        </div>
+        <!-- /POST SETTINGS WRAP -->
+      </div>
+      <!-- /WIDGET BOX SETTINGS -->
+      
+      <!-- WIDGET BOX STATUS -->
+      <div class="widget-box-status">
+        <!-- WIDGET BOX STATUS CONTENT -->
+        <div class="widget-box-status-content">
+          <!-- USER STATUS -->
+          <div class="user-status">
+            <!-- USER STATUS AVATAR -->
+            <a class="user-status-avatar" >
+              <!-- USER AVATAR -->
+              <div class="user-avatar small no-outline">
+                <!-- USER AVATAR CONTENT -->
+                <div class="user-avatar-content">
+                  <!-- HEXAGON -->
+                  <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.userImage}"></div>
+                  <!-- /HEXAGON -->
+                </div>
+                <!-- /USER AVATAR CONTENT -->
+            
+                <!-- USER AVATAR PROGRESS -->
+                <div class="user-avatar-progress">
+                  <!-- HEXAGON -->
+                  <div class="hexagon-image-40-44" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.userImage}"></div>
+                  <!-- /HEXAGON -->
+                </div>
+                <!-- /USER AVATAR PROGRESS -->
+            
+                <!-- USER AVATAR PROGRESS BORDER -->
+                <div class="user-avatar-progress-border">
+                  <!-- HEXAGON -->
+                  <div class="hexagon-border-40-44"></div>
+                  <!-- /HEXAGON -->
+                </div>
+                <!-- /USER AVATAR PROGRESS BORDER -->
+            
+  
+              </div>
+              <!-- /USER AVATAR -->
+            </a>
+            <!-- /USER STATUS AVATAR -->
+        
+            <!-- USER STATUS TITLE -->
+            <p class="user-status-title medium"><a class="bold" >${
+              data.userName
+            }</a>님의 뉴스피드</p>
+            <!-- /USER STATUS TITLE -->
+  
+            <!-- USER STATUS TEXT -->
+            <a href="/group/timeline?groupId=${
+              data.groupId
+            }"><p class="user-status-text middle">${data.groupName}</p></a>
+            <!-- /USER STATUS TEXT -->
+        
+            <!-- USER STATUS TEXT -->
+            <p class="user-status-text small">${creadteDateFormat}</p>
+            <!-- /USER STATUS TEXT -->
+          </div>
+          <!-- /USER STATUS -->
+  
+          <!-- WIDGET BOX STATUS TEXT -->
+          <p class="widget-box-status-text">${data.content}</p>
+          <!-- /WIDGET BOX STATUS TEXT -->
+  
+          <div class="newsfeed-image">
+          ${data.newsfeedImage
+            .map(
+              (image) => `
+            <img class="popup-image" onclick="popupNewsfeed('${image}')" src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${image}">
+          `,
+            )
+            .join('')}
+        </div>
+  
+          <!-- TAG LIST -->
+            <div class="tag-list">
+            ${data.tagsName
+              .map(
+                (tag) => `
+            <a class="tag-item secondary" onclick="serchtag('${tag}')">${tag}</a>
+            `,
+              )
+              .join('')}
+            </div>
+          <!-- /TAG LIST -->
+        <br>
+  
+        </div>
+        <!-- /WIDGET BOX STATUS CONTENT -->
+      </div>
+      <!-- /WIDGET BOX STATUS -->
+    </div>`;
+    $('#newsfeedbox').append(temp_html);
+    } else {
+      let temp_html = `
     <br>
     <div class="widget-box no-padding">
     <!-- WIDGET BOX SETTINGS -->
     <div class="widget-box-settings">
       <!-- POST SETTINGS WRAP -->
       <div class="post-settings-wrap">
-
-
-
         <!-- SIMPLE DROPDOWN -->
-        <div class="simple-dropdown widget-box-post-settings-dropdown" style="width:60px">
-          <!-- SIMPLE DROPDOWN LINK -->
-          <p class="simple-dropdown-link" onclick="modifyNewsfeed(${
-            data.id
-          })">수정</p>
-          <!-- /SIMPLE DROPDOWN LINK -->
-
-          <!-- SIMPLE DROPDOWN LINK -->
-          <p class="simple-dropdown-link" onclick="deleteNewsfeed(${
-            data.id
-          })">삭제</p>
-          <!-- /SIMPLE DROPDOWN LINK -->
-
-        </div>
         <!-- /SIMPLE DROPDOWN -->
       </div>
       <!-- /POST SETTINGS WRAP -->
@@ -146,8 +251,9 @@ async function newsfeedlist(data) {
       <!-- /WIDGET BOX STATUS CONTENT -->
     </div>
     <!-- /WIDGET BOX STATUS -->
-  </div>`;
-    $('#newsfeedbox').append(temp_html);
+      </div>`;
+      $('#newsfeedbox').append(temp_html);
+    }
   });
   const asd = `
   <script src="/js/global/global.hexagons.js"></script>
@@ -227,19 +333,27 @@ function clearnewsfeed() {
 
 // 뉴스피드 수정하기
 async function modifyNewsfeed(id) {
-  let popupHtml =
+  axios({
+    url: `/api/newsfeed/content/${id}`,
+    method: 'get',
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
+  })
+  .then((res) => {
+    let popupHtml =
     '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
   popupHtml += '<h2>뉴스피드 수정하기</h2>';
   popupHtml += '<form>';
   popupHtml += '<label for="newsfeedcontent">내용:</label><br>';
   popupHtml +=
-    '<textarea id="newsfeedcontent" name="newsfeedcontent" rows="4" cols="50"></textarea><br><br>';
+    `<textarea id="newsfeedcontent" name="newsfeedcontent" rows="4" cols="50">${res.data.content}</textarea><br><br>`;
   popupHtml += '<label for="tag">태그(태그는 ,로 구분합니다.)</label><br>';
-  popupHtml += '<input type="text" id="tag" name="tag"><br><br>';
+  popupHtml += `<input type="text" id="tag" name="tag"><br><br>`;
   popupHtml += '<label for="image">이미지(최대 5장):</label><br>';
   popupHtml +=
-    '<input type="file" id="imageUpload" name="imageUpload" multiple>';
-  popupHtml += '<input type="submit" value="수정">';
+    '<input type="file" id="imageUpload" name="imageUpload" multiple><br><br>';
+  popupHtml += '<input type="submit" value="수정하기"><br><br>';
   popupHtml += '<button type="button" class="cancel">취소</button>';
   popupHtml += '</form>';
   popupHtml += '</div>';
@@ -326,6 +440,14 @@ async function modifyNewsfeed(id) {
   cancelButton.addEventListener('click', () => {
     document.body.removeChild(popup);
   });
+  })
+  .catch((err) => {
+    Swal.fire({
+      icon: 'error',
+      text: `${err.response.data.message}`,
+    });
+  })
+  
 }
 
 // 무한 스크롤 설정

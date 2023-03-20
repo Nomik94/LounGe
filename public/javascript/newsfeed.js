@@ -18,21 +18,7 @@ async function readnewsfeedmygroup(page) {
       if(res.data.length < 9) {
         document.getElementById('loader').innerHTML = ''
       }
-     if(res.data.length == 0) {
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'center-center',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-      });
-      Toast.fire({
-        icon: 'error',
-        title: '보여줄 뉴스피드가 없어요 T^T <br><br>그룹에 가입해 주세요!',
-      });
-     } else if (res.data.length >= 1) {
        await newsfeedlist(res.data);
-     }
     })
     .catch((err) => {
       if (err.response.data.statusCode === 401) {
