@@ -76,24 +76,6 @@ async function login() {
   }
 }
 
-// function kakaoLogin() {
-//   // window.open('/api/auth/login/kakao');
-//   function loginCallback(event) {
-//     console.log(event);
-//     if (event.data?.accessToken) {
-//       const accessToken = event.data?.accessToken;
-//       const refreshToken = event.data?.refreshToken;
-//       const accessExpires = accessTokenExpires();
-//       const refreshExpires = refreshTokenExpires();
-//       document.cookie = `accessToken=Bearer ${accessToken}; path=/; expires=${accessExpires}`;
-//       document.cookie = `refreshToken=Bearer ${refreshToken}; path=/; expires=${refreshExpires}`;
-//     }
-//     window.removeEventListener('message', loginCallback);
-//     window.location.href = '/newsfeed';
-//   }
-//   window.addEventListener('message', loginCallback);
-// }
-
 function emailVerify() {
   const email = $('#register-email').val();
   if (!email) {
@@ -164,19 +146,19 @@ async function register() {
   formData.append('password', password);
   formData.append('username', username);
 
-  if (!check) {
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'center-center',
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true,
-    });
-    await Toast.fire({
-      icon: 'error',
-      text: '이메일 인증이 필요합니다.',
-    });
-  } else if (!email || !username || !password || !passwordRepeat) {
+  // if (!check) {
+  //   const Toast = Swal.mixin({
+  //     toast: true,
+  //     position: 'center-center',
+  //     showConfirmButton: false,
+  //     timer: 2000,
+  //     timerProgressBar: true,
+  //   });
+  //   await Toast.fire({
+  //     icon: 'error',
+  //     text: '이메일 인증이 필요합니다.',
+  //   });
+  if (!email || !username || !password || !passwordRepeat) {
     const Toast = Swal.mixin({
       toast: true,
       position: 'center-center',

@@ -1,9 +1,6 @@
-$(document).ready(function () {
-  const accessToken = getCookie('accessToken');
-
-  if (accessToken) {
-    getUserImageAndUsername();
-  }
+$(document).ready(async function () {
+  await restoreToken();
+  getUserImageAndUsername();
 });
 function getCookie(name) {
   let matches = document.cookie.match(
@@ -15,7 +12,6 @@ function getCookie(name) {
   );
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
-
 function getUserImageAndUsername() {
   const accessToken = getCookie('accessToken');
 
