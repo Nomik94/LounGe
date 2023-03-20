@@ -64,8 +64,9 @@
       },
       // 이벤트
       events: function (info, success, fail) {
+        console.log(info.startStr)
         axios({
-          url: `/api/calendar/events`,
+          url: `/api/calendar/events/${info.startStr}/${info.endStr}`,
           method: 'get',
           headers: {
             Authorization: `${getCookie('accessToken')}`,
@@ -113,6 +114,7 @@
 })();
 
 function listRender(data) {
+  $('#eventList').empty()
   data.forEach((event) => {
     const getDate = event.start.split(' ')[0].split('-');
     let temp_html;

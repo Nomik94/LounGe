@@ -1,7 +1,13 @@
-let selectedTags = [];
-let selectedImages = [];
+$(document).ready(async function () {
+  await restoreToken();
+  const searchResults = JSON.parse(localStorage.getItem('searchResults'));
+  if(!searchResults) {
+    alert(`검색한 태그를 찾을 수 없습니다! \n 다시 태그를 검색해주세요.`)
+  } else {
+    serchTagNewsfeed(searchResults)
+  }
+});
 
-// 유저 쿠키
 function getCookie(name) {
   let matches = document.cookie.match(
     new RegExp(
@@ -13,8 +19,7 @@ function getCookie(name) {
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-// 뉴스피드 리스트 불러와서 뿌려주기
-async function newsfeedlist(data) {
+async function serchTagNewsfeed(data) {
   data.forEach((data) => {
     const creadteDate = new Date(data.createAt);
     const timeOptions = {
@@ -156,14 +161,12 @@ async function newsfeedlist(data) {
   $('#ddd').append(asd);
 }
 
-// 뉴스피드 이미지 클릭시 이미지 팝업 띄워주기
 function popupNewsfeed(src) {
   Swal.fire({
     imageUrl: `https://lounges3.s3.ap-northeast-2.amazonaws.com/${src}`,
   });
 }
 
-// 뉴스피드 삭제하기
 async function deleteNewsfeed(newsfeedId) {
   await Swal.fire({
     title: '해당 뉴스피드를 지울까요?',
@@ -220,12 +223,6 @@ async function deleteNewsfeed(newsfeedId) {
   });
 }
 
-// 뉴스피드 목록 비우기
-function clearnewsfeed() {
-  $('#newsfeedbox').empty();
-}
-
-// 뉴스피드 수정하기
 async function modifyNewsfeed(id) {
   let popupHtml =
     '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
@@ -327,23 +324,3 @@ async function modifyNewsfeed(id) {
     document.body.removeChild(popup);
   });
 }
-
-// 무한 스크롤 설정
-function debounce(callback, limit = 500) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      callback.apply(this, args);
-    }, limit);
-  };
-}
-document.addEventListener(
-  'scroll',
-  debounce((e) => {
-    const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
-    if (clientHeight + scrollTop >= scrollHeight) {
-      limitscroll();
-    }
-  }, 500),
-);
