@@ -182,6 +182,11 @@ export class NewsfeedService {
         const userEmail = feed.user.email;
         const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
         const newsfeedImage = feed.newsImages.map((image) => image.image);
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -194,6 +199,7 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
+          userIdentify: userIdentify
         };
       });
       return result;
@@ -230,6 +236,11 @@ export class NewsfeedService {
         const userEmail = feed.user.email;
         const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
         const newsfeedImage = feed.newsImages.map((image) => image.image);
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -242,6 +253,7 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
+          userIdentify: userIdentify
         };
       });
       return result;
@@ -279,6 +291,11 @@ export class NewsfeedService {
         const userEmail = feed.user.email;
         const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
         const newsfeedImage = feed.newsImages.map((image) => image.image);
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -291,6 +308,7 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
+          userIdentify: userIdentify
         };
       });
       return result;

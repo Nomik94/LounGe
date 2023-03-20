@@ -1,4 +1,5 @@
 let page = 1;
+let tagSerch = 0;
 $(document).ready(async function () {
   await restoreToken();
   readnewsfeedgrouptimeline(page);
@@ -32,8 +33,10 @@ function readnewsfeedgrouptimeline(page) {
 
 // 무한 스크롤
 async function limitscroll() {
-  page++;
-  readnewsfeedgrouptimeline(page);
+  if(tagSerch == 0) {
+    page++;
+    readnewsfeedgrouptimeline(page);
+  }
 }
 
 // 특정 그룹에서 뉴스피드 태그로 검색하기
@@ -55,6 +58,7 @@ function serchtag(tag) {
     .then(async (res) => {
       clearnewsfeed();
       newsfeedlist(res.data);
+      tagSerch = 1;
     })
     .catch(async (err) => {
       if (err.response.data.statusCode === 401) {

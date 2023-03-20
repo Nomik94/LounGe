@@ -1,4 +1,5 @@
 let page = 1;
+let tagSerch = 0;
 $(document).ready(async function () {
   await restoreToken();
   readnewsfeedmygroup(page); // 내가 가입한 모든 그룹의 뉴스피드 보기
@@ -47,8 +48,10 @@ async function readnewsfeedmygroup(page) {
 
 // 무한 스크롤
 function limitscroll() {
-  page++;
-  readnewsfeedmygroup(page);
+  if(tagSerch == 0) {
+    page++;
+    readnewsfeedmygroup(page);
+  }
 }
 
 // 태그 클릭 시 해당 태그로 작성된 뉴스피드 검색
@@ -67,6 +70,7 @@ async function serchtag(tag) {
     .then(async (res) => {
       clearnewsfeed();
       newsfeedlist(res.data);
+      tagSerch = 1;
     })
     .catch(async (err) => {
       if (err.response.data.statusCode === 401) {
