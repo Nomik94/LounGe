@@ -10,4 +10,5 @@ export interface ISerchTagNewsfeed {
   newsfeedImage: string[];
   groupId: number;
   groupName: string;
+  comment: string[];
 }

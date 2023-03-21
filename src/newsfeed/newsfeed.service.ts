@@ -184,6 +184,7 @@ export class NewsfeedService {
         if(userId == checkUserId) {
           userIdentify = 1
         }
+        const comment = feed.comment.map((comment) => comment.content)
         return {
           id: feed.id,
           content: feed.content,
@@ -196,7 +197,8 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
-          userIdentify: userIdentify
+          userIdentify: userIdentify,
+          comment: comment
         };
       });
       return result;
@@ -238,6 +240,7 @@ export class NewsfeedService {
         if(userId == checkUserId) {
           userIdentify = 1
         }
+        const comment = feed.comment.map((comment) => comment.content)
         return {
           id: feed.id,
           content: feed.content,
@@ -250,7 +253,8 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
-          userIdentify: userIdentify
+          userIdentify: userIdentify,
+          comment: comment
         };
       });
       return result;
@@ -293,6 +297,7 @@ export class NewsfeedService {
         if(userId == checkUserId) {
           userIdentify = 1
         }
+        const comment = feed.comment.map((comment) => comment.content)
         return {
           id: feed.id,
           content: feed.content,
@@ -305,7 +310,8 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
-          userIdentify: userIdentify
+          userIdentify: userIdentify,
+          comment: comment
         };
       });
       return result;
@@ -340,6 +346,7 @@ export class NewsfeedService {
         if(userId == checkUserId) {
           userIdentify = 1
         }
+        const comment = feed.comment.map((comment) => comment.content)
         return {
           id: feed.id,
           content: feed.content,
@@ -352,7 +359,8 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
-          userIdentify: userIdentify
+          userIdentify: userIdentify,
+          comment: comment
         };
       });
       return result;
@@ -391,6 +399,7 @@ export class NewsfeedService {
         if(userId == checkUserId) {
           userIdentify = 1
         }
+        const comment = feed.comment.map((comment) => comment.content)
         return {
           id: feed.id,
           content: feed.content,
@@ -403,7 +412,8 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupName: groupName,
           groupId: groupId,
-          userIdentify: userIdentify
+          userIdentify: userIdentify,
+          comment: comment
         };
       });
       return result;
@@ -440,6 +450,7 @@ export class NewsfeedService {
         if(userId == checkUserId) {
           userIdentify = 1
         }
+        const comment = feed.comment.map((comment) => comment.content)
         return {
           id: feed.id,
           content: feed.content,
@@ -452,7 +463,8 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: groupId,
           groupName: groupName,
-          userIdentify: userIdentify
+          userIdentify: userIdentify,
+          comment: comment
         };
       });
       return result;
@@ -500,6 +512,7 @@ export class NewsfeedService {
         if(userId == checkUserId) {
           userIdentify = 1
         }
+        const comment = feed.comment.map((comment) => comment.content)
         return {
           id: feed.id,
           content: feed.content,
@@ -512,7 +525,8 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
-          userIdentify: userIdentify
+          userIdentify: userIdentify,
+          comment: comment
         };
       });
       return result;
