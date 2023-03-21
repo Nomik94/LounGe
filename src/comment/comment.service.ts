@@ -24,21 +24,24 @@ export class CommentService {
     });
   }
 
-  // 댓글 유저 정보 조회
-  async getUserByComment(commentId: number): Promise<Comment[]> {
-    const commentUser = await this.commentRepository.getUserByComment(
-      commentId,
-    );
-    return commentUser;
-  }
-
   // 뉴스피드 게시물에 대한 모든 댓글 조회
-  async getCommentByNewsfeed(newsfeedId: number): Promise<Comment[]> {
+  async getCommentByNewsfeed(newsfeedId: number): Promise<
+    | Comment[]
+    | {
+        message: string;
+      }
+  > {
     const newsfeed = await this.newsfeedRepository.findCommentByNewsfeed(
       newsfeedId,
     );
-
-    return await this.getUserByComment(newsfeed.comment.id);
+    const commentList = newsfeed.comment;
+    if (commentList.length < 1) {
+      return { message: '댓글이 없습니다.' };
+    }
+    const commentId = commentList.map((comment) => ({
+      id: comment.id,
+    }));
+    return await this.commentRepository.getUserByComment(commentId);
   }
 
   // 댓글 수정

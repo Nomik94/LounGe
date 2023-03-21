@@ -45,5 +45,5 @@ export class NewsFeed extends BaseEntity {
   group: Group;
 
   @OneToMany(() => Comment, (comment) => comment.newsfeed)
-  comment: Comment;
+  comment: Comment[];
 }

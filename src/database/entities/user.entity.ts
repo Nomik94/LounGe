@@ -51,5 +51,5 @@ export class User extends BaseEntity {
   userGroups: UserGroup[];
 
   @OneToMany(() => Comment, (comment) => comment.user)
-  comment: Comment;
+  comment: Comment[];
 }

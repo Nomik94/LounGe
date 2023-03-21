@@ -25,6 +25,8 @@ export class CommentController {
     @GetUser() user: IUser,
     @Body() data: CommentDTO,
   ): Promise<void> {
+    console.log(newsfeedId);
+
     const userId = user.id;
     return await this.commentService.createComment(userId, newsfeedId, data);
   }

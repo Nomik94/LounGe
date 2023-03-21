@@ -8,12 +8,14 @@ export class CommentRepository extends Repository<Comment> {
     super(Comment, dataSource.createEntityManager());
   }
 
-  async getUserByComment(commentId: number) {
-    return await this.find({
+  async getUserByComment(commentId) {
+    const comment = await this.find({
       select: ['id', 'content', 'createdAt', 'user'],
       relations: ['user'],
-      where: { id: commentId },
+      where: commentId,
       order: { createdAt: 'desc' },
     });
+
+    return comment;
   }
 }
