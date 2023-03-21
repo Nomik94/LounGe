@@ -27,7 +27,7 @@ export class GroupService {
     private readonly tagGroupRepository: TagGroupRepository,
   ) {}
 
-  // 전체 그룹 리스트
+  // 미가입 그룹 리스트
   async getAllGroupList(userId: number, page: number): Promise<IMapGroups[]> {
     const pageSize = 9;
     const foundUserWithGroups = await this.userGroupRepository.find({
@@ -36,6 +36,24 @@ export class GroupService {
 
     const groupIds = foundUserWithGroups.map((data) => data.groupId);
     const getGroupsWithOutIds = await this.groupRepository.getGroupsWithOutIds(
+      groupIds,
+      page,
+      pageSize,
+    );
+    const mapGroupList = this.mapGroupsWithTags(getGroupsWithOutIds);
+
+    return mapGroupList;
+  }
+
+  // 가입 신청 그룹 리스트
+  async getGroupJoinList(userId: number, page: number): Promise<IMapGroups[]> {
+    const pageSize = 9;
+    const foundUserWithGroups = await this.userGroupRepository.find({
+      where: { userId, role: '가입대기' },
+    });
+
+    const groupIds = foundUserWithGroups.map((data) => data.groupId);
+    const getGroupsWithOutIds = await this.groupRepository.getGroupJoinList(
       groupIds,
       page,
       pageSize,
@@ -142,7 +160,11 @@ export class GroupService {
   }
 
   // 그룹 생성
-  async createGroup(file: IFile, data: CreateGroupDto, userId: number): Promise<void> {
+  async createGroup(
+    file: IFile,
+    data: CreateGroupDto,
+    userId: number,
+  ): Promise<void> {
     const tagArray = data.tag.split(',');
     if (tagArray.find((tag) => tag.length >= 11)) {
       throw new BadRequestException(

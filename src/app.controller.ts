@@ -80,4 +80,8 @@ export class AppController {
   @Get('/serchbar/tag')
   @Render('serchnewsfeedtag')
   serchbar() {}
+
+  @Get('/groups/joinRequest')
+  @Render('joingroups')
+  joinGroupList(){}
 }
