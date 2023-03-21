@@ -469,3 +469,44 @@ document.addEventListener(
     }
   }, 500),
 );
+
+// 뉴스피드 박스 생성하기
+function createNewsfeedBox() {
+  let create_temp_html= `
+  <div class="content-grid">
+  <!-- GRID -->
+  <div class="grid grid-1-8-1 mobile-prefer-content">
+    <!-- GRID COLUMN -->
+    <div class="grid-column">
+    <!-- 뉴스피드 목록 -->
+    <div class="newsfeedbox" id="newsfeedbox">
+    </div>
+      <!-- LOADER BARS -->
+      <div class="loader-bars" id="loader">
+        <div class="loader-bar"></div>
+        <div class="loader-bar"></div>
+        <div class="loader-bar"></div>
+        <div class="loader-bar"></div>
+        <div class="loader-bar"></div>
+        <div class="loader-bar"></div>
+        <div class="loader-bar"></div>
+        <div class="loader-bar"></div>
+      </div>
+      <!-- /LOADER BARS -->
+    </div>
+    <!-- /GRID COLUMN -->
+  </div>
+  <!-- /GRID -->
+</div>
+`
+document.body.innerHTML = create_temp_html
+}
+
+// 섹션 타이틀 뉴스피드로 이름 바꾸기
+function changeTitle(){
+ let sectionTitle = document.querySelector('.section-title')
+ if(sectionTitle) {
+  console.log("섹션값을 변경합니다.");
+   sectionTitle.textContent = "뉴스피드 태그 검색"
+ }
+}
