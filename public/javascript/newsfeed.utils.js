@@ -16,13 +16,13 @@ function getCookie(name) {
 // 뉴스피드 리스트 불러와서 뿌려주기
 async function newsfeedlist(data) {
   data.forEach((data) => {
-    const creadteDate = new Date(data.createAt);
+    const createDate = new Date(data.createAt);
     const timeOptions = {
       hour12: false,
       hour: '2-digit',
       minute: '2-digit',
     };
-    const creadteDateFormat = creadteDate.toLocaleDateString(
+    const createDateFormat = createDate.toLocaleDateString(
       'Ko-KR',
       timeOptions,
     );
@@ -175,7 +175,9 @@ async function newsfeedlist(data) {
               <!-- USER AVATAR CONTENT -->
               <div class="user-avatar-content">
                 <!-- HEXAGON -->
-                <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.userImage}"></div>
+                <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
+                  data.userImage
+                }"></div>
                 <!-- /HEXAGON -->
               </div>
               <!-- /USER AVATAR CONTENT -->
@@ -183,7 +185,9 @@ async function newsfeedlist(data) {
               <!-- USER AVATAR PROGRESS -->
               <div class="user-avatar-progress">
                 <!-- HEXAGON -->
-                <div class="hexagon-image-40-44" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.userImage}"></div>
+                <div class="hexagon-image-40-44" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
+                  data.userImage
+                }"></div>
                 <!-- /HEXAGON -->
               </div>
               <!-- /USER AVATAR PROGRESS -->
@@ -215,7 +219,7 @@ async function newsfeedlist(data) {
           <!-- /USER STATUS TEXT -->
       
           <!-- USER STATUS TEXT -->
-          <p class="user-status-text small">${creadteDateFormat}</p>
+          <p class="user-status-text small">${createDateFormat}</p>
           <!-- /USER STATUS TEXT -->
         </div>
         <!-- /USER STATUS -->
@@ -247,13 +251,57 @@ async function newsfeedlist(data) {
         <!-- /TAG LIST -->
       <br>
 
+      <!-- CONTENT ACTIONS -->
+              <div class="content-actions">
+              <!-- CONTENT ACTION -->
+              <div class="content-action">
+              </div>
+              <!-- /CONTENT ACTION -->
+                <!-- CONTENT ACTION -->
+                <div class="content-action">
+                  <!-- META LINE -->
+                  <div class="meta-line">
+                    <!-- META LINE LINK -->
+                    <p class="meta-line-link">댓글 2개</p>
+                    <!-- /META LINE LINK -->
+                  </div>
+                  <!-- /META LINE -->
+                </div>
+                <!-- /CONTENT ACTION -->
+              </div>
+              <!-- /CONTENT ACTIONS -->
       </div>
       <!-- /WIDGET BOX STATUS CONTENT -->
     </div>
     <!-- /WIDGET BOX STATUS -->
-      </div>`;
-      $('#newsfeedbox').append(temp_html);
-    }
+    <!-- POST OPTIONS -->
+    <div class="post-options">
+    <!-- POST OPTION -->
+    <div class="post-option reaction-options-dropdown-trigger">
+    </div>
+    <!-- /POST OPTION -->
+      <!-- POST OPTION -->
+      <div class="post-option" onclick="getNewsfeedId(${data.id})">
+        <!-- POST OPTION ICON -->
+        <svg class="post-option-icon icon-comment">
+          <use xlink:href="#svg-comment"></use>
+        </svg>
+        <!-- /POST OPTION ICON -->
+
+        <!-- POST OPTION TEXT -->
+        <p class="post-option-text" >댓글 달기</p>
+        <!-- /POST OPTION TEXT -->
+      </div>
+      <!-- /POST OPTION -->
+      <!-- POST OPTION -->
+      <div class="post-option">
+        
+      </div>
+      <!-- /POST OPTION -->
+    </div>
+    <!-- /POST OPTIONS -->
+  </div>`;
+    $('#newsfeedbox').append(temp_html);
   });
   const asd = `
   <script src="/js/global/global.hexagons.js"></script>
@@ -390,8 +438,7 @@ async function modifyNewsfeed(id) {
         title: '사진은 최대 5장만 가능합니다.',
         text: '많은 추억을 저장하지 못해 죄송합니다 T^T',
       });
-    }
-    else {
+    } else {
       axios({
         url: `/api/newsfeed/newsfeed/${id}`,
         method: 'put',
@@ -470,43 +517,7 @@ document.addEventListener(
   }, 500),
 );
 
-// 뉴스피드 박스 생성하기
-function createNewsfeedBox() {
-  let create_temp_html= `
-  <div class="content-grid">
-  <!-- GRID -->
-  <div class="grid grid-1-8-1 mobile-prefer-content">
-    <!-- GRID COLUMN -->
-    <div class="grid-column">
-    <!-- 뉴스피드 목록 -->
-    <div class="newsfeedbox" id="newsfeedbox">
-    </div>
-      <!-- LOADER BARS -->
-      <div class="loader-bars" id="loader">
-        <div class="loader-bar"></div>
-        <div class="loader-bar"></div>
-        <div class="loader-bar"></div>
-        <div class="loader-bar"></div>
-        <div class="loader-bar"></div>
-        <div class="loader-bar"></div>
-        <div class="loader-bar"></div>
-        <div class="loader-bar"></div>
-      </div>
-      <!-- /LOADER BARS -->
-    </div>
-    <!-- /GRID COLUMN -->
-  </div>
-  <!-- /GRID -->
-</div>
-`
-document.body.innerHTML = create_temp_html
-}
-
-// 섹션 타이틀 뉴스피드로 이름 바꾸기
-function changeTitle(){
- let sectionTitle = document.querySelector('.section-title')
- if(sectionTitle) {
-  console.log("섹션값을 변경합니다.");
-   sectionTitle.textContent = "뉴스피드 태그 검색"
- }
+async function getNewsfeedId(id) {
+  localStorage.setItem('newsfeedId', JSON.stringify(id));
+  location.href = '/newsfeed/comment';
 }

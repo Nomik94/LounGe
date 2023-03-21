@@ -126,4 +126,12 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
       take: pageSize,
     });
   }
+
+  async findCommentByNewsfeed(newsfeedId: number) {
+    return await this.findOne({
+      select: ['id', 'comment'],
+      relations: ['comment'],
+      where: { id: newsfeedId },
+    });
+  }
 }

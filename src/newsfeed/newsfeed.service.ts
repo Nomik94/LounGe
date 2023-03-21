@@ -70,10 +70,7 @@ export class NewsfeedService {
       if (file.length !== 0) {
         const fileNames = file.map((file) => file.key);
         const promises = fileNames.map((key) =>
-          this.newsfeedImageRepository.createNewsfeedImage(
-            key,
-            newsfeedId.id,
-          ),
+          this.newsfeedImageRepository.createNewsfeedImage(key, newsfeedId.id),
         );
         await Promise.all(promises);
       }
@@ -467,8 +464,11 @@ export class NewsfeedService {
   }
 
   // 서치바에서 뉴스피드 태그 검색
-  async serchBarTagNewsfeed(data, userId:number) : Promise<ISerchNewsfeedList[]> {
-    try{
+  async serchBarTagNewsfeed(
+    data,
+    userId: number,
+  ): Promise<ISerchNewsfeedList[]> {
+    try {
       const tag = data;
       const serchTag = await this.tagRepository.serchTagWord(tag);
       if(!serchTag[0]) {
@@ -516,7 +516,7 @@ export class NewsfeedService {
         };
       });
       return result;
-    } catch(err) {
+    } catch (err) {
       throw new InternalServerErrorException(
         '찾으시는 태그가 없습니다.',
       );
