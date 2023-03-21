@@ -49,7 +49,7 @@ export class GroupRepository extends Repository<Group> {
     });
   }
 
-  async getGroupsWithIds(groupIds: { id: number }[]): Promise<Group[]> {
+  async getGroupsWithIds(groupIds): Promise<Group[]> {
     return await this.find({
       select: [
         'id',
