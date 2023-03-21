@@ -1,0 +1,203 @@
+<html lang='ko'>
+  <head>
+    <meta charset='utf-8' />
+    <meta
+      name='viewport'
+      content='width=device-width, initial-scale=1, shrink-to-fit=no'
+    />
+    <!-- bootstrap 4.3.1 -->
+    <link rel='stylesheet' href='/css/vendor/bootstrap.min.css' />
+    <!-- styles -->
+    <link rel='stylesheet' href='/css/styles.min.css' />
+    <!-- simplebar styles -->
+    <link rel='stylesheet' href='/css/vendor/simplebar.css' />
+    <!-- favicon -->
+    <link rel='icon' href='/img/favicon.ico' />
+    <title>LounGe</title>
+  </head>
+  <body>
+  {{>loader}}
+  {{>header}}
+
+    <!-- CONTENT GRID -->
+    <div class='content-grid'>
+      <!-- GRID -->
+      <div class='grid grid-12-3'>
+        <!-- FORUM CONTENT -->
+        <div class='forum-content'>
+          <!-- FORUM POST LIST -->
+          <div class='forum-post-list' id="commentList">
+          
+          </div>
+          <!-- /FORUM POST LIST -->
+
+          <!-- SECTION PAGER BAR WRAP -->
+          <div class='section-pager-bar-wrap align-right'>
+            <!-- SECTION PAGER BAR -->
+            <div class='section-pager-bar'>
+              <!-- SECTION PAGER -->
+              <div class='section-pager'>
+                <!-- SECTION PAGER ITEM -->
+                <div class='section-pager-item active'>
+                  <!-- SECTION PAGER ITEM TEXT -->
+                  <p class='section-pager-item-text'>01</p>
+                  <!-- /SECTION PAGER ITEM TEXT -->
+                </div>
+                <!-- /SECTION PAGER ITEM -->
+
+                <!-- SECTION PAGER ITEM -->
+                <div class='section-pager-item'>
+                  <!-- SECTION PAGER ITEM TEXT -->
+                  <p class='section-pager-item-text'>02</p>
+                  <!-- /SECTION PAGER ITEM TEXT -->
+                </div>
+                <!-- /SECTION PAGER ITEM -->
+
+                <!-- SECTION PAGER ITEM -->
+                <div class='section-pager-item'>
+                  <!-- SECTION PAGER ITEM TEXT -->
+                  <p class='section-pager-item-text'>03</p>
+                  <!-- /SECTION PAGER ITEM TEXT -->
+                </div>
+                <!-- /SECTION PAGER ITEM -->
+
+                <!-- SECTION PAGER ITEM -->
+                <div class='section-pager-item'>
+                  <!-- SECTION PAGER ITEM TEXT -->
+                  <p class='section-pager-item-text'>04</p>
+                  <!-- /SECTION PAGER ITEM TEXT -->
+                </div>
+                <!-- /SECTION PAGER ITEM -->
+
+                <!-- SECTION PAGER ITEM -->
+                <div class='section-pager-item'>
+                  <!-- SECTION PAGER ITEM TEXT -->
+                  <p class='section-pager-item-text'>05</p>
+                  <!-- /SECTION PAGER ITEM TEXT -->
+                </div>
+                <!-- /SECTION PAGER ITEM -->
+
+                <!-- SECTION PAGER ITEM -->
+                <div class='section-pager-item'>
+                  <!-- SECTION PAGER ITEM TEXT -->
+                  <p class='section-pager-item-text'>06</p>
+                  <!-- /SECTION PAGER ITEM TEXT -->
+                </div>
+                <!-- /SECTION PAGER ITEM -->
+              </div>
+              <!-- /SECTION PAGER -->
+
+              <!-- SECTION PAGER CONTROLS -->
+              <div class='section-pager-controls'>
+                <!-- SLIDER CONTROL -->
+                <div class='slider-control left disabled'>
+                  <!-- SLIDER CONTROL ICON -->
+                  <svg class='slider-control-icon icon-small-arrow'>
+                    <use xlink:href='#svg-small-arrow'></use>
+                  </svg>
+                  <!-- /SLIDER CONTROL ICON -->
+                </div>
+                <!-- /SLIDER CONTROL -->
+
+                <!-- SLIDER CONTROL -->
+                <div class='slider-control right'>
+                  <!-- SLIDER CONTROL ICON -->
+                  <svg class='slider-control-icon icon-small-arrow'>
+                    <use xlink:href='#svg-small-arrow'></use>
+                  </svg>
+                  <!-- /SLIDER CONTROL ICON -->
+                </div>
+                <!-- /SLIDER CONTROL -->
+              </div>
+              <!-- /SECTION PAGER CONTROLS -->
+            </div>
+            <!-- /SECTION PAGER BAR -->
+          </div>
+          <!-- /SECTION PAGER BAR WRAP -->
+
+          <!-- QUICK POST -->
+          <div class='quick-post medium'>
+            <!-- QUICK POST HEADER -->
+            <div class='quick-post-header'>
+              <!-- QUICK POST HEADER TITLE -->
+              <p class='quick-post-header-title'>댓글</p>
+              <!-- /QUICK POST HEADER TITLE -->
+            </div>
+            <!-- /QUICK POST HEADER -->
+
+            <!-- QUICK POST BODY -->
+            <div class='quick-post-body'>
+              <!-- FORM -->
+              <form class='form'>
+                <!-- FORM ROW -->
+                <div class='form-row'>
+                  <!-- FORM ITEM -->
+                  <div class='form-item'>
+                    <!-- FORM TEXTAREA -->
+                    <div class='form-textarea'>
+                      <textarea
+                        id='forum-post-text'
+                        name='forum-post-text'
+                        placeholder='내용을 입력해주세요.'
+                      ></textarea>
+                    </div>
+                    <!-- /FORM TEXTAREA -->
+                  </div>
+                  <!-- /FORM ITEM -->
+                </div>
+                <!-- /FORM ROW -->
+              </form>
+              <!-- /FORM -->
+            </div>
+            <!-- /QUICK POST BODY -->
+
+            <!-- QUICK POST FOOTER -->
+            <div class='quick-post-footer'>
+              <!-- QUICK POST FOOTER ACTIONS -->
+              <div class='quick-post-footer-actions'>
+              </div>
+              <!-- /QUICK POST FOOTER ACTIONS -->
+
+              <!-- QUICK POST FOOTER ACTIONS -->
+              <div class='quick-post-footer-actions'>
+                <!-- BUTTON -->
+                <p class='button secondary'>댓글 달기</p>
+                <!-- /BUTTON -->
+              </div>
+              <!-- /QUICK POST FOOTER ACTIONS -->
+            </div>
+            <!-- /QUICK POST FOOTER -->
+          </div>
+          <!-- /QUICK POST -->
+        </div>
+        <!-- /FORUM CONTENT -->
+      </div>
+      <!-- /GRID -->
+    </div>
+    <!-- /CONTENT GRID -->
+
+    <!-- app -->
+    <script src='/js/utils/app.js'></script>
+    <!-- page loader -->
+    <script src='/js/utils/page-loader.js'></script>
+    <!-- simplebar -->
+    <script src='/js/vendor/simplebar.min.js'></script>
+    <!-- XM_Plugins -->
+    <script src='/js/vendor/xm_plugins.min.js'></script>
+    <!-- global.tooltips -->
+    <script src='/js/global/global.tooltips.js'></script>
+    <!-- header -->
+    <script src='/js/header/header.js'></script>
+    <!-- sidebar -->
+    <script src='/js/sidebar/sidebar.js'></script>
+    <!-- content -->
+    <script src='/js/content/content.js'></script>
+    <!-- form.utils -->
+    <script src='/js/form/form.utils.js'></script>
+    <!-- SVG icons -->
+    <script src='/js/utils/svg-loader.js'></script>
+
+    <script src='/javascript/comment.js'></script>
+    <div id="commentjs"></div>
+  </body>
+</html>
