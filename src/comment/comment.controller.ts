@@ -24,7 +24,7 @@ export class CommentController {
     @Param('newsfeedId') newsfeedId: number,
     @GetUser() user: IUser,
     @Body() data: CommentDTO,
-  ) {
+  ): Promise<void> {
     const userId = user.id;
     return await this.commentService.createComment(userId, newsfeedId, data);
   }
@@ -61,7 +61,7 @@ export class CommentController {
     @Param('newsfeedId') newsfeedId: number,
     @Param('commentId') commentId: number,
     @GetUser() user: IUser,
-  ) {
+  ): Promise<void> {
     const userId = user.id;
     await this.commentService.deleteComment(userId, newsfeedId, commentId);
   }

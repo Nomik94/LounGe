@@ -3,21 +3,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CommentRepository } from 'src/common/repository/comment.repository';
 import { NewsfeedRepository } from 'src/common/repository/newsfeed.repository';
 import { Comment } from 'src/database/entities/comment.entity';
-import { NewsFeed } from 'src/database/entities/newsFeed.entity';
-import { Repository } from 'typeorm';
 import { CommentDTO } from './dto/comment.dto';
 
 @Injectable()
 export class CommentService {
   constructor(
-    @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
-    @InjectRepository(NewsFeed)
-    private readonly newsfeedRepository: Repository<NewsFeed>,
-    private readonly newsfeedCustomRepository: NewsfeedRepository,
+    private readonly commentRepository: CommentRepository,
+    private readonly newsfeedRepository: NewsfeedRepository,
   ) {}
 
   // 댓글 생성
@@ -29,13 +24,21 @@ export class CommentService {
     });
   }
 
+  // 댓글 유저 정보 조회
+  async getUserByComment(commentId: number): Promise<Comment[]> {
+    const commentUser = await this.commentRepository.getUserByComment(
+      commentId,
+    );
+    return commentUser;
+  }
+
   // 뉴스피드 게시물에 대한 모든 댓글 조회
-  async getCommentByNewsfeed(newsfeedId: number): Promise<NewsFeed> {
-    return await this.newsfeedRepository.findOne({
-      select: ['id', 'comment'],
-      relations: ['comment'],
-      where: { id: newsfeedId },
-    });
+  async getCommentByNewsfeed(newsfeedId: number): Promise<Comment[]> {
+    const newsfeed = await this.newsfeedRepository.findCommentByNewsfeed(
+      newsfeedId,
+    );
+
+    return await this.getUserByComment(newsfeed.comment.id);
   }
 
   // 댓글 수정
@@ -45,7 +48,7 @@ export class CommentService {
     commentId: number,
     data: CommentDTO,
   ) {
-    const checkNewsfeed = await this.newsfeedCustomRepository.checkNewsfeed(
+    const checkNewsfeed = await this.newsfeedRepository.checkNewsfeed(
       newsfeedId,
     );
     const content = data.content;
