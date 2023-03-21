@@ -1,13 +1,38 @@
+let page = 1;
 $(document).ready(async function () {
   await restoreToken();
   const newsfeedId = await JSON.parse(localStorage.getItem('newsfeedId'));
-  getCommentList(newsfeedId);
+  getCommentList(newsfeedId, page);
   const createButton = `<!-- BUTTON -->
   <p class='button secondary' onclick="createContent(${newsfeedId})">댓글 달기</p>
   <!-- /BUTTON -->`;
   $('#createButton').append(createButton);
 });
 
+async function limitscroll() {
+  page++;
+  const newsfeedId = await JSON.parse(localStorage.getItem('newsfeedId'));
+  getCommentList(newsfeedId, page);
+}
+
+function debounce(callback, limit = 500) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback.apply(this, args);
+    }, limit);
+  };
+}
+document.addEventListener(
+  'scroll',
+  debounce((e) => {
+    const { clientHeight, scrollTop, scrollHeight } = e.target.scrollingElement;
+    if (clientHeight + scrollTop >= scrollHeight) {
+      limitscroll();
+    }
+  }, 500),
+);
 function getCookie(name) {
   let matches = document.cookie.match(
     new RegExp(
@@ -65,32 +90,130 @@ async function createContent(newsfeedId) {
   }
 }
 
-async function modifyComment(newsfeedId, commentId) {}
+async function modifyComment(newsfeedId, commentId) {
+  const content = document.getElementById('commentContent').value;
+  if (!content) {
+    await Swal.fire({
+      icon: 'error',
+      text: `내용을 입력해주세요.`,
+    });
+  } else {
+    axios({
+      url: `/api/comment/${newsfeedId}/${commentId}`,
+      method: 'put',
+      headers: {
+        Authorization: `${getCookie('accessToken')}`,
+      },
+      data: { content },
+    })
+      .then(async (res) => {
+        await Swal.fire({
+          icon: 'success',
+          text: `댓글이 수정되었습니다.`,
+        });
+        window.location.reload();
+      })
+      .catch(async function (error) {
+        if (error.response.data.statusCode === 401) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'center-center',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+          await Toast.fire({
+            icon: 'error',
+            title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+          });
+          window.location.replace('/');
+        }
+        Swal.fire({
+          icon: 'error',
+          text: `${error.response.data.message}`,
+        });
+      });
+  }
+}
 
-async function deleteComment(newsfeedId, commentId) {}
+async function deleteComment(newsfeedId, commentId) {
+  await Swal.fire({
+    text: `댓글을 삭제하시겠습니까?`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '승인',
+    cancelButtonText: '취소',
+    reverseButtons: false, // 버튼 순서 거꾸로
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios({
+        url: `/api/comment/${newsfeedId}/${commentId}`,
+        method: 'delete',
+        headers: {
+          Authorization: `${getCookie('accessToken')}`,
+        },
+      })
+        .then(async (res) => {
+          await Swal.fire({
+            icon: 'success',
+            text: `댓글이 삭제되었습니다.`,
+          });
+          window.location.reload();
+        })
+        .catch(async function (error) {
+          if (error.response.data.statusCode === 401) {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'center-center',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
+            await Toast.fire({
+              icon: 'error',
+              title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+            });
+            window.location.replace('/');
+          }
+          Swal.fire({
+            icon: 'error',
+            text: `${error.response.data.message}`,
+          });
+        });
+    }
+  });
+}
 
-async function getCommentList(newsfeedId) {
+async function getCommentList(newsfeedId, page) {
   axios({
-    url: `/api/comment/${newsfeedId}`,
+    url: `/api/comment/${newsfeedId}/${page}`,
     method: 'get',
     headers: {
       Authorization: `${getCookie('accessToken')}`,
     },
-  })
-    .then((res) => {
-      const commentList = res.data;
-      commentList.forEach((data) => {
-        const createDate = new Date(data.createdAt);
-        const timeOptions = {
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-        };
-        const createDateFormat = createDate.toLocaleDateString(
-          'Ko-KR',
-          timeOptions,
-        );
-        let temp_html = `   <!-- FORUM POST -->
+  }).then(async (res) => {
+    if (res.data.length < 9) {
+      document.getElementById('loader').innerHTML = '';
+    }
+    await getComment(res.data, newsfeedId);
+  });
+}
+
+async function getComment(data, newsfeedId) {
+  data.forEach((data) => {
+    const createDate = new Date(data.createdAt);
+    const timeOptions = {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+    };
+    const createDateFormat = createDate.toLocaleDateString(
+      'Ko-KR',
+      timeOptions,
+    );
+    let temp_html = `   <!-- FORUM POST -->
       <div class='forum-post' >
         <!-- FORUM POST META -->
         <div class='forum-post-meta'>
@@ -101,7 +224,7 @@ async function getCommentList(newsfeedId) {
           <!-- FORUM POST ACTIONS -->
           <div class='forum-post-actions'>
             <!-- FORUM POST ACTION -->
-            <p class='forum-post-action' onclick="modifyComment(${newsfeedId},${data.id})">수정</p>
+            <p class='forum-post-action popup-manage-group-trigger-1' onclick="modifyCommentButton(${newsfeedId},${data.id})">수정</p>
             <!-- /FORUM POST ACTION -->
 
             <!-- FORUM POST ACTION -->
@@ -203,33 +326,21 @@ async function getCommentList(newsfeedId) {
         <!-- /FORUM POST CONTENT -->
       </div>
       <!-- /FORUM POST -->`;
-        $('#commentList').append(temp_html);
-      });
-      const js = `<!-- global.hexagons -->
+    $('#commentList').append(temp_html);
+  });
+
+  const js = `<!-- global.hexagons -->
     <script src="/js/global/global.hexagons.js"></script>
-    <script src="/js/utils/liquidify.js"></script>`;
-      $('#commentjs').append(js);
-    })
-    .catch(async function (error) {
-      if (error.response) {
-        if (error.response.data.statusCode === 401) {
-          const Toast = Swal.mixin({
-            toast: true,
-            position: 'center-center',
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true,
-          });
-          await Toast.fire({
-            icon: 'error',
-            title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
-          });
-          window.location.replace('/');
-        }
-        Swal.fire({
-          icon: 'error',
-          text: `${error.response.data.message}`,
-        });
-      }
-    });
+    <script src="/js/utils/liquidify.js"></script>
+    <!-- global.accordions -->
+    <script src="/js/global/global.accordions.js"></script>
+    <!-- global.popups -->
+    <script src="/js/global/global.popups.js"></script>`;
+  $('#commentjs').append(js);
+}
+
+async function modifyCommentButton(newsfeedId, commentId) {
+  document
+    .getElementById('modifyButton')
+    .setAttribute('onClick', `modifyComment(${newsfeedId},${commentId})`);
 }

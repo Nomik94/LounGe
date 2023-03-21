@@ -25,23 +25,31 @@ export class CommentService {
   }
 
   // 뉴스피드 게시물에 대한 모든 댓글 조회
-  async getCommentByNewsfeed(newsfeedId: number): Promise<
+  async getCommentByNewsfeed(
+    newsfeedId: number,
+    page: number,
+  ): Promise<
     | Comment[]
     | {
         message: string;
       }
   > {
+    const pageSize = 10;
     const newsfeed = await this.newsfeedRepository.findCommentByNewsfeed(
       newsfeedId,
     );
     const commentList = newsfeed.comment;
     if (commentList.length < 1) {
-      return { message: '댓글이 없습니다.' };
+      return null;
     }
     const commentId = commentList.map((comment) => ({
       id: comment.id,
     }));
-    return await this.commentRepository.getUserByComment(commentId);
+    return await this.commentRepository.getUserByComment(
+      commentId,
+      page,
+      pageSize,
+    );
   }
 
   // 댓글 수정
@@ -67,10 +75,16 @@ export class CommentService {
 
   // 댓글 삭제
   async deleteComment(userId: number, newsfeedId: number, commentId: number) {
-    await this.commentRepository.softDelete({
-      id: commentId,
-      user: { id: userId },
-      newsfeed: { id: newsfeedId },
-    });
+    const checkComment = await this.commentRepository.checkComment(commentId);
+    const checkUserId = checkComment.user['id'];
+    if (userId !== checkUserId) {
+      throw new ForbiddenException('권한이 존재하지 않습니다.');
+    } else {
+      await this.commentRepository.softDelete({
+        id: commentId,
+        user: { id: userId },
+        newsfeed: { id: newsfeedId },
+      });
+    }
   }
 }

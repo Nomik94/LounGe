@@ -25,17 +25,18 @@ export class CommentController {
     @GetUser() user: IUser,
     @Body() data: CommentDTO,
   ): Promise<void> {
-    console.log(newsfeedId);
-
     const userId = user.id;
     return await this.commentService.createComment(userId, newsfeedId, data);
   }
 
   // 뉴스피드 게시물에 대한 모든 댓글 조회 API
-  @Get('/:newsfeedId')
+  @Get('/:newsfeedId/:page')
   @UseGuards(JwtAuthGuard)
-  async getCommentByNewsfeed(@Param('newsfeedId') newsfeedId: number) {
-    return await this.commentService.getCommentByNewsfeed(newsfeedId);
+  async getCommentByNewsfeed(
+    @Param('newsfeedId') newsfeedId: number,
+    @Param('page') page: number,
+  ) {
+    return await this.commentService.getCommentByNewsfeed(newsfeedId, page);
   }
 
   // 댓글 수정 API
