@@ -35,8 +35,14 @@ export class CommentController {
   async getCommentByNewsfeed(
     @Param('newsfeedId') newsfeedId: number,
     @Param('page') page: number,
+    @GetUser() user: IUser,
   ) {
-    return await this.commentService.getCommentByNewsfeed(newsfeedId, page);
+    const userId = user.id;
+    return await this.commentService.getCommentByNewsfeed(
+      userId,
+      newsfeedId,
+      page,
+    );
   }
 
   // 댓글 수정 API

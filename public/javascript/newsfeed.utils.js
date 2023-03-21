@@ -69,7 +69,9 @@ async function newsfeedlist(data) {
                 <!-- USER AVATAR CONTENT -->
                 <div class="user-avatar-content">
                   <!-- HEXAGON -->
-                  <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.userImage}"></div>
+                  <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
+                    data.userImage
+                  }"></div>
                   <!-- /HEXAGON -->
                 </div>
                 <!-- /USER AVATAR CONTENT -->
@@ -77,7 +79,9 @@ async function newsfeedlist(data) {
                 <!-- USER AVATAR PROGRESS -->
                 <div class="user-avatar-progress">
                   <!-- HEXAGON -->
-                  <div class="hexagon-image-40-44" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.userImage}"></div>
+                  <div class="hexagon-image-40-44" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
+                    data.userImage
+                  }"></div>
                   <!-- /HEXAGON -->
                 </div>
                 <!-- /USER AVATAR PROGRESS -->
@@ -109,7 +113,7 @@ async function newsfeedlist(data) {
             <!-- /USER STATUS TEXT -->
         
             <!-- USER STATUS TEXT -->
-            <p class="user-status-text small">${creadteDateFormat}</p>
+            <p class="user-status-text small">${createDateFormat}</p>
             <!-- /USER STATUS TEXT -->
           </div>
           <!-- /USER STATUS -->
@@ -140,13 +144,57 @@ async function newsfeedlist(data) {
             </div>
           <!-- /TAG LIST -->
         <br>
-  
+        <!-- CONTENT ACTIONS -->
+        <div class="content-actions">
+        <!-- CONTENT ACTION -->
+        <div class="content-action">
+        </div>
+        <!-- /CONTENT ACTION -->
+          <!-- CONTENT ACTION -->
+          <div class="content-action">
+            <!-- META LINE -->
+            <div class="meta-line">
+              <!-- META LINE LINK -->
+              <p class="meta-line-link">댓글 2개</p>
+              <!-- /META LINE LINK -->
+            </div>
+            <!-- /META LINE -->
+          </div>
+          <!-- /CONTENT ACTION -->
+        </div>
+        <!-- /CONTENT ACTIONS -->
         </div>
         <!-- /WIDGET BOX STATUS CONTENT -->
       </div>
       <!-- /WIDGET BOX STATUS -->
-    </div>`;
-    $('#newsfeedbox').append(temp_html);
+    </div>
+    <!-- POST OPTIONS -->
+    <div class="post-options">
+    <!-- POST OPTION -->
+    <div class="post-option reaction-options-dropdown-trigger">
+    </div>
+    <!-- /POST OPTION -->
+      <!-- POST OPTION -->
+      <div class="post-option" onclick="getNewsfeedId(${data.id})">
+        <!-- POST OPTION ICON -->
+        <svg class="post-option-icon icon-comment">
+          <use xlink:href="#svg-comment"></use>
+        </svg>
+        <!-- /POST OPTION ICON -->
+
+        <!-- POST OPTION TEXT -->
+        <p class="post-option-text" >댓글 보기</p>
+        <!-- /POST OPTION TEXT -->
+      </div>
+      <!-- /POST OPTION -->
+      <!-- POST OPTION -->
+      <div class="post-option">
+        
+      </div>
+      <!-- /POST OPTION -->
+    </div>
+    <!-- /POST OPTIONS -->`;
+      $('#newsfeedbox').append(temp_html);
     } else {
       let temp_html = `
     <br>
@@ -289,7 +337,7 @@ async function newsfeedlist(data) {
         <!-- /POST OPTION ICON -->
 
         <!-- POST OPTION TEXT -->
-        <p class="post-option-text" >댓글 달기</p>
+        <p class="post-option-text" >댓글 보기</p>
         <!-- /POST OPTION TEXT -->
       </div>
       <!-- /POST OPTION -->
@@ -301,13 +349,14 @@ async function newsfeedlist(data) {
     </div>
     <!-- /POST OPTIONS -->
   </div>`;
-    $('#newsfeedbox').append(temp_html);
-  });
-  const asd = `
+      $('#newsfeedbox').append(temp_html);
+    }
+    const asd = `
   <script src="/js/global/global.hexagons.js"></script>
   <script src="/js/utils/liquidify.js"></script>
   `;
-  $('#ddd').append(asd);
+    $('#ddd').append(asd);
+  });
 }
 
 // 뉴스피드 이미지 클릭시 이미지 팝업 띄워주기
@@ -388,113 +437,113 @@ async function modifyNewsfeed(id) {
       Authorization: `${getCookie('accessToken')}`,
     },
   })
-  .then((res) => {
-    let popupHtml =
-    '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
-  popupHtml += '<h2>뉴스피드 수정하기</h2>';
-  popupHtml += '<form>';
-  popupHtml += '<label for="newsfeedcontent">내용:</label><br>';
-  popupHtml +=
-    `<textarea id="newsfeedcontent" name="newsfeedcontent" rows="4" cols="50">${res.data.content}</textarea><br><br>`;
-  popupHtml += '<label for="tag">태그(태그는 ,로 구분합니다.)</label><br>';
-  popupHtml += `<input type="text" id="tag" name="tag"><br><br>`;
-  popupHtml += '<label for="image">이미지(최대 5장):</label><br>';
-  popupHtml +=
-    '<input type="file" id="imageUpload" name="imageUpload" multiple><br><br>';
-  popupHtml += '<input type="submit" value="수정하기"><br><br>';
-  popupHtml += '<button type="button" class="cancel">취소</button>';
-  popupHtml += '</form>';
-  popupHtml += '</div>';
+    .then((res) => {
+      let popupHtml =
+        '<div id="popup" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px;">';
+      popupHtml += '<h2>뉴스피드 수정하기</h2>';
+      popupHtml += '<form>';
+      popupHtml += '<label for="newsfeedcontent">내용:</label><br>';
+      popupHtml += `<textarea id="newsfeedcontent" name="newsfeedcontent" rows="4" cols="50">${res.data.content}</textarea><br><br>`;
+      popupHtml += '<label for="tag">태그(태그는 ,로 구분합니다.)</label><br>';
+      popupHtml += `<input type="text" id="tag" name="tag"><br><br>`;
+      popupHtml += '<label for="image">이미지(최대 5장):</label><br>';
+      popupHtml +=
+        '<input type="file" id="imageUpload" name="imageUpload" multiple><br><br>';
+      popupHtml += '<input type="submit" value="수정하기"><br><br>';
+      popupHtml += '<button type="button" class="cancel">취소</button>';
+      popupHtml += '</form>';
+      popupHtml += '</div>';
 
-  let popup = document.createElement('div');
-  popup.innerHTML = popupHtml;
-  document.body.appendChild(popup);
+      let popup = document.createElement('div');
+      popup.innerHTML = popupHtml;
+      document.body.appendChild(popup);
 
-  popup.querySelector('form').addEventListener('submit', async function (e) {
-    e.preventDefault();
+      popup
+        .querySelector('form')
+        .addEventListener('submit', async function (e) {
+          e.preventDefault();
 
-    const files = document.getElementById('imageUpload');
-    selectedImages = files.files;
+          const files = document.getElementById('imageUpload');
+          selectedImages = files.files;
 
-    const formData = new FormData();
-    formData.append('content', newsfeedcontent.value);
-    if (tag.value.length !== 0) {
-      formData.append('newsfeedTags', tag.value);
-    }
-    if (selectedImages.length !== 0) {
-      for (let i = 0; i < selectedImages.length; i++) {
-        formData.append('newsfeedImage', selectedImages[i]);
-      }
-    }
-    if (!newsfeedcontent.value) {
-      await Swal.fire({
-        icon: 'error',
-        title: '빈 내용은 작성할 수 없습니다!',
-        text: '뭐라도 좋으니 내용을 입력해주세요 T^T',
-      });
-    } else if (selectedImages.length > 5) {
-      await Swal.fire({
-        icon: 'error',
-        title: '사진은 최대 5장만 가능합니다.',
-        text: '많은 추억을 저장하지 못해 죄송합니다 T^T',
-      });
-    } else {
-      axios({
-        url: `/api/newsfeed/newsfeed/${id}`,
-        method: 'put',
-        headers: {
-          Authorization: `${getCookie('accessToken')}`,
-        },
-        data: formData,
-      })
-        .then(async (res) => {
-          await Swal.fire({
-            icon: 'success',
-            title: '뉴스피드 수정 완료!',
-            text: '잠시 후 새로고침 됩니다.',
-          });
-          window.location.reload();
-        })
-        .catch((err) => {
-          if (err.response.data.statusCode === 400) {
-            Swal.fire({
-              icon: 'error',
-              title: '사진은 최대 5장까지만 등록 가능합니다.',
-              text: '죄송합니다.',
-            });
-          } else if (err.response.data.statusCode === 401) {
-            Swal.fire({
-              icon: 'error',
-              title: '로그인 정보가 확인되지 않습니다.',
-              text: '로그인 정보를 확인해 주세요.',
-            });
-          } else if (err.response.data.statusCode === 403) {
-            Swal.fire({
-              icon: 'error',
-              title: '권한이 없습니다.',
-            });
+          const formData = new FormData();
+          formData.append('content', newsfeedcontent.value);
+          if (tag.value.length !== 0) {
+            formData.append('newsfeedTags', tag.value);
           }
-          Swal.fire({
-            icon: 'error',
-            text: `${err.response.data.message}`,
-          });
+          if (selectedImages.length !== 0) {
+            for (let i = 0; i < selectedImages.length; i++) {
+              formData.append('newsfeedImage', selectedImages[i]);
+            }
+          }
+          if (!newsfeedcontent.value) {
+            await Swal.fire({
+              icon: 'error',
+              title: '빈 내용은 작성할 수 없습니다!',
+              text: '뭐라도 좋으니 내용을 입력해주세요 T^T',
+            });
+          } else if (selectedImages.length > 5) {
+            await Swal.fire({
+              icon: 'error',
+              title: '사진은 최대 5장만 가능합니다.',
+              text: '많은 추억을 저장하지 못해 죄송합니다 T^T',
+            });
+          } else {
+            axios({
+              url: `/api/newsfeed/newsfeed/${id}`,
+              method: 'put',
+              headers: {
+                Authorization: `${getCookie('accessToken')}`,
+              },
+              data: formData,
+            })
+              .then(async (res) => {
+                await Swal.fire({
+                  icon: 'success',
+                  title: '뉴스피드 수정 완료!',
+                  text: '잠시 후 새로고침 됩니다.',
+                });
+                window.location.reload();
+              })
+              .catch((err) => {
+                if (err.response.data.statusCode === 400) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: '사진은 최대 5장까지만 등록 가능합니다.',
+                    text: '죄송합니다.',
+                  });
+                } else if (err.response.data.statusCode === 401) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: '로그인 정보가 확인되지 않습니다.',
+                    text: '로그인 정보를 확인해 주세요.',
+                  });
+                } else if (err.response.data.statusCode === 403) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: '권한이 없습니다.',
+                  });
+                }
+                Swal.fire({
+                  icon: 'error',
+                  text: `${err.response.data.message}`,
+                });
+              });
+          }
+          document.body.removeChild(popup);
         });
-    }
-    document.body.removeChild(popup);
-  });
 
-  const cancelButton = popup.querySelector('.cancel');
-  cancelButton.addEventListener('click', () => {
-    document.body.removeChild(popup);
-  });
-  })
-  .catch((err) => {
-    Swal.fire({
-      icon: 'error',
-      text: `${err.response.data.message}`,
+      const cancelButton = popup.querySelector('.cancel');
+      cancelButton.addEventListener('click', () => {
+        document.body.removeChild(popup);
+      });
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: 'error',
+        text: `${err.response.data.message}`,
+      });
     });
-  })
-  
 }
 
 // 무한 스크롤 설정

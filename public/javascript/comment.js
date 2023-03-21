@@ -194,15 +194,19 @@ async function getCommentList(newsfeedId, page) {
       Authorization: `${getCookie('accessToken')}`,
     },
   }).then(async (res) => {
-    if (res.data.length < 9) {
+    if (res.data.comment.length < 9) {
       document.getElementById('loader').innerHTML = '';
     }
-    await getComment(res.data, newsfeedId);
+    const comment = res.data.comment;
+    const userId = res.data.user.id;
+    await getComment(comment, userId, newsfeedId);
   });
 }
 
-async function getComment(data, newsfeedId) {
+async function getComment(data, userId, newsfeedId) {
+  console.log(data);
   data.forEach((data) => {
+    console.log(data.user.id);
     const createDate = new Date(data.createdAt);
     const timeOptions = {
       hour12: false,
@@ -213,7 +217,8 @@ async function getComment(data, newsfeedId) {
       'Ko-KR',
       timeOptions,
     );
-    let temp_html = `   <!-- FORUM POST -->
+    if (userId === data.user.id) {
+      let temp_html = `   <!-- FORUM POST -->
       <div class='forum-post' >
         <!-- FORUM POST META -->
         <div class='forum-post-meta'>
@@ -326,7 +331,117 @@ async function getComment(data, newsfeedId) {
         <!-- /FORUM POST CONTENT -->
       </div>
       <!-- /FORUM POST -->`;
-    $('#commentList').append(temp_html);
+      $('#commentList').append(temp_html);
+    } else {
+      let temp_html = `   <!-- FORUM POST -->
+      <div class='forum-post' >
+        <!-- FORUM POST META -->
+        <div class='forum-post-meta'>
+          <!-- FORUM POST TIMESTAMP -->
+          <p class='forum-post-timestamp'>${createDateFormat}</p>
+          <!-- /FORUM POST TIMESTAMP -->
+
+          <!-- FORUM POST ACTIONS -->
+          <div class='forum-post-actions'>
+            
+          </div>
+          <!-- /FORUM POST ACTIONS -->
+        </div>
+        <!-- /FORUM POST META -->
+
+        <!-- FORUM POST CONTENT -->
+        <div class='forum-post-content'>
+          <!-- FORUM POST USER -->
+          <div class='forum-post-user'>
+            <!-- USER AVATAR -->
+            <a
+              class='user-avatar no-outline'
+            >
+              <!-- USER AVATAR CONTENT -->
+              <div class='user-avatar-content'>
+                <!-- HEXAGON -->
+                <div
+                  class='hexagon-image-68-74'
+                  data-src='https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.user.image}'
+                ></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR CONTENT -->
+
+              <!-- USER AVATAR PROGRESS -->
+              <div class='user-avatar-progress'>
+                <!-- HEXAGON -->
+                <div class='hexagon-progress-84-92'></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR PROGRESS -->
+
+              <!-- USER AVATAR PROGRESS BORDER -->
+              <div class='user-avatar-progress-border'>
+                <!-- HEXAGON -->
+                <div class='hexagon-border-84-92'></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR PROGRESS BORDER -->
+            </a>
+            <!-- /USER AVATAR -->
+
+            <!-- USER AVATAR -->
+            <a
+              class='user-avatar small no-outline'
+            >
+              <!-- USER AVATAR CONTENT -->
+              <div class='user-avatar-content'>
+                <!-- HEXAGON -->
+                <div
+                  class='hexagon-image-30-32'
+                  data-src='https://lounges3.s3.ap-northeast-2.amazonaws.com/${data.user.image}'
+                ></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR CONTENT -->
+
+              <!-- USER AVATAR PROGRESS -->
+              <div class='user-avatar-progress'>
+                <!-- HEXAGON -->
+                <div class='hexagon-progress-40-44'></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR PROGRESS -->
+
+              <!-- USER AVATAR PROGRESS BORDER -->
+              <div class='user-avatar-progress-border'>
+                <!-- HEXAGON -->
+                <div class='hexagon-border-40-44'></div>
+                <!-- /HEXAGON -->
+              </div>
+              <!-- /USER AVATAR PROGRESS BORDER -->
+            </a>
+            <!-- /USER AVATAR -->
+
+            <!-- FORUM POST USER TITLE -->
+            <p class='forum-post-user-title'>
+              ${data.user.username}
+            </p>
+            <!-- /FORUM POST USER TITLE -->
+          </div>
+          <!-- /FORUM POST USER -->
+
+          <!-- FORUM POST INFO -->
+          <div class='forum-post-info'>
+            <!-- FORUM POST PARAGRAPH -->
+            <p class='forum-post-paragraph'>
+              ${data.content}
+            </p>
+            <!-- /FORUM POST PARAGRAPH -->
+          </div>
+          <!-- /FORUM POST INFO -->
+        </div>
+        <!-- /FORUM POST CONTENT -->
+      </div>
+      <!-- /FORUM POST -->`;
+      $('#commentList').append(temp_html);
+    }
   });
 
   const js = `<!-- global.hexagons -->
