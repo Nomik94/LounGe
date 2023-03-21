@@ -56,7 +56,7 @@ export class EmailService {
   // 인증번호 생성
   async sendVerification(email: string): Promise<void> {
     const user = await this.userService.getByEmail(email);
-    if (!user) {
+    if (user) {
       throw new BadRequestException({ message: '이미 가입된 이메일입니다.' });
     }
     const verifyToken = this.randomNumber();

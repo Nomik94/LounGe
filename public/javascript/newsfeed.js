@@ -16,15 +16,16 @@ async function readnewsfeedmygroup(page) {
     },
   })
     .then(async (res) => {
-      if(res.data.length >= 1) {
+      if (res.data.length >= 1) {
         $('#firstnewsfeed').empty();
       }
-      if(res.data.length < 9) {
-        document.getElementById('loader').innerHTML = ''
+      if (res.data.length < 9) {
+        document.getElementById('loader').innerHTML = '';
       }
-       await newsfeedlist(res.data);
+      await newsfeedlist(res.data);
     })
     .catch((err) => {
+      console.log(err);
       if (err.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
           toast: true,
@@ -48,7 +49,7 @@ async function readnewsfeedmygroup(page) {
 
 // 무한 스크롤
 function limitscroll() {
-  if(tagSerch == 0) {
+  if (tagSerch == 0) {
     page++;
     readnewsfeedmygroup(page);
   }
