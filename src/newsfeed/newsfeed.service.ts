@@ -179,6 +179,11 @@ export class NewsfeedService {
         const userEmail = feed.user.email;
         const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
         const newsfeedImage = feed.newsImages.map((image) => image.image);
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -191,6 +196,7 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
+          userIdentify: userIdentify
         };
       });
       return result;
@@ -202,7 +208,7 @@ export class NewsfeedService {
   }
 
   // 태그 검색 (특정 그룹 뉴스피드)
-  async serchTagNewsfeedGroup(data, groupId): Promise<ISerchTagNewsfeed[]> {
+  async serchTagNewsfeedGroup(data, groupId, userId): Promise<ISerchTagNewsfeed[]> {
     try {
       const tag = data;
       const serchTag = await this.tagRepository.serchTagWord(tag);
@@ -227,6 +233,11 @@ export class NewsfeedService {
         const userEmail = feed.user.email;
         const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
         const newsfeedImage = feed.newsImages.map((image) => image.image);
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -239,6 +250,7 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
+          userIdentify: userIdentify
         };
       });
       return result;
@@ -276,6 +288,11 @@ export class NewsfeedService {
         const userEmail = feed.user.email;
         const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
         const newsfeedImage = feed.newsImages.map((image) => image.image);
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -288,6 +305,7 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
+          userIdentify: userIdentify
         };
       });
       return result;
@@ -302,7 +320,8 @@ export class NewsfeedService {
   async readNewsfeedGroup(
     groupId: number,
     page: number,
-  ): Promise<ISerchNewsfeedList[]> {
+    userId: number
+  ) : Promise<ISerchNewsfeedList[]>{
     try {
       const findNewsfeed =
         await this.newsfeedRepository.findnewsfeedByNewsfeedId(
@@ -316,6 +335,11 @@ export class NewsfeedService {
         const userEmail = feed.user.email;
         const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
         const newsfeedImage = feed.newsImages.map((image) => image.image);
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -328,6 +352,7 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
+          userIdentify: userIdentify
         };
       });
       return result;
@@ -361,6 +386,11 @@ export class NewsfeedService {
         const newsfeedImage = feed.newsImages.map((image) => image.image);
         const groupName = feed.group.groupName;
         const groupId = feed.group.id;
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -373,6 +403,7 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupName: groupName,
           groupId: groupId,
+          userIdentify: userIdentify
         };
       });
       return result;
@@ -396,7 +427,6 @@ export class NewsfeedService {
         page,
         this.pageSize,
       );
-
       const result = findNewsfeed.map((feed) => {
         const userName = feed.user.username;
         const userImage = feed.user.image;
@@ -405,6 +435,11 @@ export class NewsfeedService {
         const newsfeedImage = feed.newsImages.map((image) => image.image);
         const groupId = feed.group.id;
         const groupName = feed.group.groupName;
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -417,6 +452,7 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: groupId,
           groupName: groupName,
+          userIdentify: userIdentify
         };
       });
       return result;
@@ -435,6 +471,11 @@ export class NewsfeedService {
     try {
       const tag = data;
       const serchTag = await this.tagRepository.serchTagWord(tag);
+      if(!serchTag[0]) {
+        throw new InternalServerErrorException(
+          '찾으시는 태그가 없습니다.',
+        );
+      }
       const findGroup = await this.userGroupRepository.checkUserStatus(userId);
       const groupIds = findGroup.map((group) => group.groupId);
       const whereNewsfeedId = serchTag.map((tag) => ({ tagId: tag.id }));
@@ -454,6 +495,11 @@ export class NewsfeedService {
         const userEmail = feed.user.email;
         const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
         const newsfeedImage = feed.newsImages.map((image) => image.image);
+        const checkUserId = feed.user.id;
+        let userIdentify = 0;
+        if(userId == checkUserId) {
+          userIdentify = 1
+        }
         return {
           id: feed.id,
           content: feed.content,
@@ -466,10 +512,26 @@ export class NewsfeedService {
           newsfeedImage: newsfeedImage,
           groupId: feed.group.id,
           groupName: feed.group.groupName,
+          userIdentify: userIdentify
         };
       });
       return result;
     } catch (err) {
+      throw new InternalServerErrorException(
+        '찾으시는 태그가 없습니다.',
+      );
+    }
+  }
+
+  // 수정 시 컨텐츠 내용 가져오기
+  async getNewsfeedContent(id,userId){
+    try{
+      const content = await this.newsfeedRepository.findOne({
+        where: {id: id}
+      })
+
+      return content
+    } catch(err) {
       throw new InternalServerErrorException(
         '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
       );

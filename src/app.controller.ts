@@ -84,4 +84,9 @@ export class AppController {
   @Get('/newsfeed/comment')
   @Render('comment')
   comment() {}
+
+  @Get('/groups/joinRequest')
+  @Render('joingroups')
+  joinGroupList(){}
+
 }

@@ -24,7 +24,7 @@
     <!-- MENU ITEM -->
     <li class="menu-item">
       <!-- MENU ITEM LINK -->
-      <a class="menu-item-link text-tooltip-tfr" href="/newsfeed" data-title="Newsfeed">
+      <a class="menu-item-link text-tooltip-tfr" href="/newsfeed" data-title="뉴스피드">
         <!-- MENU ITEM LINK ICON -->
         <svg class="menu-item-link-icon icon-newsfeed">
           <use xlink:href="#svg-newsfeed"></use>
@@ -38,10 +38,10 @@
     <!-- MENU ITEM -->
     <li class="menu-item">
       <!-- MENU ITEM LINK -->
-      <a class="menu-item-link text-tooltip-tfr" href="/groups" data-title="Groups">
+      <a class="menu-item-link text-tooltip-tfr" href="/groups" data-title="미가입 그룹">
         <!-- MENU ITEM LINK ICON -->
-        <svg class="menu-item-link-icon icon-group">
-          <use xlink:href="#svg-group"></use>
+        <svg class="menu-item-link-icon icon-members">
+          <use xlink:href="#svg-members"></use>
         </svg>
         <!-- /MENU ITEM LINK ICON -->
       </a>
@@ -52,7 +52,21 @@
     <!-- MENU ITEM -->
     <li class="menu-item">
       <!-- MENU ITEM LINK -->
-      <a class="menu-item-link text-tooltip-tfr" href="/events" data-title="Events">
+      <a class="menu-item-link text-tooltip-tfr" href="/groups/joinRequest" data-title="가입 신청 그룹">
+        <!-- MENU ITEM LINK ICON -->
+        <svg class="menu-item-link-icon icon-group">
+          <use xlink:href="#svg-group"></use>
+        </svg>
+        <!-- /MENU ITEM LINK ICON -->
+      </a>
+      <!-- /MENU ITEM LINK -->
+    </li>
+    <!-- /MENU ITEM -->    
+
+    <!-- MENU ITEM -->
+    <li class="menu-item">
+      <!-- MENU ITEM LINK -->
+      <a class="menu-item-link text-tooltip-tfr" href="/events" data-title="일정">
         <!-- MENU ITEM LINK ICON -->
         <svg class="menu-item-link-icon icon-events">
           <use xlink:href="#svg-events"></use>
@@ -124,7 +138,7 @@
           <use xlink:href="#svg-newsfeed"></use>
         </svg>
         <!-- /MENU ITEM LINK ICON -->
-        Newsfeed
+        뉴스피드
       </a>
       <!-- /MENU ITEM LINK -->
     </li>
@@ -135,11 +149,26 @@
       <!-- MENU ITEM LINK -->
       <a class="menu-item-link" href="/groups">
         <!-- MENU ITEM LINK ICON -->
+        <svg class="menu-item-link-icon icon-members">
+          <use xlink:href="#svg-members"></use>
+        </svg>
+        <!-- /MENU ITEM LINK ICON -->
+        미가입 그룹
+      </a>
+      <!-- /MENU ITEM LINK -->
+    </li>
+    <!-- /MENU ITEM -->
+
+    <!-- MENU ITEM -->
+    <li class="menu-item">
+      <!-- MENU ITEM LINK -->
+      <a class="menu-item-link" href="/groups/joinRequest">
+        <!-- MENU ITEM LINK ICON -->
         <svg class="menu-item-link-icon icon-group">
           <use xlink:href="#svg-group"></use>
         </svg>
         <!-- /MENU ITEM LINK ICON -->
-        Groups
+        가입 신청 그룹
       </a>
       <!-- /MENU ITEM LINK -->
     </li>
@@ -154,7 +183,7 @@
           <use xlink:href="#svg-events"></use>
         </svg>
         <!-- /MENU ITEM LINK ICON -->
-        Events
+        일정
       </a>
       <!-- /MENU ITEM LINK -->
     </li>
@@ -200,7 +229,7 @@
           <use xlink:href="#svg-newsfeed"></use>
         </svg>
         <!-- /MENU ITEM LINK ICON -->
-        Newsfeed
+        뉴스피드
       </a>
       <!-- /MENU ITEM LINK -->
     </li>
@@ -211,11 +240,26 @@
       <!-- MENU ITEM LINK -->
       <a class="menu-item-link" href="/groups">
         <!-- MENU ITEM LINK ICON -->
+        <svg class="menu-item-link-icon icon-members">
+          <use xlink:href="#svg-members"></use>
+        </svg>
+        <!-- /MENU ITEM LINK ICON -->
+        미가입 그룹
+      </a>
+      <!-- /MENU ITEM LINK -->
+    </li>
+    <!-- /MENU ITEM -->
+
+    <!-- MENU ITEM -->
+    <li class="menu-item">
+      <!-- MENU ITEM LINK -->
+      <a class="menu-item-link" href="/groups/joinRequest">
+        <!-- MENU ITEM LINK ICON -->
         <svg class="menu-item-link-icon icon-group">
           <use xlink:href="#svg-group"></use>
         </svg>
         <!-- /MENU ITEM LINK ICON -->
-        Groups
+        가입 신청 그룹
       </a>
       <!-- /MENU ITEM LINK -->
     </li>
@@ -230,7 +274,7 @@
           <use xlink:href="#svg-events"></use>
         </svg>
         <!-- /MENU ITEM LINK ICON -->
-        Events
+        일정
       </a>
       <!-- /MENU ITEM LINK -->
     </li>
@@ -257,7 +301,7 @@
       <!-- /LOGO -->
 
       <!-- HEADER BRAND TEXT -->
-      <h1 class="header-brand-text">LounGe</h1>
+      <h1 class="header-brand-text"><a href="/newsfeed">LounGe</a></h1>
       <!-- /HEADER BRAND TEXT -->
     </div>
     <!-- /HEADER BRAND -->
@@ -302,7 +346,7 @@
   <div class="header-actions search-bar">
     <!-- INTERACTIVE INPUT -->
     <div class="interactive-input dark">
-      <input type="text" id="search-main" name="search_main" placeholder="Search here for newsfeed tag" onKeypress="if(window.event.keyCode==13){serchTagNewsfeed()}" >
+      <input type="text" class="search-main" id="search-main" placeholder="Search here for newsfeed tag" onKeypress="if(window.event.keyCode==13){serchTagNewsfeedButton()}">
       <!-- INTERACTIVE INPUT ICON WRAP -->
       <div class="interactive-input-icon-wrap">
         <!-- INTERACTIVE INPUT ICON -->
@@ -312,7 +356,6 @@
         <!-- /INTERACTIVE INPUT ICON -->
       </div>
       <!-- /INTERACTIVE INPUT ICON WRAP -->
-
       <!-- INTERACTIVE INPUT ACTION -->
       <div class="interactive-input-action">
         <!-- INTERACTIVE INPUT ACTION ICON -->
@@ -386,7 +429,7 @@
         <!-- /DROPDOWN NAVIGATION LINK -->
     
         <!-- DROPDOWN NAVIGATION LINK -->
-        <a class="dropdown-navigation-link" href="/joined/grouplist">나의 그룹</a>
+        <a class="dropdown-navigation-link" href="/joined/grouplist">소속 그룹</a>
         <!-- /DROPDOWN NAVIGATION LINK -->
     
         <!-- DROPDOWN NAVIGATION BUTTON -->

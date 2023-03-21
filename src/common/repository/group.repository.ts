@@ -28,6 +28,26 @@ export class GroupRepository extends Repository<Group> {
       skip: pageSize * (page - 1),
     });
   }
+  // 가입 신청 그룹 리스트
+  async getGroupJoinList(
+    groupIds: number[],
+    page: number,
+    pageSize: number,
+  ): Promise<Group[]> {
+    return await this.find({
+      select: [
+        'id',
+        'groupName',
+        'groupImage',
+        'backgroundImage',
+        'description',
+      ],
+      relations: ['tagGroups.tag'],
+      where: { id: In(groupIds) },
+      take: pageSize,
+      skip: pageSize * (page - 1),
+    });
+  }
 
   async getGroupsWithIds(groupIds: { id: number }[]): Promise<Group[]> {
     return await this.find({

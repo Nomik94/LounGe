@@ -122,8 +122,8 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
       select: ['id', 'content', 'createdAt', 'updatedAt'],
       where: { group: { id: In(groupIds) }, deletedAt: null },
       order: { createdAt: 'desc' },
-      take: pageSize,
       skip: pageSize * (page - 1),
+      take: pageSize,
     });
   }
 
