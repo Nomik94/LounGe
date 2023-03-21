@@ -301,10 +301,8 @@
   <div class="header-actions search-bar">
     <!-- INTERACTIVE INPUT -->
     <div class="interactive-input dark">
-      <input type="text" class="search-main" id="search-main" placeholder="Search here for newsfeed tag">
+      <input type="text" class="search-main" id="search-main" placeholder="Search here for newsfeed tag" onKeypress="if(window.event.keyCode==13){serchTagNewsfeedButton()}">
       <!-- INTERACTIVE INPUT ICON WRAP -->
-        <button class="button primary" onclick="serchTagNewsfeedButton()">
-
       <div class="interactive-input-icon-wrap">
         <!-- INTERACTIVE INPUT ICON -->
         <svg class="interactive-input-icon icon-magnifying-glass">
@@ -313,7 +311,6 @@
         <!-- /INTERACTIVE INPUT ICON -->
       </div>
       <!-- /INTERACTIVE INPUT ICON WRAP -->
-
       <!-- INTERACTIVE INPUT ACTION -->
       <div class="interactive-input-action">
         <!-- INTERACTIVE INPUT ACTION ICON -->
@@ -323,7 +320,6 @@
         <!-- /INTERACTIVE INPUT ACTION ICON -->
       </div>
       <!-- /INTERACTIVE INPUT ACTION -->
-          </button>
     </div>
     <!-- /INTERACTIVE INPUT -->
 
