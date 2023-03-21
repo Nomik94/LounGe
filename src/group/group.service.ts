@@ -8,7 +8,6 @@ import { GroupRepository } from 'src/common/repository/group.repository';
 import { TagGroupRepository } from 'src/common/repository/tag.group.repository';
 import { TagRepository } from 'src/common/repository/tag.repository';
 import { UserGroupRepository } from 'src/common/repository/user.group.repository';
-import { Like } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { ModifyGroupDto } from './dto/modify.group.dto';
 import { IMapGroups } from './interface/map.group.tag.interface';
@@ -19,6 +18,7 @@ import { IMemberList } from './interface/group.member.list.interface';
 import { IJoinRequest } from './interface/group.join.request.interface';
 import { IFile } from './interface/file.interface';
 import { ElasticsearchService } from '@nestjs/elasticsearch/dist';
+import { IGroupIndexBody } from './interface/es.group.data.interface';
 
 @Injectable()
 export class GroupService {
@@ -32,7 +32,6 @@ export class GroupService {
 
   // 미가입 그룹 리스트
   async getAllGroupList(userId: number, page: number): Promise<IMapGroups[]> {
-    // this.createIndex('groups')
     const pageSize = 9;
     const foundUserWithGroups = await this.userGroupRepository.find({
       where: { userId },
@@ -233,8 +232,8 @@ export class GroupService {
       data.backgroundImage = file.backgroundImage[0].key;
     }
 
-    const groupIndexId = await this.findIndexGroup(foundGroup.id)
-    await this.updateIndexGroup(groupIndexId,data,foundGroup.id)
+    const groupIndexId = await this.findIndexGroup(foundGroup.id);
+    await this.updateIndexGroup(groupIndexId, data, foundGroup.id);
     await this.tagGroupRepository.delete({ groupId });
 
     await this.checkTag(tagArray, groupId);
@@ -259,8 +258,8 @@ export class GroupService {
       groupId,
     });
 
-    const groupIndexId = await this.findIndexGroup(groupId)
-    await this.deleteIndexGroup(groupIndexId)
+    const groupIndexId = await this.findIndexGroup(groupId);
+    await this.deleteIndexGroup(groupIndexId);
   }
 
   // 그룹 양도
@@ -446,60 +445,73 @@ export class GroupService {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
   }
 
-  async createIndex(indexName: string) {
+  // ES 인덱스 생성
+  async createIndex(indexName: string): Promise<void> {
     await this.elasticsearchService.indices.create({
-      index: indexName
+      index: indexName,
     });
   }
 
-  async createIndexGroup(group, tag) {
+  // ES 그룹 인덱스 문서 추가
+  async createIndexGroup(group: IGroupIndexBody, tag: string): Promise<void> {
     if (tag === '') {
       tag = '전체';
     }
     await this.elasticsearchService.index({
       index: 'groups',
       body: {
-        id : group.id,
-        groupName : group.groupName,
-        description : group.description,
-        tag
+        id: group.id,
+        groupName: group.groupName,
+        description: group.description,
+        tag,
       },
     });
   }
 
-  async findIndexGroup(id) {
+  // ES 그룹 인덱스 문서 찾기
+  async findIndexGroup(id): Promise<string> {
     const groupIndex = await this.elasticsearchService.search({
-      index : 'groups',
-      query : {
-        match : {
-          id
-        }
-      }
-    })
-    return groupIndex.hits.hits[0]._id
+      index: 'groups',
+      query: {
+        match: {
+          id,
+        },
+      },
+    });
+    return groupIndex.hits.hits[0]._id;
   }
-  
-  async updateIndexGroup(groupIndexId,data:ModifyGroupDto,groupId) {
+
+  // ES 그룹 인덱스 문서 수정
+  async updateIndexGroup(
+    groupIndexId: string,
+    data: IGroupIndexBody,
+    groupId: number,
+  ): Promise<void> {
+    if (data.tag === '') {
+      data.tag = '전체';
+    }
     await this.elasticsearchService.index({
-      index : 'groups',
+      index: 'groups',
       id: groupIndexId,
-      body : {
-        id : groupId,
-        groupName : data.groupName,
-        description : data.description,
-        tag : data.tag
-      }
-    })
+      body: {
+        id: groupId,
+        groupName: data.groupName,
+        description: data.description,
+        tag: data.tag,
+      },
+    });
   }
 
-  async deleteIndexGroup(groupIndexId) {
+  // ES 그룹 인덱스 문서 삭제
+  async deleteIndexGroup(groupIndexId: string): Promise<void> {
     await this.elasticsearchService.delete({
-      index : 'groups',
-      id : groupIndexId
-    })
+      index: 'groups',
+      id: groupIndexId,
+    });
   }
 
-  async searchGroupWithTag(tag) {
+  // ES 그룹 검색
+  async searchGroupWithTag(tag: string) {
     const result = await this.elasticsearchService.search({
       index: 'groups',
       query: {
@@ -510,7 +522,6 @@ export class GroupService {
       },
       _source: ['id'],
     });
-    console.log(result.hits.hits)
     return result.hits.hits;
   }
 }
