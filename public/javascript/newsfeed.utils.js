@@ -155,7 +155,7 @@ async function newsfeedlist(data) {
             <!-- META LINE -->
             <div class="meta-line">
               <!-- META LINE LINK -->
-              <p class="meta-line-link">댓글 2개</p>
+              <p class="meta-line-link" onclick="getNewsfeedId(${data.id})">댓글 ${data.comment.length}개</p>
               <!-- /META LINE LINK -->
             </div>
             <!-- /META LINE -->
@@ -168,32 +168,7 @@ async function newsfeedlist(data) {
       </div>
       <!-- /WIDGET BOX STATUS -->
     </div>
-    <!-- POST OPTIONS -->
-    <div class="post-options">
-    <!-- POST OPTION -->
-    <div class="post-option reaction-options-dropdown-trigger">
-    </div>
-    <!-- /POST OPTION -->
-      <!-- POST OPTION -->
-      <div class="post-option" onclick="getNewsfeedId(${data.id})">
-        <!-- POST OPTION ICON -->
-        <svg class="post-option-icon icon-comment">
-          <use xlink:href="#svg-comment"></use>
-        </svg>
-        <!-- /POST OPTION ICON -->
-
-        <!-- POST OPTION TEXT -->
-        <p class="post-option-text" >댓글 보기</p>
-        <!-- /POST OPTION TEXT -->
-      </div>
-      <!-- /POST OPTION -->
-      <!-- POST OPTION -->
-      <div class="post-option">
-        
-      </div>
-      <!-- /POST OPTION -->
-    </div>
-    <!-- /POST OPTIONS -->`;
+   `;
       $('#newsfeedbox').append(temp_html);
     } else {
       let temp_html = `
@@ -310,7 +285,7 @@ async function newsfeedlist(data) {
                   <!-- META LINE -->
                   <div class="meta-line">
                     <!-- META LINE LINK -->
-                    <p class="meta-line-link">댓글 2개</p>
+                    <p class="meta-line-link" onclick="getNewsfeedId(${data.id})">댓글 ${data.comment.length}개</p>
                     <!-- /META LINE LINK -->
                   </div>
                   <!-- /META LINE -->
@@ -322,33 +297,7 @@ async function newsfeedlist(data) {
       <!-- /WIDGET BOX STATUS CONTENT -->
     </div>
     <!-- /WIDGET BOX STATUS -->
-    <!-- POST OPTIONS -->
-    <div class="post-options">
-    <!-- POST OPTION -->
-    <div class="post-option reaction-options-dropdown-trigger">
-    </div>
-    <!-- /POST OPTION -->
-      <!-- POST OPTION -->
-      <div class="post-option" onclick="getNewsfeedId(${data.id})">
-        <!-- POST OPTION ICON -->
-        <svg class="post-option-icon icon-comment">
-          <use xlink:href="#svg-comment"></use>
-        </svg>
-        <!-- /POST OPTION ICON -->
-
-        <!-- POST OPTION TEXT -->
-        <p class="post-option-text" >댓글 보기</p>
-        <!-- /POST OPTION TEXT -->
-      </div>
-      <!-- /POST OPTION -->
-      <!-- POST OPTION -->
-      <div class="post-option">
-        
-      </div>
-      <!-- /POST OPTION -->
-    </div>
-    <!-- /POST OPTIONS -->
-  </div>`;
+    `;
       $('#newsfeedbox').append(temp_html);
     }
     const asd = `

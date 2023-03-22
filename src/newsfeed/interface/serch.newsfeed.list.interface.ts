@@ -11,4 +11,5 @@ export interface ISerchNewsfeedList {
   groupId: number;
   groupName: string;
   userIdentify: number;
+  comment: string[]
 }
