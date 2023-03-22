@@ -30,23 +30,17 @@ export class CommentService {
   async getCommentByNewsfeed(userId: number, newsfeedId: number, page: number) {
     const pageSize = 10;
     const user = await this.userService.getById(userId);
-    console.log(user.id);
 
-    const newsfeed = await this.newsfeedRepository.findCommentByNewsfeed(
-      newsfeedId,
-    );
-    const commentList = newsfeed.comment;
-    if (commentList.length < 1) {
-      return null;
-    }
-    const commentId = commentList.map((comment) => ({
-      id: comment.id,
-    }));
     const comment = await this.commentRepository.getUserByComment(
-      commentId,
+      newsfeedId,
       page,
       pageSize,
     );
+    // const comment = await this.commentRepository.test(
+    //   newsfeedId,
+    //   page,
+    //   pageSize,
+    // );
     return { comment, user };
   }
 
