@@ -97,4 +97,11 @@ export class GroupRepository extends Repository<Group> {
       relations: ['user'],
     });
   }
+
+  async serchGroupName(groupId:number):Promise<any> {
+    return await this.findOne({
+      where: {id:groupId},
+      select: ['groupName']
+    })
+  }
 }

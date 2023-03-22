@@ -20,10 +20,14 @@ import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { ISerchTagNewsfeed } from './interface/serch.tag.newsfeed.interface';
 import { ISerchTagMyNewsfeed } from './interface/serch.tag.mynewsfeed.interface';
 import { ISerchNewsfeedList } from './interface/serch.newsfeed.list.interface';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Controller('api/newsfeed')
 export class NewsfeedController {
-  constructor(private readonly newsfeedService: NewsfeedService) {}
+  constructor(
+    private readonly newsfeedService: NewsfeedService,
+    private readonly elasticSearchService: ElasticsearchService
+    ) {}
 
   // 뉴스피드 작성 API
   @Post('/newsfeed/:groupId')
@@ -137,16 +141,26 @@ export class NewsfeedController {
     return await this.newsfeedService.readNewsfeedMyGroup(userId, page);
   }
 
-  // 헤더에서 뉴스피드 내용 검색
-  @Get('serchbar/tag')
-  @UseGuards(JwtAuthGuard)
-  async serchBarTagNewsfeed(
-    @Query('tag') data: string,
-    @GetUser() user: IUser,
-  ): Promise<ISerchNewsfeedList[]> {
-    const userId = user.id;
-    return await this.newsfeedService.serchBarTagNewsfeed(data, userId);
-  }
+  // // 헤더에서 뉴스피드 내용 검색
+  // @Get('serchbar/tag')
+  // @UseGuards(JwtAuthGuard)
+  // async serchBarTagNewsfeed(
+  //   @Query('tag') data: string,
+  //   @GetUser() user: IUser,
+  // ): Promise<ISerchNewsfeedList[]> {
+  //   const userId = user.id;
+  //   return await this.newsfeedService.serchBarTagNewsfeed(data, userId);
+  // }
+
+  //  헤더에서 뉴스피드 내용 검색 (엘라스틱 서치 이용)
+   @Get('serchbar/tag')
+   @UseGuards(JwtAuthGuard)
+   async serchBarTagNewsfeed(
+     @Query('tag') data: string,
+     @GetUser() user: IUser,
+   ) {
+   return await this.newsfeedService.testSearchIndex(data)
+   }
 
   // 수정 시 컨텐츠 내용 가져오기
   @Get('content/:id')
