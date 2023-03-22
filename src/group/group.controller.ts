@@ -1,4 +1,4 @@
-import { Body, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
   Delete,
@@ -48,13 +48,14 @@ export class GroupController {
   }
 
   // 그룹 태그 검색 리스트 API
-  @Get('/search/:tag')
+  @Get('/search/tag')
   @UseGuards(JwtAuthGuard)
   async searchGroupByTag(
     @GetUser() user: IUser,
-    @Param('tag') tag: string,
+    @Query('tag') tag: string,
+    @Query('page') page: number,
   ): Promise<IMapGroups[]> {
-    return await this.groupService.searchGroupByTag(tag);
+    return await this.groupService.searchGroupByTag(tag, page);
   }
 
   // 소속된 그룹 리스트 API

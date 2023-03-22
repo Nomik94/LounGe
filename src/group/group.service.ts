@@ -67,13 +67,13 @@ export class GroupService {
   }
 
   // 그룹 태그 검색 리스트
-  async searchGroupByTag(tag: string): Promise<IMapGroups[]> {
-    const searchGroupWithTag = this.searchGroupWithTag(tag);
+  async searchGroupByTag(tag: string, page: number): Promise<IMapGroups[]> {
+    const searchGroupWithTag = this.searchGroupWithTag(tag, page);
     const groupIds = (await searchGroupWithTag).map(
       (groupId) => groupId._source,
     );
     if (groupIds.length === 0) {
-      throw new NotFoundException('존재하지 않는 태그입니다.');
+      return
     }
     const getGroupsWithIds = await this.groupRepository.getGroupsWithIds(
       groupIds,
@@ -511,9 +511,12 @@ export class GroupService {
   }
 
   // ES 그룹 검색
-  async searchGroupWithTag(tag: string) {
+  async searchGroupWithTag(tag: string, page: number) {
+    const pageSize = 9;
     const result = await this.elasticsearchService.search({
       index: 'groups',
+      from: pageSize * (page - 1),
+      size: pageSize,
       query: {
         query_string: {
           query: `*${tag}*`,
