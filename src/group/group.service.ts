@@ -37,14 +37,23 @@ export class GroupService {
       where: { userId },
     });
 
-    const groupIds = foundUserWithGroups.map((data) => data.groupId);
-    const getGroupsWithOutIds = await this.groupRepository.getGroupsWithOutIds(
-      groupIds,
-      page,
-      pageSize,
-    );
-    const mapGroupList = this.mapGroupsWithTags(getGroupsWithOutIds);
+    let getGroupsWithOutIds;
 
+    const groupIds = foundUserWithGroups.map((data) => data.groupId);
+    if (groupIds.length === 0) {
+      getGroupsWithOutIds = await this.groupRepository.getAllGroupList(
+        page,
+        pageSize,
+      );
+    } else {
+      getGroupsWithOutIds = await this.groupRepository.getGroupsWithOutIds(
+        groupIds,
+        page,
+        pageSize,
+      );
+    }
+
+    const mapGroupList = await this.mapGroupsWithTags(getGroupsWithOutIds);
     return mapGroupList;
   }
 
@@ -56,6 +65,7 @@ export class GroupService {
     });
 
     const groupIds = foundUserWithGroups.map((data) => data.groupId);
+    if (groupIds.length === 0) return [];
     const getGroupsWithOutIds = await this.groupRepository.getGroupJoinList(
       groupIds,
       page,
@@ -73,10 +83,15 @@ export class GroupService {
       (groupId) => groupId._source,
     );
     if (groupIds.length === 0) {
-      return
+      throw new NotFoundException('존재하지 않는 태그입니다.');
     }
+
+    const resultGroupIds = Array.from(
+      new Set(groupIds.map((item) => item['id'])),
+    );
+
     const getGroupsWithIds = await this.groupRepository.getGroupsWithIds(
-      groupIds,
+      resultGroupIds,
     );
     const mapGroupList = this.mapGroupsWithTags(getGroupsWithIds);
 
@@ -91,7 +106,6 @@ export class GroupService {
       page,
       pageSize,
     );
-
     return myGroupList.map((group) => ({
       groupId: group.id,
       groupName: group.groupName,
@@ -111,6 +125,7 @@ export class GroupService {
     }
     return await this.groupRepository.find({
       where: { userGroups: { userId, role: '그룹장' } },
+      select: ['id', 'groupName', 'groupImage', 'backgroundImage'],
       take: pageSize,
       skip: pageSize * (page - 1),
     });
@@ -118,9 +133,8 @@ export class GroupService {
 
   // 그룹 멤버 리스트
   async getGroupMemberList(groupId: number): Promise<IMemberList> {
-    const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId); // 그룹 수정에 사용중 분리 필요
-
-    const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName); //그룹 수정에 사용중 분리 필요
+    const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId);
+    const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName);
     const memberList = await this.userGroupRepository.getMemberList(groupId);
     const mapMemberList = memberList.map((data) => ({
       userId: data.userId,
