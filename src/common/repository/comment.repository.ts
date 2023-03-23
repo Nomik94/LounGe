@@ -29,19 +29,22 @@ export class CommentRepository extends Repository<Comment> {
         'comment.createdAt',
         'user.image',
         'user.username',
+        'user.id',
       ])
       .leftJoin('comment.user', 'user')
       .where('comment.newsfeed = :id', { id: newsfeedId })
+      .orderBy({ 'comment.createdAt': 'DESC' })
       .take(pageSize)
       .skip(pageSize * (page - 1))
       .getMany();
     return comment;
   }
 
-  async checkComment(id: number) {
-    return await this.findOne({
-      relations: ['user'],
-      where: { id },
-    });
+  async checkComment(commentId: number) {
+    return await this.createQueryBuilder('comment')
+      .select(['comment.id', 'user.id'])
+      .leftJoin('comment.user', 'user')
+      .where('comment.id = :id', { id: commentId })
+      .getOne();
   }
 }

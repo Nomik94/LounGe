@@ -30,16 +30,11 @@ export class CommentService {
     const pageSize = 10;
     const user = await this.userService.getById(userId);
 
-    const comment = await this.commentRepository.getUserByComment(
+    const comment = await this.commentRepository.test(
       newsfeedId,
       page,
       pageSize,
     );
-    // const comment = await this.commentRepository.test(
-    //   newsfeedId,
-    //   page,
-    //   pageSize,
-    // );
     return { comment, user };
   }
 

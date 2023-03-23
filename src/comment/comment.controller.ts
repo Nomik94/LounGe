@@ -26,10 +26,7 @@ export class CommentController {
     @Body() data: CommentDTO,
   ): Promise<void> {
     const userId = user.id;
-    for (let i = 0; i < 1000; i++) {
-      await this.commentService.createComment(userId, newsfeedId, data);
-    }
-    return;
+    return await this.commentService.createComment(userId, newsfeedId, data);
   }
 
   // 뉴스피드 게시물에 대한 모든 댓글 조회 API

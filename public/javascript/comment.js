@@ -204,9 +204,7 @@ async function getCommentList(newsfeedId, page) {
 }
 
 async function getComment(data, userId, newsfeedId) {
-  console.log(data);
   data.forEach((data) => {
-    console.log(data.user.id);
     const createDate = new Date(data.createdAt);
     const timeOptions = {
       hour12: false,
