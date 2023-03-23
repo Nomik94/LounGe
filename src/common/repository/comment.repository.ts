@@ -8,20 +8,12 @@ export class CommentRepository extends Repository<Comment> {
     super(Comment, dataSource.createEntityManager());
   }
 
-  // async getUserByComment(newsfeedId: number, page: number, pageSize: number) {
-  //   const comment = await this.find({
-  //     select: ['id', 'content', 'createdAt', 'user'],
-  //     relations: ['user'],
-  //     where: { newsfeed: { id: newsfeedId } },
-  //     order: { createdAt: 'desc' },
-  //     take: pageSize,
-  //     skip: pageSize * (page - 1),
-  //   });
-
-  //   return comment;
-  // }
-
-  async getUserByComment(newsfeedId: number, page: number, pageSize: number) {
+  // 댓글ID로 유저정보 가져오기
+  async getUserByCommentId(
+    newsfeedId: number,
+    page: number,
+    pageSize: number,
+  ): Promise<Comment[]> {
     const comment = await this.createQueryBuilder('comment')
       .select([
         'comment.id',
@@ -40,7 +32,8 @@ export class CommentRepository extends Repository<Comment> {
     return comment;
   }
 
-  async checkComment(commentId: number) {
+  // 댓글ID로 유저ID 가져오기
+  async getUserIdByCommentId(commentId: number): Promise<Comment> {
     return await this.createQueryBuilder('comment')
       .select(['comment.id', 'user.id'])
       .leftJoin('comment.user', 'user')

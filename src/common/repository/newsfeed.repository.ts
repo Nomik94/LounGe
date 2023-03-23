@@ -127,7 +127,8 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     });
   }
 
-  async checkGroudByNewsfeedId(newsfeedId: number) {
+  // 뉴스피드ID로 그룹ID 가져오기
+  async getGroupIdByNewsfeedId(newsfeedId: number): Promise<NewsFeed> {
     return await this.createQueryBuilder('newsfeed')
       .select(['newsfeed.id', 'group.id', 'user.id'])
       .leftJoin('newsfeed.group', 'group')

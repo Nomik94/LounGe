@@ -5,20 +5,26 @@ import {
 } from '@nestjs/common';
 import { CommentRepository } from 'src/common/repository/comment.repository';
 import { NewsfeedRepository } from 'src/common/repository/newsfeed.repository';
-import { UserService } from 'src/user/user.service';
 import { CommentDTO } from './dto/comment.dto';
+import { Comment } from 'src/database/entities/comment.entity';
+import { User } from 'src/database/entities/user.entity';
+import { UserRepository } from 'src/common/repository/user.repository';
 
 @Injectable()
 export class CommentService {
   constructor(
     private readonly commentRepository: CommentRepository,
     private readonly newsfeedRepository: NewsfeedRepository,
-    private readonly userService: UserService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   // 댓글 생성
-  async createComment(userId: number, newsfeedId: number, data: CommentDTO) {
-    const check = await this.newsfeedRepository.checkGroudByNewsfeedId(
+  async createComment(
+    userId: number,
+    newsfeedId: number,
+    data: CommentDTO,
+  ): Promise<void> {
+    const check = await this.newsfeedRepository.getGroupIdByNewsfeedId(
       newsfeedId,
     );
 
@@ -33,11 +39,21 @@ export class CommentService {
   }
 
   // 뉴스피드 게시물에 대한 모든 댓글 조회
-  async getCommentByNewsfeed(userId: number, newsfeedId: number, page: number) {
+  async getCommentByNewsfeed(
+    userId: number,
+    newsfeedId: number,
+    page: number,
+  ): Promise<{
+    comment: Comment[];
+    user: User;
+  }> {
     const pageSize = 10;
-    const user = await this.userService.getById(userId);
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'username', 'image'],
+    });
 
-    const comment = await this.commentRepository.getUserByComment(
+    const comment = await this.commentRepository.getUserByCommentId(
       newsfeedId,
       page,
       pageSize,
@@ -51,7 +67,7 @@ export class CommentService {
     newsfeedId: number,
     commentId: number,
     data: CommentDTO,
-  ) {
+  ): Promise<void> {
     const checkNewsfeed = await this.newsfeedRepository.checkNewsfeed(
       newsfeedId,
     );
@@ -67,8 +83,14 @@ export class CommentService {
   }
 
   // 댓글 삭제
-  async deleteComment(userId: number, newsfeedId: number, commentId: number) {
-    const checkComment = await this.commentRepository.checkComment(commentId);
+  async deleteComment(
+    userId: number,
+    newsfeedId: number,
+    commentId: number,
+  ): Promise<void> {
+    const checkComment = await this.commentRepository.getUserIdByCommentId(
+      commentId,
+    );
     const checkUserId = checkComment.user['id'];
     if (userId !== checkUserId) {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
