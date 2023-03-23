@@ -24,8 +24,8 @@ function serchTagNewsfeed(text){
           document.getElementById('loader').innerHTML = ''
         } 
         clearnewsfeed()
-        newsfeedlist([res.data[0]._source]);
-        console.log(res.data[0]._source);
+        newsfeedlist(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
         if (err.response.data.statusCode === 401) {

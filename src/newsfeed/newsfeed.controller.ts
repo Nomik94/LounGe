@@ -141,26 +141,17 @@ export class NewsfeedController {
     return await this.newsfeedService.readNewsfeedMyGroup(userId, page);
   }
 
-  // // 헤더에서 뉴스피드 내용 검색
-  // @Get('serchbar/tag')
-  // @UseGuards(JwtAuthGuard)
-  // async serchBarTagNewsfeed(
-  //   @Query('tag') data: string,
-  //   @GetUser() user: IUser,
-  // ): Promise<ISerchNewsfeedList[]> {
-  //   const userId = user.id;
-  //   return await this.newsfeedService.serchBarTagNewsfeed(data, userId);
-  // }
-
-  //  헤더에서 뉴스피드 내용 검색 (엘라스틱 서치 이용)
-   @Get('serchbar/tag')
-   @UseGuards(JwtAuthGuard)
-   async serchBarTagNewsfeed(
-     @Query('tag') data: string,
-     @GetUser() user: IUser,
-   ) {
-   return await this.newsfeedService.testSearchIndex(data)
-   }
+  // 헤더에서 뉴스피드 내용 검색
+  @Get('serchbar/tag')
+  @UseGuards(JwtAuthGuard)
+  async serchBarTagNewsfeed(
+    @Query('tag') data: string,
+    @GetUser() user: IUser,
+  ): Promise<ISerchNewsfeedList[]> {
+    const userId = user.id;
+    const NewsfeedIds = await this.newsfeedService.testSearchIndex(data)
+    return await this.newsfeedService.serchBarTagNewsfeed(userId, NewsfeedIds);
+  }
 
   // 수정 시 컨텐츠 내용 가져오기
   @Get('content/:id')
