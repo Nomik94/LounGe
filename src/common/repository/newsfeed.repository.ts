@@ -126,4 +126,13 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
       take: pageSize,
     });
   }
+
+  async checkGroudByNewsfeedId(newsfeedId: number) {
+    return await this.createQueryBuilder('newsfeed')
+      .select(['newsfeed.id', 'group.id', 'user.id'])
+      .leftJoin('newsfeed.group', 'group')
+      .leftJoin('newsfeed.user', 'user')
+      .where('newsfeed.id=:id', { id: newsfeedId })
+      .getOne();
+  }
 }

@@ -18,6 +18,13 @@ export class CommentService {
 
   // 댓글 생성
   async createComment(userId: number, newsfeedId: number, data: CommentDTO) {
+    const check = await this.newsfeedRepository.checkGroudByNewsfeedId(
+      newsfeedId,
+    );
+
+    if (check.group.id !== data.groupId) {
+      throw new ForbiddenException('해당 그룹에 가입해주세요.');
+    }
     await this.commentRepository.save({
       newsfeed: { id: newsfeedId },
       user: { id: userId },
@@ -30,7 +37,7 @@ export class CommentService {
     const pageSize = 10;
     const user = await this.userService.getById(userId);
 
-    const comment = await this.commentRepository.test(
+    const comment = await this.commentRepository.getUserByComment(
       newsfeedId,
       page,
       pageSize,

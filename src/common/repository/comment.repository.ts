@@ -8,20 +8,20 @@ export class CommentRepository extends Repository<Comment> {
     super(Comment, dataSource.createEntityManager());
   }
 
+  // async getUserByComment(newsfeedId: number, page: number, pageSize: number) {
+  //   const comment = await this.find({
+  //     select: ['id', 'content', 'createdAt', 'user'],
+  //     relations: ['user'],
+  //     where: { newsfeed: { id: newsfeedId } },
+  //     order: { createdAt: 'desc' },
+  //     take: pageSize,
+  //     skip: pageSize * (page - 1),
+  //   });
+
+  //   return comment;
+  // }
+
   async getUserByComment(newsfeedId: number, page: number, pageSize: number) {
-    const comment = await this.find({
-      select: ['id', 'content', 'createdAt', 'user'],
-      relations: ['user'],
-      where: { newsfeed: { id: newsfeedId } },
-      order: { createdAt: 'desc' },
-      take: pageSize,
-      skip: pageSize * (page - 1),
-    });
-
-    return comment;
-  }
-
-  async test(newsfeedId: number, page: number, pageSize: number) {
     const comment = await this.createQueryBuilder('comment')
       .select([
         'comment.id',
