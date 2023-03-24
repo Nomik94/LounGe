@@ -14,6 +14,7 @@ import { ISerchTagNewsfeed } from './interface/serch.tag.newsfeed.interface';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { GroupRepository } from 'src/common/repository/group.repository';
 import { UserRepository } from 'src/common/repository/user.repository';
+import { IFirstNesfeed } from './interface/firstNewsfeed.interface';
 
 @Injectable()
 export class NewsfeedService {
@@ -229,12 +230,10 @@ export class NewsfeedService {
       const newsfeedSerchId = Array.from(
         new Set(newsfeedTag.map((tag) => tag.newsFeedId)),
       );
-
       const findNewsfeed = await this.newsfeedRepository.findNewsfeedByGroupId(
         newsfeedSerchId,
         groupIds,
       );
-
       const result = findNewsfeed.map((feed) => {
         const userName = feed.user.username;
         const userImage = feed.user.image;
@@ -290,7 +289,6 @@ export class NewsfeedService {
           numberNewsfeedIdArray,
           groupId,
         );
-
       const result = findNewsfeed.map((feed) => {
         const userName = feed.user.username;
         const userImage = feed.user.image;
@@ -341,13 +339,11 @@ export class NewsfeedService {
       const serchNewsfeedId = Array.from(
         new Set(newsfeedTag.map((tag) => tag.newsFeedId)),
       );
-
       const findNewsfeed = await this.newsfeedRepository.findNewsfeedByTag(
         serchNewsfeedId,
         userId,
         groupIds,
       );
-
       const result = findNewsfeed.map((feed) => {
         const userName = feed.user.username;
         const userImage = feed.user.image;
@@ -389,7 +385,7 @@ export class NewsfeedService {
     groupId: number,
     page: number,
     userId: number
-  ) : Promise<ISerchNewsfeedList[]>{
+  ) : Promise<ISerchNewsfeedList[] | IFirstNesfeed>{
     try {
       const findNewsfeed =
         await this.newsfeedRepository.findnewsfeedByNewsfeedId(
@@ -437,17 +433,19 @@ export class NewsfeedService {
   async readNewsfeedMyList(
     userId: number,
     page: number,
-  ): Promise<ISerchNewsfeedList[]> {
+  ): Promise<ISerchNewsfeedList[] | IFirstNesfeed> {
     try {
       const findGroup = await this.userGroupRepository.checkUserStatus(userId);
       const groupIds = findGroup.map((group) => group.groupId);
+      if(!groupIds.length) {
+        return this.firstNewsfeed()
+      }
       const findNewsfeed = await this.newsfeedRepository.findnewsfeedByUserId(
         userId,
         groupIds,
         page,
         this.pageSize,
       );
-
       const result = findNewsfeed.map((feed) => {
         const userName = feed.user.username;
         const userImage = feed.user.image;
@@ -490,10 +488,13 @@ export class NewsfeedService {
   async readNewsfeedMyGroup(
     userId: number,
     page: number,
-  ): Promise<ISerchNewsfeedList[]> {
+  ): Promise<ISerchNewsfeedList[] | IFirstNesfeed> {
     try {
       const findGroup = await this.userGroupRepository.checkUserStatus(userId);
       const groupIds = findGroup.map((group) => group.groupId);
+      if(!groupIds.length) {
+        return this.firstNewsfeed()
+      }
       const findNewsfeed = await this.newsfeedRepository.findnewsfeedByGroupId(
         groupIds,
         page,
@@ -624,5 +625,11 @@ export class NewsfeedService {
         );
     }
     return resultByEs
+  }
+
+  firstNewsfeed() {
+    return {
+      userIdentify: 2,
+    }
   }
 }

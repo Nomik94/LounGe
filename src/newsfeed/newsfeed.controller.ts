@@ -21,6 +21,7 @@ import { ISerchTagNewsfeed } from './interface/serch.tag.newsfeed.interface';
 import { ISerchTagMyNewsfeed } from './interface/serch.tag.mynewsfeed.interface';
 import { ISerchNewsfeedList } from './interface/serch.newsfeed.list.interface';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { IFirstNesfeed } from './interface/firstNewsfeed.interface';
 
 @Controller('api/newsfeed')
 export class NewsfeedController {
@@ -114,7 +115,7 @@ export class NewsfeedController {
     @GetUser() user: IUser,
     @Param('id') groupId: number,
     @Param('page') page: number,
-  ): Promise<ISerchNewsfeedList[]> {
+  ): Promise<ISerchNewsfeedList[] | IFirstNesfeed> {
     const userId = user.id;
     return await this.newsfeedService.readNewsfeedGroup(groupId, page, userId);
   }
@@ -125,7 +126,7 @@ export class NewsfeedController {
   async readNewsfeedMyList(
     @GetUser() user: IUser,
     @Param('page') page: number,
-  ): Promise<ISerchNewsfeedList[]> {
+  ): Promise<ISerchNewsfeedList[] | IFirstNesfeed> {
     const userId = user.id;
     return await this.newsfeedService.readNewsfeedMyList(userId, page);
   }
@@ -136,7 +137,7 @@ export class NewsfeedController {
   async readNewsfeedMyGroup(
     @GetUser() user: IUser,
     @Param('page') page: number,
-  ): Promise<ISerchNewsfeedList[]> {
+  ): Promise<ISerchNewsfeedList[] | IFirstNesfeed> {
     const userId = user.id;
     return await this.newsfeedService.readNewsfeedMyGroup(userId, page);
   }
