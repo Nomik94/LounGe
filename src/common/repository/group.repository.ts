@@ -17,7 +17,7 @@ export class GroupRepository extends Repository<Group> {
         'group.groupImage',
         'group.backgroundImage',
         'group.description',
-        'tagGroups',
+        'tagGroups.tagId',
         'tag.tagName',
       ])
       .leftJoin('group.tagGroups', 'tagGroups')
@@ -40,7 +40,7 @@ export class GroupRepository extends Repository<Group> {
         'group.groupImage',
         'group.backgroundImage',
         'group.description',
-        'tagGroups',
+        'tagGroups.tagId',
         'tag.tagName',
       ])
       .leftJoin('group.tagGroups', 'tagGroups')
@@ -68,7 +68,7 @@ export class GroupRepository extends Repository<Group> {
         'group.groupImage',
         'group.backgroundImage',
         'group.description',
-        'tagGroups',
+        'tagGroups.tagId',
         'tag.tagName',
       ])
       .leftJoin('group.tagGroups', 'tagGroups')
@@ -88,7 +88,7 @@ export class GroupRepository extends Repository<Group> {
         'group.groupImage',
         'group.backgroundImage',
         'group.description',
-        'tagGroups',
+        'tagGroups.tagId',
         'tag.tagName',
       ])
       .leftJoin('group.tagGroups', 'tagGroups')
