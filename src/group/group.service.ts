@@ -106,7 +106,8 @@ export class GroupService {
       page,
       pageSize,
     );
-    const a =myGroupList.map((group) => ({
+
+    return myGroupList.map((group) => ({
       groupId: group.id,
       groupName: group.groupName,
       groupImage: group.groupImage,
@@ -115,17 +116,21 @@ export class GroupService {
       leader: group.user.username,
       leaderImage: group.user.image,
     }));
-    console.log(a)
-    return a
   }
 
   // 그룹 관리 리스트
   async getGroupManagementList(userId: number, page: number): Promise<Group[]> {
     let pageSize = 9;
-    
+
     return await this.groupRepository.find({
       where: { userGroups: { userId, role: '그룹장' } },
-      select: ['id', 'groupName', 'groupImage', 'backgroundImage', 'description'],
+      select: [
+        'id',
+        'groupName',
+        'groupImage',
+        'backgroundImage',
+        'description',
+      ],
       take: pageSize,
       skip: pageSize * (page - 1),
     });
