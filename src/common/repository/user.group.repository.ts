@@ -36,4 +36,13 @@ export class UserGroupRepository extends Repository<UserGroup> {
       relations: ['user'],
     });
   }
+
+  async getLankerGroups(): Promise<UserGroup[]>{
+    return await this.createQueryBuilder("userGroups")
+    .select("userGroups.groupId as groupId")
+    .addSelect("COUNT(userGroups.groupId) as count")
+    .having("count >= :count", { count: 2 })
+    .groupBy("userGroups.groupId")
+    .getRawMany();
+  }
 }

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
 import { Between, Not, Repository } from 'typeorm';
@@ -9,8 +9,9 @@ import { GroupEventDto } from './dto/group.event.dto';
 import { Group } from 'src/database/entities/group.entity';
 import { ForbiddenException } from '@nestjs/common/exceptions';
 import { UserGroup } from 'src/database/entities/user-group.entity';
-import { IAllEventList } from './interface/event.list.interface';
 import { IGroupEventList } from './interface/group.event.list.interface';
+import { Cache } from 'cache-manager';
+import { UserGroupRepository } from 'src/common/repository/user.group.repository';
 
 @Injectable()
 export class CalendarService {
@@ -21,28 +22,56 @@ export class CalendarService {
     private readonly groupEventRepository: Repository<GroupEvent>,
     @InjectRepository(Group)
     private readonly groupRepository: Repository<Group>,
-    @InjectRepository(UserGroup)
-    private readonly userGroupRepository: Repository<UserGroup>,
+    private readonly userGroupRepository: UserGroupRepository,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
   // 전체 이벤트 리스트
-  async getAllEvent(
-    userId: number,
-    startStr,
-    endStr,
-  ) {
+  async getAllEvent(userId: number, startStr, endStr) {
     const myGroupList = await this.userGroupRepository.find({
       where: {
         userId,
         role: Not('가입대기'),
         group: { groupEvents: { start: Between(startStr, endStr) } },
       },
-      select: ['groupId', 'userId'],
+      select: ['groupId'],
     });
-    console.log(myGroupList)
-    const myGroupIds = myGroupList.map((ids) => ({
-      group: { id: ids.groupId },
+
+    const lankerGroups = await this.getLankerGroups();
+    const mapLankerGroups = lankerGroups.map((userGroup) => userGroup.groupId);
+    const mapMyGroupIds = myGroupList.map((userGroup) => userGroup.groupId);
+    const differenceGroups = mapMyGroupIds.filter(
+      (id) => !mapLankerGroups.includes(id),
+    );
+    const intersectionGroups = mapMyGroupIds.filter((id) =>
+      mapLankerGroups.includes(id),
+    );
+    console.log(mapMyGroupIds, '가입한 그룹');
+    console.log(mapLankerGroups, '상위 그룹');
+    console.log(differenceGroups, '상위 그룹을 제외한 가입 그룹');
+    console.log(intersectionGroups, '가입한 그룹중 상위 그룹');
+    let existCacheGroups = [];
+    let nullCacheGroups = [];
+    let cacheData = [];
+    for (let id of intersectionGroups) {
+      const checkCache = await this.cacheManager.get(`${id}${startStr}`);
+      if (checkCache) {
+        existCacheGroups.push(id);
+        cacheData.push(checkCache);
+      } else {
+        nullCacheGroups.push(id);
+      }
+    }
+
+    const joinGroupIds = differenceGroups.concat(nullCacheGroups);
+    console.log(existCacheGroups, '캐시에 데이터가 존재하는 그룹');
+    console.log(nullCacheGroups, '캐시에 데이터가 존재하지 않는 그룹');
+    console.log(joinGroupIds, '최종적으로 데이터를 찾아와야 하는 그룹');
+    const myGroupIds = joinGroupIds.map((id) => ({
+      group: { id },
     }));
+
     let groupEvents = [];
     let mapGroupEvents = [];
     if (myGroupIds.length > 0) {
@@ -50,6 +79,7 @@ export class CalendarService {
         where: myGroupIds,
         relations: ['group'],
       });
+
       mapGroupEvents = groupEvents.map((event) => ({
         id: event.id,
         where: 'group',
@@ -66,9 +96,20 @@ export class CalendarService {
         backgroundImage: event.group.backgroundImage,
       }));
     }
+    if (nullCacheGroups.length !== 0) {
+      const saveCacheDataList = mapGroupEvents.filter((event) =>
+        nullCacheGroups.includes(event.tableId),
+      );
+      for (let data of saveCacheDataList) {
+        await this.cacheManager.set(`${data.tableId}${startStr}`, data, {
+          ttl: 3600,
+        });
+      }
+    }
+    const concatGroupEvents = mapGroupEvents.concat(cacheData);
 
     const myUserEvents = await this.userEventRepository.find({
-      where: { user: { id: userId } , start: Between(startStr,endStr)},
+      where: { user: { id: userId }, start: Between(startStr, endStr) },
       relations: ['user'],
     });
 
@@ -88,10 +129,11 @@ export class CalendarService {
       backgroundImage: '1.png',
     }));
 
-    const joinEvents = mapGroupEvents.concat(mapUserEvents);
+    const joinEvents = mapUserEvents.concat(concatGroupEvents);
     joinEvents.sort(
       (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
     );
+
     return joinEvents;
   }
 
@@ -218,5 +260,9 @@ export class CalendarService {
     if (!memberCheck) {
       throw new ForbiddenException('그룹에 가입해야만 확인할 수 있습니다.');
     }
+  }
+
+  async getLankerGroups() {
+    return await this.userGroupRepository.getLankerGroups();
   }
 }
