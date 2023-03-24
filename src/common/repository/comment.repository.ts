@@ -8,7 +8,7 @@ export class CommentRepository extends Repository<Comment> {
     super(Comment, dataSource.createEntityManager());
   }
 
-  // 댓글ID로 유저정보 가져오기
+  // 뉴스피드ID로 댓글 정보 가져오기
   async getCommentByNewsfeedId(
     newsfeedId: number,
     page: number,
