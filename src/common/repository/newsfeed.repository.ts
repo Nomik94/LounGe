@@ -40,7 +40,7 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     groupId: number,
   ): Promise<NewsFeed[]> {
     return await this.find({
-      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group'],
+      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group', 'comment'],
       order: { createdAt: 'desc' },
       where: {
         id: In(numberNewsfeedIdArray),
@@ -56,7 +56,7 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     groupIds: number[],
   ): Promise<NewsFeed[]> {
     return await this.find({
-      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group'],
+      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group', 'comment'],
       order: { createdAt: 'desc' },
       where: {
         id: In(serchNewsfeedId),
@@ -71,7 +71,7 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     groupIds: number[],
   ): Promise<NewsFeed[]> {
     return await this.find({
-      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group'],
+      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group', 'comment'],
       where: { id: In(newsfeedSerchId), group: { id: In(groupIds) } },
       order: { createdAt: 'desc' },
     });
@@ -83,7 +83,7 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     pageSize: number,
   ): Promise<NewsFeed[]> {
     return await this.find({
-      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group'],
+      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group', 'comment'],
       select: ['id', 'content', 'createdAt', 'updatedAt'],
       where: { group: { id: groupId }, deletedAt: null },
       order: { createdAt: 'desc' },
@@ -99,7 +99,7 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     pageSize: number,
   ): Promise<NewsFeed[]> {
     return await this.find({
-      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group'],
+      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group', 'comment'],
       select: ['id', 'content', 'createdAt', 'updatedAt'],
       where: {
         user: { id: userId },
@@ -118,12 +118,12 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     pageSize: number,
   ) {
     return await this.find({
-      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group'],
+      relations: ['newsFeedTags.tag', 'newsImages', 'user', 'group', 'comment'],
       select: ['id', 'content', 'createdAt', 'updatedAt'],
       where: { group: { id: In(groupIds) }, deletedAt: null },
       order: { createdAt: 'desc' },
-      take: pageSize,
       skip: pageSize * (page - 1),
+      take: pageSize,
     });
   }
 }

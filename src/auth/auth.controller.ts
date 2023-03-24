@@ -1,6 +1,5 @@
 import {
   Get,
-  HttpCode,
   Res,
   UploadedFile,
   UseGuards,
@@ -40,7 +39,6 @@ export class AuthController {
 
   // 카카오로그인 API
   @Get('login/kakao')
-  @HttpCode(200)
   @UseGuards(AuthGuard('kakao'))
   async kakaoLogin(@GetUser() user: KakaoLoginDTO, @Res() res: Response) {
     const tokens = await this.authService.kakaoLogin(user);

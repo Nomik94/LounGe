@@ -81,7 +81,12 @@ export class AppController {
   @Render('serchnewsfeedtag')
   serchbar() {}
 
+  @Get('/newsfeed/comment')
+  @Render('comment')
+  comment() {}
+
   @Get('/groups/joinRequest')
   @Render('joingroups')
   joinGroupList(){}
+
 }

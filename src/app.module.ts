@@ -15,6 +15,7 @@ import { Group } from './database/entities/group.entity';
 import { UserGroup } from './database/entities/user-group.entity';
 import { NewsFeed } from './database/entities/newsFeed.entity';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
     EmailModule,
     CalendarModule,
     UserModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,9 +1,6 @@
-$(document).ready(function () {
-  const accessToken = getCookie('accessToken');
-
-  if (accessToken) {
-    getUserImageAndUsername();
-  }
+$(document).ready(async function () {
+  await restoreToken();
+  getUserImageAndUsername();
 });
 function getCookie(name) {
   let matches = document.cookie.match(
@@ -15,7 +12,6 @@ function getCookie(name) {
   );
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
-
 function getUserImageAndUsername() {
   const accessToken = getCookie('accessToken');
 
@@ -104,4 +100,17 @@ function getUserImageAndUsername() {
     $('#mobileSideBar').append(mobileSideBar_html);
     $('#dropDownBar').append(dropDownBar_html);
   });
+}
+
+function serchTagNewsfeedButton(){
+  const reg = /\s/g;
+  const text = document.getElementById('search-main').value;
+  if(text.match(reg)) {
+    alert("공백은 입력할 수 없어요!")
+  } else if (!text){
+    alert("검색할 태그는 최소 한 글자 이상!")
+  } else {
+    window.localStorage.setItem('searchResults', text)
+    window.location.href = '/serchbar/tag';
+  }
 }

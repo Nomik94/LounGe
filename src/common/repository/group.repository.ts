@@ -54,6 +54,7 @@ export class GroupRepository extends Repository<Group> {
       .skip(pageSize * (page - 1))
       .getMany();
   }
+
   // 가입 신청 그룹 리스트
   async getGroupJoinList(
     groupIds: number[],
@@ -113,7 +114,11 @@ export class GroupRepository extends Repository<Group> {
         'user.image',
       ])
       .leftJoin('group.user', 'user')
-      .where('user.id = :userId', { userId })
+      .leftJoin('group.userGroups','userGroups')
+      .where('userGroups.userId = :userId', { userId })
+      .andWhere(new NotBrackets((qb) => {
+        qb.where('userGroups.role = :role', { role : '가입대기' });
+      }))
       .take(pageSize)
       .skip(pageSize * (page - 1))
       .getMany();

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   CACHE_MANAGER,
   Inject,
   Injectable,
@@ -10,6 +11,7 @@ import Mail from 'nodemailer/lib/mailer';
 import * as nodemailer from 'nodemailer';
 import { Cache } from 'cache-manager';
 import _ from 'lodash';
+import { UserService } from 'src/user/user.service';
 
 interface EmailOptions {
   to: string;
@@ -25,6 +27,7 @@ export class EmailService {
     private readonly configService: ConfigService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    private readonly userService: UserService,
   ) {
     this.transporter = nodemailer.createTransport({
       service: this.configService.get('SERVICE'),
@@ -52,6 +55,10 @@ export class EmailService {
 
   // 인증번호 생성
   async sendVerification(email: string): Promise<void> {
+    const user = await this.userService.getByEmail(email);
+    if (user) {
+      throw new BadRequestException({ message: '이미 가입된 이메일입니다.' });
+    }
     const verifyToken = this.randomNumber();
     await this.cacheManager.set(email, verifyToken, { ttl: 300 });
     await this.sendVerifyToken(email, verifyToken);
