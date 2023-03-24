@@ -53,7 +53,7 @@ export class CommentService {
       select: ['id', 'username', 'image'],
     });
 
-    const comment = await this.commentRepository.getUserByCommentId(
+    const comment = await this.commentRepository.getCommentByNewsfeedId(
       newsfeedId,
       page,
       pageSize,

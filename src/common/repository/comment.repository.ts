@@ -9,7 +9,7 @@ export class CommentRepository extends Repository<Comment> {
   }
 
   // 댓글ID로 유저정보 가져오기
-  async getUserByCommentId(
+  async getCommentByNewsfeedId(
     newsfeedId: number,
     page: number,
     pageSize: number,
