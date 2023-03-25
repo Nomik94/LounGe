@@ -54,9 +54,8 @@ export class CalendarController {
     @Body() data: GroupEventDto,
   ): Promise<void> {
     const userId = user.id;
-    for (let i = 0; i < 100; i++) {
-      await this.calendarService.createGroupEvent(userId, groupId, data);
-    }
+    await this.calendarService.createGroupEvent(userId, groupId, data);
+
     return;
   }
 
