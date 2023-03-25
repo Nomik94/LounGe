@@ -71,7 +71,7 @@ export class CalendarService {
       );
       this.setCacheData(saveCacheDataList, startStr);
     }
-    
+
     const concatGroupEvents = [...mapGroupEvents, ...joinCacheData];
     const myUserEvents = await this.getMyUserEvents(userId, startStr, endStr);
     const mapUserEvents = await this.mapUserEvents(myUserEvents);
@@ -208,12 +208,20 @@ export class CalendarService {
     }
   }
 
-  async checkCacheData(intersectionGroups, startStr) {
+  async checkCacheData(
+    intersectionGroups,
+    startStr,
+  ): Promise<{
+    cacheData: IAllEventList[][];
+    nullCacheGroups: number[];
+  }> {
     let nullCacheGroups = [];
     let cacheData = [];
 
     for (let id of intersectionGroups) {
-      const checkCache = await this.cacheManager.get(`${id}${startStr}`);
+      const checkCache: IAllEventList[] = await this.cacheManager.get(
+        `${id}${startStr}`,
+      );
       if (checkCache) {
         cacheData.push(checkCache);
       } else {
@@ -224,7 +232,7 @@ export class CalendarService {
     return { cacheData, nullCacheGroups };
   }
 
-  async joinCacheData(cacheData) {
+  async joinCacheData(cacheData): Promise<IAllEventList[]> {
     let joinCacheData = [];
     cacheData.forEach((array) => {
       joinCacheData = joinCacheData.concat(array);
@@ -232,14 +240,14 @@ export class CalendarService {
     return joinCacheData;
   }
 
-  async getGroupEvents(myGroupIds) {
+  async getGroupEvents(myGroupIds): Promise<GroupEvent[]> {
     return await this.groupEventRepository.find({
       where: myGroupIds,
       relations: ['group'],
     });
   }
 
-  async mapGroupEvents(groupEvents) {
+  async mapGroupEvents(groupEvents): Promise<IAllEventList[]> {
     return groupEvents.map((event) => ({
       id: event.id,
       where: 'group',
@@ -282,14 +290,14 @@ export class CalendarService {
     }
   }
 
-  async getMyUserEvents(userId, startStr, endStr) {
+  async getMyUserEvents(userId, startStr, endStr): Promise<UserEvent[]> {
     return await this.userEventRepository.find({
       where: { user: { id: userId }, start: Between(startStr, endStr) },
       relations: ['user'],
     });
   }
 
-  async mapUserEvents(UserEvents) {
+  async mapUserEvents(UserEvents): Promise<IAllEventList[]> {
     return UserEvents.map((event) => ({
       id: event.id,
       where: 'user',
@@ -307,7 +315,7 @@ export class CalendarService {
     }));
   }
 
-  async changeNumberArrayIds(a) {
-    return a.map((userGroup) => userGroup.groupId);
+  async changeNumberArrayIds(userGroups): Promise<number[]> {
+    return userGroups.map((userGroup) => userGroup.groupId);
   }
 }
