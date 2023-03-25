@@ -8,7 +8,6 @@ import { UserEventDto } from './dto/user.event.dto';
 import { GroupEventDto } from './dto/group.event.dto';
 import { Group } from 'src/database/entities/group.entity';
 import { ForbiddenException } from '@nestjs/common/exceptions';
-import { UserGroup } from 'src/database/entities/user-group.entity';
 import { IGroupEventList } from './interface/group.event.list.interface';
 import { Cache } from 'cache-manager';
 import { UserGroupRepository } from 'src/common/repository/user.group.repository';
@@ -44,17 +43,14 @@ export class CalendarService {
     const intersectionGroups = mapMyGroupIds.filter((id) =>
       mapLankerGroups.includes(id),
     );
-    // console.log(mapMyGroupIds, '가입한 그룹');
-    // console.log(mapLankerGroups, '상위 그룹');
-    // console.log(differenceGroups, '상위 그룹을 제외한 가입 그룹');
-    // console.log(intersectionGroups, '가입한 그룹중 상위 그룹');
-    let existCacheGroups = [];
+
+
     let nullCacheGroups = [];
     let cacheData = [];
+    
     for (let id of intersectionGroups) {
       const checkCache = await this.cacheManager.get(`${id}${startStr}`);
       if (checkCache) {
-        existCacheGroups.push(id);
         cacheData.push(checkCache);
       } else {
         nullCacheGroups.push(id);
@@ -67,9 +63,6 @@ export class CalendarService {
     });
 
     const joinGroupIds = differenceGroups.concat(nullCacheGroups);
-    // console.log(existCacheGroups, '캐시에 데이터가 존재하는 그룹');
-    // console.log(nullCacheGroups, '캐시에 데이터가 존재하지 않는 그룹');
-    // console.log(joinGroupIds, '최종적으로 데이터를 찾아와야 하는 그룹');
     const myGroupIds = joinGroupIds.map((id) => ({
       group: { id },
     }));
