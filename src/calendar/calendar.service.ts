@@ -39,9 +39,9 @@ export class CalendarService {
       endStr,
     );
 
-    const lankerGroups = await this.getLankerGroups();
-    const mapLankerGroups = lankerGroups.map((userGroup) => userGroup.groupId);
-    const mapMyGroupIds = myGroupList.map((userGroup) => userGroup.groupId);
+    const lankerGroups = await this.userGroupRepository.getLankerGroups();
+    const mapLankerGroups = await this.changeNumberArrayIds(lankerGroups);
+    const mapMyGroupIds = await this.changeNumberArrayIds(myGroupList);
     const differenceGroups = mapMyGroupIds.filter(
       (id) => !mapLankerGroups.includes(id),
     );
@@ -49,103 +49,33 @@ export class CalendarService {
       mapLankerGroups.includes(id),
     );
 
-    let nullCacheGroups = [];
-    let cacheData = [];
+    let { cacheData, nullCacheGroups } = await this.checkCacheData(
+      intersectionGroups,
+      startStr,
+    );
 
-    for (let id of intersectionGroups) {
-      const checkCache = await this.cacheManager.get(`${id}${startStr}`);
-      if (checkCache) {
-        cacheData.push(checkCache);
-      } else {
-        nullCacheGroups.push(id);
-      }
-    }
+    let joinCacheData = await this.joinCacheData(cacheData);
 
-    let joinCacheData = [];
-    cacheData.forEach((array) => {
-      joinCacheData = joinCacheData.concat(array);
-    });
-
-    const joinGroupIds = differenceGroups.concat(nullCacheGroups);
+    const joinGroupIds = [...differenceGroups, ...nullCacheGroups];
     const myGroupIds = joinGroupIds.map((id) => ({
       group: { id },
     }));
 
-    let groupEvents = [];
-    let mapGroupEvents = [];
-    if (myGroupIds.length > 0) {
-      groupEvents = await this.groupEventRepository.find({
-        where: myGroupIds,
-        relations: ['group'],
-      });
+    const groupEvents =
+      myGroupIds.length > 0 ? await this.getGroupEvents(myGroupIds) : [];
+    const mapGroupEvents = await this.mapGroupEvents(groupEvents);
 
-      mapGroupEvents = groupEvents.map((event) => ({
-        id: event.id,
-        where: 'group',
-        name: event.group.groupName,
-        tableId: event.group.id,
-        eventName: event.eventName,
-        eventContent: event.eventContent,
-        start: event.start,
-        end: event.end,
-        lat: event.lat,
-        lng: event.lng,
-        location: event.location,
-        color: '#FFC8A2',
-        backgroundImage: event.group.backgroundImage,
-      }));
-    }
-    if (nullCacheGroups.length !== 0) {
+    if (nullCacheGroups.length > 0) {
       const saveCacheDataList = mapGroupEvents.filter((event) =>
         nullCacheGroups.includes(event.tableId),
       );
-      let dataId;
-      let dataArray = [];
-      let first = true;
-      let change = false;
-      for (let data of saveCacheDataList) {
-        if (first) {
-          dataId = data.tableId;
-          first = false;
-        }
-        if (dataId !== data.tableId) {
-          change = true;
-          dataId = data.tableId;
-        }
-        if (change === true) {
-          await this.cacheManager.set(`${data.tableId}${startStr}`, dataArray, {
-            ttl: 500,
-          });
-          dataArray = [];
-          change = false;
-        }
-        await dataArray.push(data);
-      }
+      this.setCacheData(saveCacheDataList, startStr);
     }
-    const concatGroupEvents = mapGroupEvents.concat(joinCacheData);
-
-    const myUserEvents = await this.userEventRepository.find({
-      where: { user: { id: userId }, start: Between(startStr, endStr) },
-      relations: ['user'],
-    });
-
-    const mapUserEvents = myUserEvents.map((event) => ({
-      id: event.id,
-      where: 'user',
-      name: '개인',
-      tableId: event.user.id,
-      eventName: event.eventName,
-      eventContent: event.eventContent,
-      start: event.start,
-      end: event.end,
-      lat: event.lat,
-      lng: event.lng,
-      location: event.location,
-      color: '#D4F0F0',
-      backgroundImage: '1.png',
-    }));
-
-    const joinEvents = mapUserEvents.concat(concatGroupEvents);
+    
+    const concatGroupEvents = [...mapGroupEvents, ...joinCacheData];
+    const myUserEvents = await this.getMyUserEvents(userId, startStr, endStr);
+    const mapUserEvents = await this.mapUserEvents(myUserEvents);
+    const joinEvents = [...mapUserEvents, ...concatGroupEvents];
     joinEvents.sort(
       (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
     );
@@ -278,7 +208,106 @@ export class CalendarService {
     }
   }
 
-  async getLankerGroups() {
-    return await this.userGroupRepository.getLankerGroups();
+  async checkCacheData(intersectionGroups, startStr) {
+    let nullCacheGroups = [];
+    let cacheData = [];
+
+    for (let id of intersectionGroups) {
+      const checkCache = await this.cacheManager.get(`${id}${startStr}`);
+      if (checkCache) {
+        cacheData.push(checkCache);
+      } else {
+        nullCacheGroups.push(id);
+      }
+    }
+
+    return { cacheData, nullCacheGroups };
+  }
+
+  async joinCacheData(cacheData) {
+    let joinCacheData = [];
+    cacheData.forEach((array) => {
+      joinCacheData = joinCacheData.concat(array);
+    });
+    return joinCacheData;
+  }
+
+  async getGroupEvents(myGroupIds) {
+    return await this.groupEventRepository.find({
+      where: myGroupIds,
+      relations: ['group'],
+    });
+  }
+
+  async mapGroupEvents(groupEvents) {
+    return groupEvents.map((event) => ({
+      id: event.id,
+      where: 'group',
+      name: event.group.groupName,
+      tableId: event.group.id,
+      eventName: event.eventName,
+      eventContent: event.eventContent,
+      start: event.start,
+      end: event.end,
+      lat: event.lat,
+      lng: event.lng,
+      location: event.location,
+      color: '#FFC8A2',
+      backgroundImage: event.group.backgroundImage,
+    }));
+  }
+
+  async setCacheData(saveCacheDataList, startStr) {
+    let dataId;
+    let dataArray = [];
+    let first = true;
+    let change = false;
+    for (let data of saveCacheDataList) {
+      if (first) {
+        dataId = data.tableId;
+        first = false;
+      }
+      if (dataId !== data.tableId) {
+        change = true;
+        dataId = data.tableId;
+      }
+      if (change === true) {
+        await this.cacheManager.set(`${data.tableId}${startStr}`, dataArray, {
+          ttl: 500,
+        });
+        dataArray = [];
+        change = false;
+      }
+      await dataArray.push(data);
+    }
+  }
+
+  async getMyUserEvents(userId, startStr, endStr) {
+    return await this.userEventRepository.find({
+      where: { user: { id: userId }, start: Between(startStr, endStr) },
+      relations: ['user'],
+    });
+  }
+
+  async mapUserEvents(UserEvents) {
+    return UserEvents.map((event) => ({
+      id: event.id,
+      where: 'user',
+      name: '개인',
+      tableId: event.user.id,
+      eventName: event.eventName,
+      eventContent: event.eventContent,
+      start: event.start,
+      end: event.end,
+      lat: event.lat,
+      lng: event.lng,
+      location: event.location,
+      color: '#D4F0F0',
+      backgroundImage: '1.png',
+    }));
+  }
+
+  async changeNumberArrayIds(a) {
+    return a.map((userGroup) => userGroup.groupId);
   }
 }
