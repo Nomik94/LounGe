@@ -17,6 +17,9 @@ function groupEventList() {
     },
   })
     .then(function (res) {
+      if (!res.data.role) {
+        document.getElementById('createButton').innerHTML = '';
+      }
       res.data.groupInfo.forEach((data) => {
         const getDate = data.start.split(' ')[0].split('-');
         if (res.data.role) {
@@ -85,7 +88,6 @@ function groupEventList() {
           <!-- /EVENT PREVIEW -->`;
           $('#groupEventList').append(temp_html);
         } else {
-          document.getElementById('createButton').innerHTML = '';
           let temp_html = `      <!-- EVENT PREVIEW -->
         <div class="event-preview">
           <!-- EVENT PREVIEW COVER -->
@@ -156,6 +158,7 @@ function groupEventList() {
       $('#groupeventjs').append(js);
     })
     .catch(async function (error) {
+      document.getElementById('createButton').innerHTML = '';
       if (error.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
           toast: true,

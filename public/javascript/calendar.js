@@ -74,6 +74,7 @@
           data: {},
         })
           .then(async function (res) {
+            console.log(res)
             listRender(res.data);
             const events = [];
             res.data.forEach((event) => {

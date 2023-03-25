@@ -29,14 +29,11 @@ export class CalendarService {
 
   // 전체 이벤트 리스트
   async getAllEvent(userId: number, startStr, endStr) {
-    const myGroupList = await this.userGroupRepository.find({
-      where: {
-        userId,
-        role: Not('가입대기'),
-        group: { groupEvents: { start: Between(startStr, endStr) } },
-      },
-      select: ['groupId'],
-    });
+    const myGroupList = await this.userGroupRepository.getMyGroupsWithTime(
+      userId,
+      startStr,
+      endStr,
+    );
 
     const lankerGroups = await this.getLankerGroups();
     const mapLankerGroups = lankerGroups.map((userGroup) => userGroup.groupId);
@@ -47,10 +44,10 @@ export class CalendarService {
     const intersectionGroups = mapMyGroupIds.filter((id) =>
       mapLankerGroups.includes(id),
     );
-    console.log(mapMyGroupIds, '가입한 그룹');
-    console.log(mapLankerGroups, '상위 그룹');
-    console.log(differenceGroups, '상위 그룹을 제외한 가입 그룹');
-    console.log(intersectionGroups, '가입한 그룹중 상위 그룹');
+    // console.log(mapMyGroupIds, '가입한 그룹');
+    // console.log(mapLankerGroups, '상위 그룹');
+    // console.log(differenceGroups, '상위 그룹을 제외한 가입 그룹');
+    // console.log(intersectionGroups, '가입한 그룹중 상위 그룹');
     let existCacheGroups = [];
     let nullCacheGroups = [];
     let cacheData = [];
@@ -64,10 +61,15 @@ export class CalendarService {
       }
     }
 
+    let joinCacheData = [];
+    cacheData.forEach((array) => {
+      joinCacheData = joinCacheData.concat(array);
+    });
+
     const joinGroupIds = differenceGroups.concat(nullCacheGroups);
-    console.log(existCacheGroups, '캐시에 데이터가 존재하는 그룹');
-    console.log(nullCacheGroups, '캐시에 데이터가 존재하지 않는 그룹');
-    console.log(joinGroupIds, '최종적으로 데이터를 찾아와야 하는 그룹');
+    // console.log(existCacheGroups, '캐시에 데이터가 존재하는 그룹');
+    // console.log(nullCacheGroups, '캐시에 데이터가 존재하지 않는 그룹');
+    // console.log(joinGroupIds, '최종적으로 데이터를 찾아와야 하는 그룹');
     const myGroupIds = joinGroupIds.map((id) => ({
       group: { id },
     }));
@@ -100,13 +102,24 @@ export class CalendarService {
       const saveCacheDataList = mapGroupEvents.filter((event) =>
         nullCacheGroups.includes(event.tableId),
       );
+
       for (let data of saveCacheDataList) {
-        await this.cacheManager.set(`${data.tableId}${startStr}`, data, {
-          ttl: 3600,
-        });
+        const existData: object[] = await this.cacheManager.get(
+          `${data.tableId}${startStr}`,
+        );
+        if (existData) {
+          existData.push(data);
+          await this.cacheManager.set(`${data.tableId}${startStr}`, existData, {
+            ttl: 300,
+          });
+        } else {
+          await this.cacheManager.set(`${data.tableId}${startStr}`, [data], {
+            ttl: 300,
+          });
+        }
       }
     }
-    const concatGroupEvents = mapGroupEvents.concat(cacheData);
+    const concatGroupEvents = mapGroupEvents.concat(joinCacheData);
 
     const myUserEvents = await this.userEventRepository.find({
       where: { user: { id: userId }, start: Between(startStr, endStr) },
