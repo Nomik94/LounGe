@@ -128,7 +128,10 @@ export class CalendarService {
     groupId: number,
   ): Promise<IGroupEventList> {
     await this.checkMember(userId, groupId);
-
+    const today = new Date()
+    const future = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000));
+    const todayStr = today.toISOString()
+    const futureStr = future.toISOString()
     const checkRole = await this.groupRepository.findOne({
       where: { id: groupId, user: { id: userId } },
     });
@@ -139,8 +142,13 @@ export class CalendarService {
     }
 
     const groupInfo = await this.groupEventRepository.findBy({
+      start : Between(todayStr, futureStr),
       group: { id: groupId },
     });
+
+    groupInfo.sort(
+      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+    );
     return { groupInfo, role };
   }
 
