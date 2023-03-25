@@ -96,19 +96,25 @@ export class CalendarService {
       );
       let dataId;
       let dataArray = [];
-      let first = true
+      let first = true;
+      let change = false;
       for (let data of saveCacheDataList) {
-        if(first) {
-          dataId = data.tableId
-          first =false
+        if (first) {
+          dataId = data.tableId;
+          first = false;
         }
-        if(dataId === data.tableId){
-          dataArray = []
+        if (dataId !== data.tableId) {
+          change = true;
+          dataId = data.tableId;
         }
-        await dataArray.push(data)
-        await this.cacheManager.set(`${data.tableId}${startStr}`, dataArray, {
-          ttl: 300,
-        });
+        if (change === true) {
+          await this.cacheManager.set(`${data.tableId}${startStr}`, dataArray, {
+            ttl: 10,
+          });
+          dataArray = [];
+          change = false;
+        }
+        await dataArray.push(data);
       }
     }
     const concatGroupEvents = mapGroupEvents.concat(joinCacheData);
