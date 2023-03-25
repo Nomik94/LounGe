@@ -41,12 +41,12 @@ export class UserGroupRepository extends Repository<UserGroup> {
     return await this.createQueryBuilder('userGroups')
       .select('userGroups.groupId as groupId')
       .addSelect('COUNT(userGroups.groupId) as count')
-      .having('count >= :count', { count: 2 })
+      .having('count >= :count', { count: 5 })
       .groupBy('userGroups.groupId')
       .getRawMany();
   }
 
-  async getMyGroupsWithTime(userId, startStr, endStr) {
+  async getMyGroupsWithTime(userId, startStr, endStr): Promise<UserGroup[]> {
     return await this.find({
       where: {
         userId,

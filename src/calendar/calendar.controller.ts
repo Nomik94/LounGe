@@ -29,8 +29,7 @@ export class CalendarController {
     @GetUser() user: IUser,
     @Param('startStr') startStr,
     @Param('endStr') endStr,
-  ) {
-    
+  ): Promise<IAllEventList[]> {
     const userId = user.id;
     return await this.calendarService.getAllEvent(userId, startStr, endStr);
   }

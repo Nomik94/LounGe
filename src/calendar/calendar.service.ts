@@ -11,6 +11,7 @@ import { ForbiddenException } from '@nestjs/common/exceptions';
 import { IGroupEventList } from './interface/group.event.list.interface';
 import { Cache } from 'cache-manager';
 import { UserGroupRepository } from 'src/common/repository/user.group.repository';
+import { IAllEventList } from './interface/event.list.interface';
 
 @Injectable()
 export class CalendarService {
@@ -27,7 +28,11 @@ export class CalendarService {
   ) {}
 
   // 전체 이벤트 리스트
-  async getAllEvent(userId: number, startStr, endStr) {
+  async getAllEvent(
+    userId: number,
+    startStr,
+    endStr,
+  ): Promise<IAllEventList[]> {
     const myGroupList = await this.userGroupRepository.getMyGroupsWithTime(
       userId,
       startStr,
