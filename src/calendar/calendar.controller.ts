@@ -54,9 +54,7 @@ export class CalendarController {
     @Body() data: GroupEventDto,
   ): Promise<void> {
     const userId = user.id;
-    await this.calendarService.createGroupEvent(userId, groupId, data);
-
-    return;
+    return await this.calendarService.createGroupEvent(userId, groupId, data);
   }
 
   // 그룹 이벤트 리스트 API
