@@ -109,7 +109,7 @@ export class CalendarService {
         }
         if (change === true) {
           await this.cacheManager.set(`${data.tableId}${startStr}`, dataArray, {
-            ttl: 10,
+            ttl: 500,
           });
           dataArray = [];
           change = false;
