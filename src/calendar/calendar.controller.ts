@@ -30,8 +30,7 @@ export class CalendarController {
     @Param('startStr') startStr,
     @Param('endStr') endStr,
   ) {
-    console.log(startStr)
-    console.log(endStr)
+    
     const userId = user.id;
     return await this.calendarService.getAllEvent(userId, startStr, endStr);
   }
@@ -44,7 +43,7 @@ export class CalendarController {
     @Body() data: UserEventDto,
   ): Promise<void> {
     const userId = user.id;
-    return await this.calendarService.createUserEvent(userId, data);
+    await this.calendarService.createUserEvent(userId, data);
   }
 
   // 그룹 이벤트 생성 API
@@ -56,7 +55,7 @@ export class CalendarController {
     @Body() data: GroupEventDto,
   ): Promise<void> {
     const userId = user.id;
-    return await this.calendarService.createGroupEvent(userId, groupId, data);
+    await this.calendarService.createGroupEvent(userId, groupId, data);
   }
 
   // 그룹 이벤트 리스트 API

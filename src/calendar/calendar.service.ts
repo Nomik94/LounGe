@@ -44,10 +44,9 @@ export class CalendarService {
       mapLankerGroups.includes(id),
     );
 
-
     let nullCacheGroups = [];
     let cacheData = [];
-    
+
     for (let id of intersectionGroups) {
       const checkCache = await this.cacheManager.get(`${id}${startStr}`);
       if (checkCache) {
@@ -95,21 +94,21 @@ export class CalendarService {
       const saveCacheDataList = mapGroupEvents.filter((event) =>
         nullCacheGroups.includes(event.tableId),
       );
-
+      let dataId;
+      let dataArray = [];
+      let first = true
       for (let data of saveCacheDataList) {
-        const existData: object[] = await this.cacheManager.get(
-          `${data.tableId}${startStr}`,
-        );
-        if (existData) {
-          existData.push(data);
-          await this.cacheManager.set(`${data.tableId}${startStr}`, existData, {
-            ttl: 300,
-          });
-        } else {
-          await this.cacheManager.set(`${data.tableId}${startStr}`, [data], {
-            ttl: 300,
-          });
+        if(first) {
+          dataId = data.tableId
+          first =false
         }
+        if(dataId === data.tableId){
+          dataArray = []
+        }
+        await dataArray.push(data)
+        await this.cacheManager.set(`${data.tableId}${startStr}`, dataArray, {
+          ttl: 300,
+        });
       }
     }
     const concatGroupEvents = mapGroupEvents.concat(joinCacheData);
