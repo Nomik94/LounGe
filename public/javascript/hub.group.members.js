@@ -17,7 +17,6 @@ function managementMemberList() {
     },
   })
     .then(function (res) {
-      console.log(res)
       $('#groupTitle').empty();
       $('#groupTitle').append(`${res.data.foundGroup.groupName}`);
       document.getElementById(
@@ -125,7 +124,6 @@ function managementMemberList() {
       $('#managementjs').append(js);
     })
     .catch(async function (error) {
-      console.log(error)
       if (error.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
           toast: true,
