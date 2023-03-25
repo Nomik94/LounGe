@@ -1,16 +1,16 @@
 import _ from 'lodash';
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
-import { Between, Not, Repository } from 'typeorm';
+import { Between, In, Not, Repository } from 'typeorm';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
 import { UserEventDto } from './dto/user.event.dto';
 import { GroupEventDto } from './dto/group.event.dto';
 import { Group } from 'src/database/entities/group.entity';
 import { ForbiddenException } from '@nestjs/common/exceptions';
-import { UserGroup } from 'src/database/entities/user-group.entity';
-import { IAllEventList } from './interface/event.list.interface';
 import { IGroupEventList } from './interface/group.event.list.interface';
+import { Cache } from 'cache-manager';
+import { UserGroupRepository } from 'src/common/repository/user.group.repository';
 
 @Injectable()
 export class CalendarService {
@@ -21,36 +21,87 @@ export class CalendarService {
     private readonly groupEventRepository: Repository<GroupEvent>,
     @InjectRepository(Group)
     private readonly groupRepository: Repository<Group>,
-    @InjectRepository(UserGroup)
-    private readonly userGroupRepository: Repository<UserGroup>,
+    private readonly userGroupRepository: UserGroupRepository,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
   // 전체 이벤트 리스트
-  async getAllEvent(
-    userId: number,
-    startStr,
-    endStr,
-  ) {
+  async getAllEvent(userId: number, startStr, endStr) {
     const myGroupList = await this.userGroupRepository.find({
       where: {
         userId,
         role: Not('가입대기'),
         group: { groupEvents: { start: Between(startStr, endStr) } },
       },
-      select: ['groupId', 'userId'],
+      select: ['groupId'],
     });
-    console.log(myGroupList)
-    const myGroupIds = myGroupList.map((ids) => ({
-      group: { id: ids.groupId },
-    }));
+
+    const myGroupIds = [];
+    let groupMember;
+    const cacheGroup = [];
+    const notCache = [];
+    myGroupList.map((ids) => {
+      myGroupIds.push(ids.groupId);
+    });
+    if (myGroupIds.length > 0) {
+      groupMember = await this.userGroupRepository.getMemberCount(myGroupIds);
+
+      for (let i = 0; i < groupMember.length; i++) {
+        if (Number(groupMember[i].member) > 1) {
+          cacheGroup.push(groupMember[i].groupId);
+        } else {
+          notCache.push(groupMember[i].groupId);
+        }
+      }
+    }
+
+    const groupEvent = [];
+    for (let i = 0; i < cacheGroup.length; i++) {
+      const getCache: any = await this.cacheManager.get(
+        `${cacheGroup[i]}-${startStr}`,
+      );
+
+      if (!getCache) {
+        const event = await this.groupEventRepository.find({
+          where: { group: { id: cacheGroup[i] } },
+          relations: ['group'],
+        });
+        await this.cacheManager.set(`${cacheGroup[i]}-${startStr}`, event, {
+          ttl: 300,
+        });
+        groupEvent.push(...event);
+      } else {
+        groupEvent.push(...getCache);
+      }
+    }
+
     let groupEvents = [];
     let mapGroupEvents = [];
-    if (myGroupIds.length > 0) {
+    if (notCache.length > 0) {
       groupEvents = await this.groupEventRepository.find({
-        where: myGroupIds,
+        where: { group: { id: In(notCache) } },
         relations: ['group'],
       });
-      mapGroupEvents = groupEvents.map((event) => ({
+      const allGroupEvent = groupEvent.concat(groupEvents);
+
+      mapGroupEvents = allGroupEvent.map((event) => ({
+        id: event.id,
+        where: 'group',
+        name: event.group.groupName,
+        tableId: event.group.id,
+        eventName: event.eventName,
+        eventContent: event.eventContent,
+        start: event.start,
+        end: event.end,
+        lat: event.lat,
+        lng: event.lng,
+        location: event.location,
+        color: '#FFC8A2',
+        backgroundImage: event.group.backgroundImage,
+      }));
+    } else {
+      mapGroupEvents = groupEvent.map((event) => ({
         id: event.id,
         where: 'group',
         name: event.group.groupName,
@@ -68,7 +119,7 @@ export class CalendarService {
     }
 
     const myUserEvents = await this.userEventRepository.find({
-      where: { user: { id: userId } , start: Between(startStr,endStr)},
+      where: { user: { id: userId }, start: Between(startStr, endStr) },
       relations: ['user'],
     });
 

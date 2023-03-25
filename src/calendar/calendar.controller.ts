@@ -25,9 +25,13 @@ export class CalendarController {
   // 전체 이벤트 리스트 API
   @Get('/events/:startStr/:endStr')
   @UseGuards(JwtAuthGuard)
-  async getAllEvent(@GetUser() user: IUser, @Param('startStr') startStr,@Param('endStr') endStr ) {
+  async getAllEvent(
+    @GetUser() user: IUser,
+    @Param('startStr') startStr,
+    @Param('endStr') endStr,
+  ) {
     const userId = user.id;
-    return await this.calendarService.getAllEvent(userId,startStr,endStr);
+    return await this.calendarService.getAllEvent(userId, startStr, endStr);
   }
 
   // 유저 이벤트 생성 API
@@ -50,7 +54,10 @@ export class CalendarController {
     @Body() data: GroupEventDto,
   ): Promise<void> {
     const userId = user.id;
-    return await this.calendarService.createGroupEvent(userId, groupId, data);
+    for (let i = 0; i < 100; i++) {
+      await this.calendarService.createGroupEvent(userId, groupId, data);
+    }
+    return;
   }
 
   // 그룹 이벤트 리스트 API

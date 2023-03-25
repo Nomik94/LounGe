@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserGroup } from 'src/database/entities/user-group.entity';
-import { DataSource, Not, Repository } from 'typeorm';
+import { DataSource, Not, NotBrackets, Repository } from 'typeorm';
 
 @Injectable()
 export class UserGroupRepository extends Repository<UserGroup> {
@@ -35,5 +35,19 @@ export class UserGroupRepository extends Repository<UserGroup> {
       select: ['userId', 'groupId'],
       relations: ['user'],
     });
+  }
+
+  async getMemberCount(groupIds) {
+    return this.createQueryBuilder('userGroup')
+      .select('userGroup.groupId', 'groupId')
+      .addSelect('COUNT(*)', 'member')
+      .where('userGroup.groupId IN (:...id)', { id: groupIds })
+      .andWhere(
+        new NotBrackets((qb) => {
+          qb.where('userGroup.role = :role', { role: '가입대기' });
+        }),
+      )
+      .groupBy('userGroup.groupId')
+      .getRawMany();
   }
 }
