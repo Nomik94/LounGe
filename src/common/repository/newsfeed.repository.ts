@@ -20,6 +20,10 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     await this.softDelete(id);
   }
 
+  async findFirstNewsfeed(){
+    return await this.find()
+  }
+
   async createNewsfeed(
     content: string,
     userId: number,
