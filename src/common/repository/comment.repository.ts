@@ -8,23 +8,36 @@ export class CommentRepository extends Repository<Comment> {
     super(Comment, dataSource.createEntityManager());
   }
 
-  async getUserByComment(commentId, page: number, pageSize: number) {
-    const comment = await this.find({
-      select: ['id', 'content', 'createdAt', 'user'],
-      relations: ['user'],
-      where: commentId,
-      order: { createdAt: 'desc' },
-      take: pageSize,
-      skip: pageSize * (page - 1),
-    });
-
+  // 뉴스피드ID로 댓글 정보 가져오기
+  async getCommentByNewsfeedId(
+    newsfeedId: number,
+    page: number,
+    pageSize: number,
+  ): Promise<Comment[]> {
+    const comment = await this.createQueryBuilder('comment')
+      .select([
+        'comment.id',
+        'comment.content',
+        'comment.createdAt',
+        'user.image',
+        'user.username',
+        'user.id',
+      ])
+      .leftJoin('comment.user', 'user')
+      .where('comment.newsfeed = :id', { id: newsfeedId })
+      .orderBy({ 'comment.createdAt': 'DESC' })
+      .take(pageSize)
+      .skip(pageSize * (page - 1))
+      .getMany();
     return comment;
   }
 
-  async checkComment(id: number) {
-    return await this.findOne({
-      relations: ['user'],
-      where: { id },
-    });
+  // 댓글ID로 유저ID 가져오기
+  async getUserIdByCommentId(commentId: number): Promise<Comment> {
+    return await this.createQueryBuilder('comment')
+      .select(['comment.id', 'user.id'])
+      .leftJoin('comment.user', 'user')
+      .where('comment.id = :id', { id: commentId })
+      .getOne();
   }
 }
