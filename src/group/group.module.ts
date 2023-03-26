@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ElasticsearchModule } from '@nestjs/elasticsearch/dist/elasticsearch.module';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsFormDataModule } from 'nestjs-form-data';

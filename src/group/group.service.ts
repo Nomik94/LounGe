@@ -17,8 +17,8 @@ import { Group } from 'src/database/entities/group.entity';
 import { IMemberList } from './interface/group.member.list.interface';
 import { IJoinRequest } from './interface/group.join.request.interface';
 import { IFile } from './interface/file.interface';
-import { ElasticsearchService } from '@nestjs/elasticsearch/dist';
 import { IGroupIndexBody } from './interface/es.group.data.interface';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Injectable()
 export class GroupService {
