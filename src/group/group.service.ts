@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { GroupRepository } from 'src/common/repository/group.repository';
 import { TagGroupRepository } from 'src/common/repository/tag.group.repository';
@@ -526,7 +525,6 @@ export class GroupService {
 
   // ES 그룹 검색
   async searchGroupWithTag(findJoinGroups, tag: string, page: number) {
-    console.log(findJoinGroups);
     const pageSize = 9;
     const result = await this.elasticsearchService.search({
       index: 'search-groups',
