@@ -74,6 +74,19 @@ export class AppController {
   }
 
   @Get('/newsfeed/mylist')
-  @Render('newsfeed-mylist')
+  @Render('hub-newsfeed-mylist')
   mylist() {}
+
+  @Get('/serchbar/tag')
+  @Render('serchnewsfeedtag')
+  serchbar() {}
+
+  @Get('/newsfeed/comment')
+  @Render('comment')
+  comment() {}
+
+  @Get('/groups/joinRequest')
+  @Render('joingroups')
+  joinGroupList(){}
+
 }

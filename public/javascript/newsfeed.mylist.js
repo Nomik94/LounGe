@@ -1,4 +1,5 @@
 let page = 1;
+let tagSerch = 0;
 $(document).ready(async function () {
   await restoreToken();
   readnewsfeedmylist(page);
@@ -15,8 +16,14 @@ async function readnewsfeedmylist(page) {
     },
   })
     .then(async (res) => {
-      await newsfeedlist(res.data);
-    })
+      if(res.data.length >= 1) {
+        $('#firstnewsfeed').empty();
+      }
+      if(res.data.length < 9) {
+        document.getElementById('loader').innerHTML = ''
+      }
+        await newsfeedlist(res.data);
+      })
     .catch((err) => {
       if (err.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
@@ -40,8 +47,10 @@ async function readnewsfeedmylist(page) {
 
 // 무한 스크롤
 async function limitscroll() {
-  page++;
-  readnewsfeedmylist(page);
+  if(tagSerch == 0) {
+    page++;
+    readnewsfeedmylist(page);
+  }
 }
 
 // 내 뉴스피드에서 태그 정렬
@@ -60,6 +69,7 @@ async function serchtag(tag) {
     .then((res) => {
       clearnewsfeed();
       newsfeedlist(res.data);
+      tagSerch = 1;
     })
     .catch(async (err) => {
       if (err.response.data.statusCode === 401) {

@@ -51,7 +51,7 @@ export class UserService {
   async getById(userId: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      select: ['id', 'username', 'email', 'image'],
+      select: ['id', 'username', 'password', 'email', 'image'],
     });
     if (!user) {
       throw new NotFoundException('유저가 존재하지 않습니다.');
@@ -99,7 +99,7 @@ export class UserService {
     const isRegister = await bcrypt.compare(pass, user.password);
 
     if (!user || !isRegister) {
-      throw new UnauthorizedException('패스워드가 일치하지 않습니다.');
+      throw new NotFoundException('패스워드가 일치하지 않습니다.');
     }
 
     const password = await bcrypt.hash(newPassword, 10);

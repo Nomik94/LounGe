@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -12,6 +13,7 @@ import {
 import { GroupEvent } from './groupEvent.entity';
 import { NewsFeed } from './newsFeed.entity';
 import { TagGroup } from './tag-group.entity';
+import { Tag } from './tag.entity';
 import { UserGroup } from './user-group.entity';
 import { User } from './user.entity';
 
@@ -46,6 +48,9 @@ export class Group extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.group)
   user: User;
+
+  // @ManyToMany(() => Tag, (tags) => tags.groups)
+  // tags : Tag[]
 
   @OneToMany(() => TagGroup, (tagGroup) => tagGroup.group)
   tagGroups: TagGroup[];

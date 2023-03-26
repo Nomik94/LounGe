@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsFormDataModule } from 'nestjs-form-data';
@@ -16,6 +17,9 @@ import { GroupService } from './group.service';
 
 @Module({
   imports: [
+    ElasticsearchModule.register({
+      node : "http://localhost:9200"
+    }),
     NestjsFormDataModule,
     MulterModule.registerAsync({ useFactory: multerOptionsFactory }),
     TypeOrmModule.forFeature([Group, Tag, TagGroup, UserGroup]),

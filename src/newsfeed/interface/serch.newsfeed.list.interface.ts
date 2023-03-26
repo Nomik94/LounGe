@@ -10,4 +10,6 @@ export interface ISerchNewsfeedList {
   newsfeedImage: string[];
   groupId: number;
   groupName: string;
+  userIdentify: number;
+  comment: string[]
 }

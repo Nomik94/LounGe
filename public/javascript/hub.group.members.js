@@ -544,7 +544,7 @@ function rejectGroup(groupId, memberId, userName) {
         },
       })
         .then(function (res) {
-          managementApplyList()
+          managementApplyList();
         })
         .catch(async function (error) {
           if (error.response.data.statusCode === 401) {
