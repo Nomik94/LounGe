@@ -16,12 +16,11 @@ import { UserGroup } from './database/entities/user-group.entity';
 import { NewsFeed } from './database/entities/newsFeed.entity';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { CommentModule } from './comment/comment.module';
-import { ElasticsearchModule } from '@nestjs/elasticsearch';
 
 @Module({
   imports: [
     ElasticsearchModule.register({
-      node : "http://localhost:9200"
+      node: 'http://localhost:9200',
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfig }),
@@ -41,8 +40,8 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
     UserModule,
     CommentModule,
     ElasticsearchModule.register({
-      node: 'http://localhost:9200'
-    })
+      node: 'http://localhost:9200',
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
