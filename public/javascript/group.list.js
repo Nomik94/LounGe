@@ -158,6 +158,7 @@ function searchGroups(tag,page) {
     }
   })
     .then(function (res) {
+      console.log(res)
       if (res.data.length < 9) {
         document.getElementById('loader').innerHTML = '';
       }

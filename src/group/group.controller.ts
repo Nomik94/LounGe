@@ -54,8 +54,9 @@ export class GroupController {
     @GetUser() user: IUser,
     @Query('tag') tag: string,
     @Query('page') page: number,
-  ): Promise<IMapGroups[]> {
-    return await this.groupService.searchGroupByTag(tag, page);
+  ) {
+    const userId = user.id
+    return await this.groupService.searchGroupByTag(userId, tag, page);
   }
 
   // 소속된 그룹 리스트 API
