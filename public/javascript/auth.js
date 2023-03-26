@@ -146,19 +146,19 @@ async function register() {
   formData.append('password', password);
   formData.append('username', username);
 
-  // if (!check) {
-  //   const Toast = Swal.mixin({
-  //     toast: true,
-  //     position: 'center-center',
-  //     showConfirmButton: false,
-  //     timer: 2000,
-  //     timerProgressBar: true,
-  //   });
-  //   await Toast.fire({
-  //     icon: 'error',
-  //     text: '이메일 인증이 필요합니다.',
-  //   });
-  if (!email || !username || !password || !passwordRepeat) {
+  if (!check) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-center',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+    await Toast.fire({
+      icon: 'error',
+      text: '이메일 인증이 필요합니다.',
+    });
+  } else if (!email || !username || !password || !passwordRepeat) {
     const Toast = Swal.mixin({
       toast: true,
       position: 'center-center',
