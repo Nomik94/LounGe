@@ -25,9 +25,13 @@ export class CalendarController {
   // 전체 이벤트 리스트 API
   @Get('/events/:startStr/:endStr')
   @UseGuards(JwtAuthGuard)
-  async getAllEvent(@GetUser() user: IUser, @Param('startStr') startStr,@Param('endStr') endStr ) {
+  async getAllEvent(
+    @GetUser() user: IUser,
+    @Param('startStr') startStr,
+    @Param('endStr') endStr,
+  ): Promise<IAllEventList[]> {
     const userId = user.id;
-    return await this.calendarService.getAllEvent(userId,startStr,endStr);
+    return await this.calendarService.getAllEvent(userId, startStr, endStr);
   }
 
   // 유저 이벤트 생성 API
@@ -38,7 +42,7 @@ export class CalendarController {
     @Body() data: UserEventDto,
   ): Promise<void> {
     const userId = user.id;
-    return await this.calendarService.createUserEvent(userId, data);
+    await this.calendarService.createUserEvent(userId, data);
   }
 
   // 그룹 이벤트 생성 API
@@ -50,7 +54,7 @@ export class CalendarController {
     @Body() data: GroupEventDto,
   ): Promise<void> {
     const userId = user.id;
-    return await this.calendarService.createGroupEvent(userId, groupId, data);
+    await this.calendarService.createGroupEvent(userId, groupId, data);
   }
 
   // 그룹 이벤트 리스트 API
@@ -63,6 +67,7 @@ export class CalendarController {
     const userId: number = user.id;
     return await this.calendarService.getGroupEvent(userId, groupId);
   }
+
   // 그룹 이벤트 상세 보기 API
   @Get('/groups/:groupId/events/:eventId')
   @UseGuards(JwtAuthGuard)

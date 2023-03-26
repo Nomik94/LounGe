@@ -40,6 +40,9 @@ import { ElasticConfig } from './common/config/elastic.config';
     CalendarModule,
     UserModule,
     CommentModule,
+    ElasticsearchModule.register({
+      node: 'http://localhost:9200',
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

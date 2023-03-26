@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsFormDataModule } from 'nestjs-form-data';
+import { CommentRepository } from 'src/common/repository/comment.repository';
 import { GroupRepository } from 'src/common/repository/group.repository';
 import { NewsfeedRepository } from 'src/common/repository/newsfeed.repository';
 import { NewsfeedTagRepository } from 'src/common/repository/newsfeed.tag.repository';
@@ -17,8 +19,10 @@ import { NewsFeedImage } from 'src/database/entities/newsFeedImage.entity';
 import { Tag } from 'src/database/entities/tag.entity';
 import { UserGroup } from 'src/database/entities/user-group.entity';
 import { User } from 'src/database/entities/user.entity';
+import { Comment } from 'src/database/entities/comment.entity';
 import { NewsfeedController } from './newsfeed.controller';
 import { NewsfeedService } from './newsfeed.service';
+import { ElasticConfig } from 'src/common/config/elastic.config';
 
 @Module({
   imports: [
@@ -32,7 +36,11 @@ import { NewsfeedService } from './newsfeed.service';
       User,
       Group,
       UserGroup,
+      Comment
     ]),
+    ElasticsearchModule.registerAsync({
+      useClass: ElasticConfig,
+    }),
   ],
   controllers: [NewsfeedController],
   providers: [
@@ -44,6 +52,7 @@ import { NewsfeedService } from './newsfeed.service';
     UserRepository,
     GroupRepository,
     UserGroupRepository,
+    CommentRepository
   ],
 })
 export class NewsfeedModule {}
