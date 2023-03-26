@@ -289,154 +289,9 @@ async function newsfeedlist(data) {
         <br>
   
         <!-- CONTENT ACTIONS -->
-        <div class="content-actions">
-        <!-- CONTENT ACTION -->
-        <div class="content-action">
-        </div>
-        <!-- /CONTENT ACTION -->
-          <!-- CONTENT ACTION -->
-          <div class="content-action">
-            <!-- META LINE -->
-            <div class="meta-line">
-              <!-- META LINE LINK -->
-              <p class="meta-line-link" onclick="getNewsfeedId(${data.id},${
-        data.groupId
-      })">댓글 ${data.comment.length}개</p>
-              <!-- /META LINE LINK -->
-            </div>
-            <!-- /META LINE -->
-          </div>
-          <!-- /CONTENT ACTION -->
-        </div>
-        <!-- /CONTENT ACTIONS -->
-        </div>
-        <!-- /WIDGET BOX STATUS CONTENT -->
-      </div>
-      <!-- /WIDGET BOX STATUS -->
-    </div>
-  `;
-      $('#newsfeedbox').append(temp_html);
-    } else {
-      let temp_html = `
-    <br>
-    <div class="widget-box no-padding">
-    <!-- WIDGET BOX SETTINGS -->
-    <div class="widget-box-settings">
-      <!-- POST SETTINGS WRAP -->
-      <div class="post-settings-wrap">
-        <!-- SIMPLE DROPDOWN -->
-        <!-- /SIMPLE DROPDOWN -->
-      </div>
-      <!-- /POST SETTINGS WRAP -->
-    </div>
-    <!-- /WIDGET BOX SETTINGS -->
-    
-    <!-- WIDGET BOX STATUS -->
-    <div class="widget-box-status">
-      <!-- WIDGET BOX STATUS CONTENT -->
-      <div class="widget-box-status-content">
-        <!-- USER STATUS -->
-        <div class="user-status">
-          <!-- USER STATUS AVATAR -->
-          <a class="user-status-avatar" >
-            <!-- USER AVATAR -->
-            <div class="user-avatar small no-outline">
-              <!-- USER AVATAR CONTENT -->
-              <div class="user-avatar-content">
-                <!-- HEXAGON -->
-                <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
-                  data.userImage
-                }"></div>
-                <!-- /HEXAGON -->
-              </div>
-              <!-- /USER AVATAR CONTENT -->
-          
-              <!-- USER AVATAR PROGRESS -->
-              <div class="user-avatar-progress">
-                <!-- HEXAGON -->
-                <div class="hexagon-image-40-44" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
-                  data.userImage
-                }"></div>
-                <!-- /HEXAGON -->
-              </div>
-              <!-- /USER AVATAR PROGRESS -->
-          
-              <!-- USER AVATAR PROGRESS BORDER -->
-              <div class="user-avatar-progress-border">
-                <!-- HEXAGON -->
-                <div class="hexagon-border-40-44"></div>
-                <!-- /HEXAGON -->
-              </div>
-              <!-- /USER AVATAR PROGRESS BORDER -->
-          
-
-            </div>
-            <!-- /USER AVATAR -->
-          </a>
-          <!-- /USER STATUS AVATAR -->
-      
-          <!-- USER STATUS TITLE -->
-          <p class="user-status-title medium"><a class="bold" >${
-            data.userName
-          }</a>님의 뉴스피드</p>
-          <!-- /USER STATUS TITLE -->
-
-          <!-- USER STATUS TEXT -->
-          <a href="/group/timeline?groupId=${
-            data.groupId
-          }"><p class="user-status-text middle">${data.groupName}</p></a>
-          <!-- /USER STATUS TEXT -->
-      
-          <!-- USER STATUS TEXT -->
-          <p class="user-status-text small">${createDateFormat}</p>
-          <!-- /USER STATUS TEXT -->
-        </div>
-        <!-- /USER STATUS -->
-
-        <!-- WIDGET BOX STATUS TEXT -->
-        <p class="widget-box-status-text">${data.content}</p>
-        <!-- /WIDGET BOX STATUS TEXT -->
-
-        <div class="newsfeed-image">
-        ${data.newsfeedImage
-          .map(
-            (image) => `
-          <img class="popup-image" onclick="popupNewsfeed('${image}')" src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${image}">
-        `,
-          )
-          .join('')}
-      </div>
-
-        <!-- TAG LIST -->
-          <div class="tag-list">
-          ${data.tagsName
-            .map(
-              (tag) => `
-          <a class="tag-item secondary" onclick="serchtag('${tag}')">${tag}</a>
-          `,
-            )
-            .join('')}
-          </div>
-        <!-- /TAG LIST -->
-      <br>
-
-      <!-- CONTENT ACTIONS -->
-              <div class="content-actions">
-              <!-- CONTENT ACTION -->
-              <div class="content-action">
-              </div>
-              <!-- /CONTENT ACTION -->
+                <div class="content-actions">
                 <!-- CONTENT ACTION -->
                 <div class="content-action">
-                  <!-- META LINE -->
-                  <div class="meta-line">
-                    <!-- META LINE LINK -->
-                    <p class="meta-line-link" onclick="getNewsfeedId(${
-                      data.id
-                    })">댓글 ${data.comment.length}개</p>
-                    <!-- /META LINE LINK -->
-                  </div>
-                  <!-- /META LINE -->
                 </div>
                 <!-- /CONTENT ACTION -->
                   <!-- CONTENT ACTION -->
@@ -463,14 +318,9 @@ async function newsfeedlist(data) {
     <script src="/js/global/global.hexagons.js"></script>
     <script src="/js/utils/liquidify.js"></script>
     `;
-      $('#newsfeedbox').append(temp_html);
-    }
-  });
-  const asd = `
-  <script src="/js/global/global.hexagons.js"></script>
-  <script src="/js/utils/liquidify.js"></script>
-  `;
-  $('#ddd').append(asd);
+      $('#ddd').append(asd);
+    });
+  }
 }
 
 // 뉴스피드 이미지 클릭시 이미지 팝업 띄워주기
@@ -680,8 +530,7 @@ document.addEventListener(
   }, 500),
 );
 
-async function getNewsfeedId(id, groupId) {
+async function getNewsfeedId(id) {
   localStorage.setItem('newsfeedId', JSON.stringify(id));
-  localStorage.setItem('groupId', JSON.stringify(groupId));
   location.href = '/newsfeed/comment';
 }
