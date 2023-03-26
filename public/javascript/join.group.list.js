@@ -4,22 +4,13 @@ $(document).ready(async function () {
 
   getGroupList(page);
 });
-history.pushState(null, null, `/groups?page=${page}`);
+history.pushState(null, null, `/groups/joinRequest?page=${page}`);
 
 async function limitscroll() {
-  if (window.location.href.split('?')[1].split('=')[0] !== 'page') {
-    let query = window.location.search; 
-    let param = new URLSearchParams(query); 
-    let tag = param.get('search');
-    let searchPage = Number(param.get('page')) + 1;
-    history.pushState(null, null, `/groups?search=${tag}&page=${searchPage}`);
-    searchGroups(tag,String(searchPage))
-  }else{
-    page++;
-    history.pushState(null, null, `/groups?page=${page}`);
-    getGroupList(page);
-  }
-
+  if (window.location.href.split('?')[1].split('=')[0] !== 'page') return;
+  page++;
+  history.pushState(null, null, `/groups/joinRequest?page=${page}`);
+  getGroupList(page);
 }
 
 function debounce(callback, limit = 500) {
@@ -41,121 +32,14 @@ document.addEventListener(
     }
   }, 500),
 );
+
 async function getGroupList(page) {
   axios({
-    url: `/api/groups/${page}`,
+    url: `/api/groups/joined/requests/${page}`,
     method: 'get',
     headers: {
       Authorization: `${getCookie('accessToken')}`,
     },
-  })
-    .then(function (res) {
-      if (res.data.length < 9) {
-        document.getElementById('loader').innerHTML = '';
-      }
-      groupList(res.data);
-    })
-    .catch(async function (error) {
-      if (error.response.data.statusCode === 401) {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'center-center',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-        });
-        await Toast.fire({
-          icon: 'error',
-          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
-        });
-        window.location.replace('/');
-      }
-      Swal.fire({
-        icon: 'error',
-        text: `${error.response.data.message}`,
-      });
-    });
-}
-
-function joinGroup(groupId, groupName) {
-  Swal.fire({
-    text: `${groupName}에 가입을 신청하시겠습니까?`,
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: '승인',
-    cancelButtonText: '취소',
-    reverseButtons: false, // 버튼 순서 거꾸로
-  }).then((result) => {
-    if (result.isConfirmed) {
-      axios({
-        url: `/api/groups/${groupId}/join`,
-        method: 'post',
-        headers: {
-          Authorization: `${getCookie('accessToken')}`,
-        },
-      })
-        .then(function (res) {
-          Swal.fire({
-            icon: 'success',
-            text: `${groupName}에 가입 신청이 완료되었습니다.`,
-          });
-          window.location.reload()
-        })
-        .catch(async function (error) {
-          if (error.response.data.statusCode === 401) {
-            const Toast = Swal.mixin({
-              toast: true,
-              position: 'center-center',
-              showConfirmButton: false,
-              timer: 2000,
-              timerProgressBar: true,
-            });
-            await Toast.fire({
-              icon: 'error',
-              title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
-            });
-            window.location.replace('/');
-          }
-          Swal.fire({
-            icon: 'error',
-            text: `${error.response.data.message}`,
-          });
-        });
-    }
-  });
-}
-
-function searchGroups(tag,page) {
-  if(!page) {
-    page = 1
-  }
-  if(page === 1){
-    document.getElementById('groupList').innerHTML = '';
-  }
-  if (!tag) {
-    tag = document.getElementById('groups-search').value;
-  }
-  document.getElementById('groups-search').value = '';
-  history.pushState(null, null, `/groups?search=${tag}&page=${page}`);
-  if (!tag.length) {
-    Swal.fire({
-      icon: 'false',
-      text: `태그를 입력해주세요.`,
-    });
-    return;
-  }
-  axios({
-    url: `/api/groups/search/tag`,
-    method: 'get',
-    headers: {
-      Authorization: `${getCookie('accessToken')}`,
-    },
-    params : {
-      tag,
-      page
-    }
   })
     .then(function (res) {
       if (res.data.length < 9) {
@@ -246,7 +130,7 @@ async function groupList(list) {
             ${data.tagGroups
               .map(
                 (tag) =>
-                  `<a class="tag-item secondary"  onclick="searchGroups('${tag}')">${tag}</a>`,
+                  `<a class="tag-item secondary">${tag}</a>`,
               )
               .join('')}
           </div>
@@ -265,7 +149,7 @@ async function groupList(list) {
               <use xlink:href="#svg-join-group"></use>
             </svg>
             <!-- /BUTTON ICON -->
-            소모임 가입하기
+            소모임 가입 신청 취소
           </p>
           <!-- /BUTTON -->
         </div>

@@ -1,4 +1,4 @@
-import { Body, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
   Delete,
@@ -25,7 +25,7 @@ import { IGroupWithMemberIdsStr } from './interface/member.group.ids.interface';
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
-  // 전체 그룹 리스트 API
+  // 미가입 그룹 리스트 API
   @Get('/:page')
   @UseGuards(JwtAuthGuard)
   async getAllGroupList(
@@ -36,14 +36,27 @@ export class GroupController {
     return await this.groupService.getAllGroupList(userId, page);
   }
 
+  // 가입 신청 그룹 리스트 API
+  @Get('/joined/requests/:page')
+  @UseGuards(JwtAuthGuard)
+  async getGroupJoinList(
+    @Param('page') page: number,
+    @GetUser() user: IUser,
+  ): Promise<IMapGroups[]> {
+    const userId: number = user.id;
+    return await this.groupService.getGroupJoinList(userId, page);
+  }
+
   // 그룹 태그 검색 리스트 API
-  @Get('/search/:tag')
+  @Get('/search/tag')
   @UseGuards(JwtAuthGuard)
   async searchGroupByTag(
     @GetUser() user: IUser,
-    @Param('tag') tag: string,
+    @Query('tag') tag: string,
+    @Query('page') page: number,
   ): Promise<IMapGroups[]> {
-    return await this.groupService.searchGroupByTag(tag);
+    console.log(tag,page ,'1111')
+    return await this.groupService.searchGroupByTag(tag, page);
   }
 
   // 소속된 그룹 리스트 API

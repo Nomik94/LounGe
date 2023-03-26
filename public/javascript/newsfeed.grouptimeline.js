@@ -1,4 +1,5 @@
 let page = 1;
+let tagSerch = 0;
 $(document).ready(async function () {
   await restoreToken();
   readnewsfeedgrouptimeline(page);
@@ -12,6 +13,9 @@ function readnewsfeedgrouptimeline(page) {
   axios({
     method: 'get',
     url: `/api/newsfeed/group/${groupId}/${page}`,
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
   })
     .then(async (res) => {
       if(res.data.length < 9) {
@@ -29,8 +33,10 @@ function readnewsfeedgrouptimeline(page) {
 
 // 무한 스크롤
 async function limitscroll() {
-  page++;
-  readnewsfeedgrouptimeline(page);
+  if(tagSerch == 0) {
+    page++;
+    readnewsfeedgrouptimeline(page);
+  }
 }
 
 // 특정 그룹에서 뉴스피드 태그로 검색하기
@@ -45,10 +51,14 @@ function serchtag(tag) {
     params: {
       tag: test,
     },
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
   })
     .then(async (res) => {
       clearnewsfeed();
       newsfeedlist(res.data);
+      tagSerch = 1;
     })
     .catch(async (err) => {
       if (err.response.data.statusCode === 401) {
@@ -77,11 +87,11 @@ async function createNewsfeed() {
   const urlParams = new URLSearchParams(window.location.search);
   const groupId = urlParams.get('groupId');
   const formData = new FormData();
-  if (!content) {
+  if (!content && selectedImages.length === 0) {
     await Swal.fire({
       icon: 'error',
-      title: '빈 내용은 작성할 수 없습니다!',
-      text: '뭐라도 좋으니 내용을 입력해주세요 T^T',
+      title: '이미지와 내용 중 한가지는 있어야 해요',
+      text: '전부 공백일 수는 없어요...',
     });
   } else if (selectedImages.length > 5) {
     await Swal.fire({

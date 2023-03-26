@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { Comment } from 'src/database/entities/comment.entity';
 import { Group } from 'src/database/entities/group.entity';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
 import { NewsFeedTag } from 'src/database/entities/newsFeed-Tag.entity';
@@ -39,6 +40,7 @@ export class TypeOrmConfig implements TypeOrmOptionsFactory {
         UserGroup,
         TagGroup,
         NewsFeedTag,
+        Comment,
       ],
     };
   }
