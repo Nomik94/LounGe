@@ -15,41 +15,184 @@ function getCookie(name) {
 
 // 뉴스피드 리스트 불러와서 뿌려주기
 async function newsfeedlist(data) {
-  data.forEach((data) => {
-    const createDate = new Date(data.createAt);
-    const timeOptions = {
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-    };
-    const createDateFormat = createDate.toLocaleDateString(
-      'Ko-KR',
-      timeOptions,
-    );
-    if (data.userIdentify === 1) {
-      let temp_html = `
+  if (data.userIdentify === 2) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center-center',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+    Toast.fire({
+      icon: 'success',
+      title: '새로 가입하셨군요! <br><br> 환영합니다!',
+    });
+  } else {
+    $('#firstnewsfeed').empty();
+    data.forEach((data) => {
+      const createDate = new Date(data.createAt);
+      const timeOptions = {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+      };
+      const createDateFormat = createDate.toLocaleDateString(
+        'Ko-KR',
+        timeOptions,
+      );
+      if (data.userIdentify === 1) {
+        let temp_html = `
+        <br>
+        <div class="widget-box no-padding">
+        <!-- WIDGET BOX SETTINGS -->
+        <div class="widget-box-settings">
+          <!-- POST SETTINGS WRAP -->
+          <div class="post-settings-wrap">
+    
+            <!-- SIMPLE DROPDOWN -->
+            <div class="simple-dropdown widget-box-post-settings-dropdown" style="width:60px">
+              <!-- SIMPLE DROPDOWN LINK -->
+              <p class="simple-dropdown-link" onclick="modifyNewsfeed(${
+                data.id
+              })">수정</p>
+              <!-- /SIMPLE DROPDOWN LINK -->
+    
+              <!-- SIMPLE DROPDOWN LINK -->
+              <p class="simple-dropdown-link" onclick="deleteNewsfeed(${
+                data.id
+              })">삭제</p>
+              <!-- /SIMPLE DROPDOWN LINK -->
+    
+            </div>
+            <!-- /SIMPLE DROPDOWN -->
+          </div>
+          <!-- /POST SETTINGS WRAP -->
+        </div>
+        <!-- /WIDGET BOX SETTINGS -->
+        
+        <!-- WIDGET BOX STATUS -->
+        <div class="widget-box-status">
+          <!-- WIDGET BOX STATUS CONTENT -->
+          <div class="widget-box-status-content">
+            <!-- USER STATUS -->
+            <div class="user-status">
+              <!-- USER STATUS AVATAR -->
+              <a class="user-status-avatar" >
+                <!-- USER AVATAR -->
+                <div class="user-avatar small no-outline">
+                  <!-- USER AVATAR CONTENT -->
+                  <div class="user-avatar-content">
+                    <!-- HEXAGON -->
+                    <div class="hexagon-image-30-32" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
+                      data.userImage
+                    }"></div>
+                    <!-- /HEXAGON -->
+                  </div>
+                  <!-- /USER AVATAR CONTENT -->
+              
+                  <!-- USER AVATAR PROGRESS -->
+                  <div class="user-avatar-progress">
+                    <!-- HEXAGON -->
+                    <div class="hexagon-image-40-44" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${
+                      data.userImage
+                    }"></div>
+                    <!-- /HEXAGON -->
+                  </div>
+                  <!-- /USER AVATAR PROGRESS -->
+              
+                  <!-- USER AVATAR PROGRESS BORDER -->
+                  <div class="user-avatar-progress-border">
+                    <!-- HEXAGON -->
+                    <div class="hexagon-border-40-44"></div>
+                    <!-- /HEXAGON -->
+                  </div>
+                  <!-- /USER AVATAR PROGRESS BORDER -->
+              
+    
+                </div>
+                <!-- /USER AVATAR -->
+              </a>
+              <!-- /USER STATUS AVATAR -->
+          
+              <!-- USER STATUS TITLE -->
+              <p class="user-status-title medium"><a class="bold" >${
+                data.userName
+              }</a>님의 뉴스피드</p>
+              <!-- /USER STATUS TITLE -->
+    
+              <!-- USER STATUS TEXT -->
+              <a href="/group/timeline?groupId=${
+                data.groupId
+              }"><p class="user-status-text middle">${data.groupName}</p></a>
+              <!-- /USER STATUS TEXT -->
+          
+              <!-- USER STATUS TEXT -->
+              <p class="user-status-text small">${createDateFormat}</p>
+              <!-- /USER STATUS TEXT -->
+            </div>
+            <!-- /USER STATUS -->
+    
+            <!-- WIDGET BOX STATUS TEXT -->
+            <p class="widget-box-status-text">${data.content}</p>
+            <!-- /WIDGET BOX STATUS TEXT -->
+    
+            <div class="newsfeed-image">
+            ${data.newsfeedImage
+              .map(
+                (image) => `
+              <img class="popup-image" onclick="popupNewsfeed('${image}')" src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${image}">
+            `,
+              )
+              .join('')}
+          </div>
+    
+            <!-- TAG LIST -->
+              <div class="tag-list">
+              ${data.tagsName
+                .map(
+                  (tag) => `
+              <a class="tag-item secondary" onclick="serchtag('${tag}')">${tag}</a>
+              `,
+                )
+                .join('')}
+              </div>
+            <!-- /TAG LIST -->
+          <br>
+          <!-- CONTENT ACTIONS -->
+          <div class="content-actions">
+          <!-- CONTENT ACTION -->
+          <div class="content-action">
+          </div>
+          <!-- /CONTENT ACTION -->
+            <!-- CONTENT ACTION -->
+            <div class="content-action">
+              <!-- META LINE -->
+              <div class="meta-line">
+                <!-- META LINE LINK -->
+                <p class="meta-line-link" onclick="getNewsfeedId(${data.id})">댓글 ${data.comment.length}개</p>
+                <!-- /META LINE LINK -->
+              </div>
+              <!-- /META LINE -->
+            </div>
+            <!-- /CONTENT ACTION -->
+          </div>
+          <!-- /CONTENT ACTIONS -->
+          </div>
+          <!-- /WIDGET BOX STATUS CONTENT -->
+        </div>
+        <!-- /WIDGET BOX STATUS -->
+      </div>
+     `;
+        $('#newsfeedbox').append(temp_html);
+      } else {
+        let temp_html = `
       <br>
       <div class="widget-box no-padding">
       <!-- WIDGET BOX SETTINGS -->
       <div class="widget-box-settings">
         <!-- POST SETTINGS WRAP -->
         <div class="post-settings-wrap">
-  
           <!-- SIMPLE DROPDOWN -->
-          <div class="simple-dropdown widget-box-post-settings-dropdown" style="width:60px">
-            <!-- SIMPLE DROPDOWN LINK -->
-            <p class="simple-dropdown-link" onclick="modifyNewsfeed(${
-              data.id
-            })">수정</p>
-            <!-- /SIMPLE DROPDOWN LINK -->
-  
-            <!-- SIMPLE DROPDOWN LINK -->
-            <p class="simple-dropdown-link" onclick="deleteNewsfeed(${
-              data.id
-            })">삭제</p>
-            <!-- /SIMPLE DROPDOWN LINK -->
-  
-          </div>
           <!-- /SIMPLE DROPDOWN -->
         </div>
         <!-- /POST SETTINGS WRAP -->
@@ -144,6 +287,7 @@ async function newsfeedlist(data) {
             </div>
           <!-- /TAG LIST -->
         <br>
+  
         <!-- CONTENT ACTIONS -->
         <div class="content-actions">
         <!-- CONTENT ACTION -->
@@ -295,12 +439,29 @@ async function newsfeedlist(data) {
                   <!-- /META LINE -->
                 </div>
                 <!-- /CONTENT ACTION -->
-              </div>
-              <!-- /CONTENT ACTIONS -->
+                  <!-- CONTENT ACTION -->
+                  <div class="content-action">
+                    <!-- META LINE -->
+                    <div class="meta-line">
+                      <!-- META LINE LINK -->
+                      <p class="meta-line-link" onclick="getNewsfeedId(${data.id})">댓글 ${data.comment.length}개</p>
+                      <!-- /META LINE LINK -->
+                    </div>
+                    <!-- /META LINE -->
+                  </div>
+                  <!-- /CONTENT ACTION -->
+                </div>
+                <!-- /CONTENT ACTIONS -->
+        </div>
+        <!-- /WIDGET BOX STATUS CONTENT -->
       </div>
-      <!-- /WIDGET BOX STATUS CONTENT -->
-    </div>
-    <!-- /WIDGET BOX STATUS -->
+      <!-- /WIDGET BOX STATUS -->
+      `;
+        $('#newsfeedbox').append(temp_html);
+      }
+      const asd = `
+    <script src="/js/global/global.hexagons.js"></script>
+    <script src="/js/utils/liquidify.js"></script>
     `;
       $('#newsfeedbox').append(temp_html);
     }
