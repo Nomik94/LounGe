@@ -2,9 +2,16 @@ let page = 1;
 $(document).ready(async function () {
   await restoreToken();
   const newsfeedId = await JSON.parse(localStorage.getItem('newsfeedId'));
+  let groupId;
+  const checkGroupId = localStorage.getItem('groupId');
+  if (checkGroupId > 0) {
+    groupId = await JSON.parse(localStorage.getItem('groupId'));
+  } else {
+    groupId = undefined;
+  }
   getCommentList(newsfeedId, page);
   const createButton = `<!-- BUTTON -->
-  <p class='button secondary' onclick="createContent(${newsfeedId})">댓글 달기</p>
+  <p class='button secondary' onclick="createContent(${newsfeedId},${groupId})">댓글 달기</p>
   <!-- /BUTTON -->`;
   $('#createButton').append(createButton);
 });
@@ -44,7 +51,7 @@ function getCookie(name) {
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-async function createContent(newsfeedId) {
+async function createContent(newsfeedId, groupId) {
   const content = document.getElementById('forum-post-text').value;
   if (!content) {
     await Swal.fire({
@@ -58,7 +65,7 @@ async function createContent(newsfeedId) {
       headers: {
         Authorization: `${getCookie('accessToken')}`,
       },
-      data: { content },
+      data: { content, groupId: groupId },
     })
       .then(async (res) => {
         await Swal.fire({
@@ -204,9 +211,7 @@ async function getCommentList(newsfeedId, page) {
 }
 
 async function getComment(data, userId, newsfeedId) {
-  console.log(data);
   data.forEach((data) => {
-    console.log(data.user.id);
     const createDate = new Date(data.createdAt);
     const timeOptions = {
       hour12: false,

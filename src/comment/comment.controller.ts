@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { GetUser } from 'src/common/decorator/get.user.decorator';
+import { User } from 'src/database/entities/user.entity';
+import { Comment } from 'src/database/entities/comment.entity';
 import { CommentService } from './comment.service';
 import { CommentDTO } from './dto/comment.dto';
 
@@ -36,7 +38,10 @@ export class CommentController {
     @Param('newsfeedId') newsfeedId: number,
     @Param('page') page: number,
     @GetUser() user: IUser,
-  ) {
+  ): Promise<{
+    comment: Comment[];
+    user: User;
+  }> {
     const userId = user.id;
     return await this.commentService.getCommentByNewsfeed(
       userId,

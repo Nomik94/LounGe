@@ -126,4 +126,14 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
       take: pageSize,
     });
   }
+
+  // 뉴스피드ID로 그룹ID 가져오기
+  async getGroupIdByNewsfeedId(newsfeedId: number): Promise<NewsFeed> {
+    return await this.createQueryBuilder('newsfeed')
+      .select(['newsfeed.id', 'group.id', 'user.id'])
+      .leftJoin('newsfeed.group', 'group')
+      .leftJoin('newsfeed.user', 'user')
+      .where('newsfeed.id=:id', { id: newsfeedId })
+      .getOne();
+  }
 }

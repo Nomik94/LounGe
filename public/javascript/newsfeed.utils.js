@@ -155,7 +155,9 @@ async function newsfeedlist(data) {
             <!-- META LINE -->
             <div class="meta-line">
               <!-- META LINE LINK -->
-              <p class="meta-line-link" onclick="getNewsfeedId(${data.id})">댓글 ${data.comment.length}개</p>
+              <p class="meta-line-link" onclick="getNewsfeedId(${data.id},${
+        data.groupId
+      })">댓글 ${data.comment.length}개</p>
               <!-- /META LINE LINK -->
             </div>
             <!-- /META LINE -->
@@ -168,7 +170,7 @@ async function newsfeedlist(data) {
       </div>
       <!-- /WIDGET BOX STATUS -->
     </div>
-   `;
+  `;
       $('#newsfeedbox').append(temp_html);
     } else {
       let temp_html = `
@@ -285,7 +287,9 @@ async function newsfeedlist(data) {
                   <!-- META LINE -->
                   <div class="meta-line">
                     <!-- META LINE LINK -->
-                    <p class="meta-line-link" onclick="getNewsfeedId(${data.id})">댓글 ${data.comment.length}개</p>
+                    <p class="meta-line-link" onclick="getNewsfeedId(${
+                      data.id
+                    })">댓글 ${data.comment.length}개</p>
                     <!-- /META LINE LINK -->
                   </div>
                   <!-- /META LINE -->
@@ -300,12 +304,12 @@ async function newsfeedlist(data) {
     `;
       $('#newsfeedbox').append(temp_html);
     }
-    const asd = `
+  });
+  const asd = `
   <script src="/js/global/global.hexagons.js"></script>
   <script src="/js/utils/liquidify.js"></script>
   `;
-    $('#ddd').append(asd);
-  });
+  $('#ddd').append(asd);
 }
 
 // 뉴스피드 이미지 클릭시 이미지 팝업 띄워주기
@@ -515,7 +519,8 @@ document.addEventListener(
   }, 500),
 );
 
-async function getNewsfeedId(id) {
+async function getNewsfeedId(id, groupId) {
   localStorage.setItem('newsfeedId', JSON.stringify(id));
+  localStorage.setItem('groupId', JSON.stringify(groupId));
   location.href = '/newsfeed/comment';
 }
