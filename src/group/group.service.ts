@@ -133,7 +133,7 @@ export class GroupService {
   }
 
   // 그룹 멤버 리스트
-  async getGroupMemberList(groupId: number): Promise<IMemberList> {
+  async getGroupMemberList(groupId: number): Promise<IMemberList[]> {
     const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId);
     const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName);
     const memberList = await this.userGroupRepository.getMemberList(groupId);
@@ -145,7 +145,16 @@ export class GroupService {
       userImage: data.user.image,
       userRole: data.role,
     }));
-    return { members: mapMemberList, foundGroup, tags };
+    return mapMemberList;
+  }
+
+  //그룹 관리 상세 페이지
+  async getGroupDetail(userId: number, groupId: number) {
+    await this.checkGroupLeader(userId, groupId);
+    const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId);
+    const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName);
+
+    return { tags, foundGroup };
   }
 
   // 그룹 가입 신청자 리스트
