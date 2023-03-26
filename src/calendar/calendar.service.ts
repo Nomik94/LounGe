@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
 import { Between, Not, Repository } from 'typeorm';
@@ -8,9 +8,10 @@ import { UserEventDto } from './dto/user.event.dto';
 import { GroupEventDto } from './dto/group.event.dto';
 import { Group } from 'src/database/entities/group.entity';
 import { ForbiddenException } from '@nestjs/common/exceptions';
-import { UserGroup } from 'src/database/entities/user-group.entity';
-import { IAllEventList } from './interface/event.list.interface';
 import { IGroupEventList } from './interface/group.event.list.interface';
+import { Cache } from 'cache-manager';
+import { UserGroupRepository } from 'src/common/repository/user.group.repository';
+import { IAllEventList } from './interface/event.list.interface';
 
 @Injectable()
 export class CalendarService {
@@ -21,8 +22,9 @@ export class CalendarService {
     private readonly groupEventRepository: Repository<GroupEvent>,
     @InjectRepository(Group)
     private readonly groupRepository: Repository<Group>,
-    @InjectRepository(UserGroup)
-    private readonly userGroupRepository: Repository<UserGroup>,
+    private readonly userGroupRepository: UserGroupRepository,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
   // 전체 이벤트 리스트
@@ -30,67 +32,54 @@ export class CalendarService {
     userId: number,
     startStr,
     endStr,
-  ) {
-    const myGroupList = await this.userGroupRepository.find({
-      where: {
-        userId,
-        role: Not('가입대기'),
-        group: { groupEvents: { start: Between(startStr, endStr) } },
-      },
-      select: ['groupId', 'userId'],
-    });
-    const myGroupIds = myGroupList.map((ids) => ({
-      group: { id: ids.groupId },
+  ): Promise<IAllEventList[]> {
+    const myGroupList = await this.userGroupRepository.getMyGroupsWithTime(
+      userId,
+      startStr,
+      endStr,
+    );
+
+    const lankerGroups = await this.userGroupRepository.getLankerGroups();
+    const mapLankerGroups = await this.changeNumberArrayIds(lankerGroups);
+    const mapMyGroupIds = await this.changeNumberArrayIds(myGroupList);
+    const differenceGroups = mapMyGroupIds.filter(
+      (id) => !mapLankerGroups.includes(id),
+    );
+    const intersectionGroups = mapMyGroupIds.filter((id) =>
+      mapLankerGroups.includes(id),
+    );
+
+    let { cacheData, nullCacheGroups } = await this.checkCacheData(
+      intersectionGroups,
+      startStr,
+    );
+
+    let joinCacheData = await this.joinCacheData(cacheData);
+
+    const joinGroupIds = [...differenceGroups, ...nullCacheGroups];
+    const myGroupIds = joinGroupIds.map((id) => ({
+      group: { id },
     }));
-    let groupEvents = [];
-    let mapGroupEvents = [];
-    if (myGroupIds.length > 0) {
-      groupEvents = await this.groupEventRepository.find({
-        where: myGroupIds,
-        relations: ['group'],
-      });
-      mapGroupEvents = groupEvents.map((event) => ({
-        id: event.id,
-        where: 'group',
-        name: event.group.groupName,
-        tableId: event.group.id,
-        eventName: event.eventName,
-        eventContent: event.eventContent,
-        start: event.start,
-        end: event.end,
-        lat: event.lat,
-        lng: event.lng,
-        location: event.location,
-        color: '#FFC8A2',
-        backgroundImage: event.group.backgroundImage,
-      }));
+
+    const groupEvents =
+      myGroupIds.length > 0 ? await this.getGroupEvents(myGroupIds) : [];
+    const mapGroupEvents = await this.mapGroupEvents(groupEvents);
+
+    if (nullCacheGroups.length > 0) {
+      const saveCacheDataList = mapGroupEvents.filter((event) =>
+        nullCacheGroups.includes(event.tableId),
+      );
+      this.setCacheData(saveCacheDataList, startStr);
     }
 
-    const myUserEvents = await this.userEventRepository.find({
-      where: { user: { id: userId } , start: Between(startStr,endStr)},
-      relations: ['user'],
-    });
-
-    const mapUserEvents = myUserEvents.map((event) => ({
-      id: event.id,
-      where: 'user',
-      name: '개인',
-      tableId: event.user.id,
-      eventName: event.eventName,
-      eventContent: event.eventContent,
-      start: event.start,
-      end: event.end,
-      lat: event.lat,
-      lng: event.lng,
-      location: event.location,
-      color: '#D4F0F0',
-      backgroundImage: '1.png',
-    }));
-
-    const joinEvents = mapGroupEvents.concat(mapUserEvents);
+    const concatGroupEvents = [...mapGroupEvents, ...joinCacheData];
+    const myUserEvents = await this.getMyUserEvents(userId, startStr, endStr);
+    const mapUserEvents = await this.mapUserEvents(myUserEvents);
+    const joinEvents = [...mapUserEvents, ...concatGroupEvents];
     joinEvents.sort(
       (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
     );
+
     return joinEvents;
   }
 
@@ -139,7 +128,10 @@ export class CalendarService {
     groupId: number,
   ): Promise<IGroupEventList> {
     await this.checkMember(userId, groupId);
-
+    const today = new Date()
+    const future = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000));
+    const todayStr = today.toISOString()
+    const futureStr = future.toISOString()
     const checkRole = await this.groupRepository.findOne({
       where: { id: groupId, user: { id: userId } },
     });
@@ -150,8 +142,13 @@ export class CalendarService {
     }
 
     const groupInfo = await this.groupEventRepository.findBy({
+      start : Between(todayStr, futureStr),
       group: { id: groupId },
     });
+
+    groupInfo.sort(
+      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+    );
     return { groupInfo, role };
   }
 
@@ -217,5 +214,116 @@ export class CalendarService {
     if (!memberCheck) {
       throw new ForbiddenException('그룹에 가입해야만 확인할 수 있습니다.');
     }
+  }
+
+  async checkCacheData(
+    intersectionGroups,
+    startStr,
+  ): Promise<{
+    cacheData: IAllEventList[][];
+    nullCacheGroups: number[];
+  }> {
+    let nullCacheGroups = [];
+    let cacheData = [];
+
+    for (let id of intersectionGroups) {
+      const checkCache: IAllEventList[] = await this.cacheManager.get(
+        `${id}${startStr}`,
+      );
+      if (checkCache) {
+        cacheData.push(checkCache);
+      } else {
+        nullCacheGroups.push(id);
+      }
+    }
+
+    return { cacheData, nullCacheGroups };
+  }
+
+  async joinCacheData(cacheData): Promise<IAllEventList[]> {
+    let joinCacheData = [];
+    cacheData.forEach((array) => {
+      joinCacheData = joinCacheData.concat(array);
+    });
+    return joinCacheData;
+  }
+
+  async getGroupEvents(myGroupIds): Promise<GroupEvent[]> {
+    return await this.groupEventRepository.find({
+      where: myGroupIds,
+      relations: ['group'],
+    });
+  }
+
+  async mapGroupEvents(groupEvents): Promise<IAllEventList[]> {
+    return groupEvents.map((event) => ({
+      id: event.id,
+      where: 'group',
+      name: event.group.groupName,
+      tableId: event.group.id,
+      eventName: event.eventName,
+      eventContent: event.eventContent,
+      start: event.start,
+      end: event.end,
+      lat: event.lat,
+      lng: event.lng,
+      location: event.location,
+      color: '#FFC8A2',
+      backgroundImage: event.group.backgroundImage,
+    }));
+  }
+
+  async setCacheData(saveCacheDataList, startStr) {
+    let dataId;
+    let dataArray = [];
+    let first = true;
+    let change = false;
+    for (let data of saveCacheDataList) {
+      if (first) {
+        dataId = data.tableId;
+        first = false;
+      }
+      if (dataId !== data.tableId) {
+        change = true;
+        dataId = data.tableId;
+      }
+      if (change === true) {
+        await this.cacheManager.set(`${data.tableId}${startStr}`, dataArray, {
+          ttl: 500,
+        });
+        dataArray = [];
+        change = false;
+      }
+      await dataArray.push(data);
+    }
+  }
+
+  async getMyUserEvents(userId, startStr, endStr): Promise<UserEvent[]> {
+    return await this.userEventRepository.find({
+      where: { user: { id: userId }, start: Between(startStr, endStr) },
+      relations: ['user'],
+    });
+  }
+
+  async mapUserEvents(UserEvents): Promise<IAllEventList[]> {
+    return UserEvents.map((event) => ({
+      id: event.id,
+      where: 'user',
+      name: '개인',
+      tableId: event.user.id,
+      eventName: event.eventName,
+      eventContent: event.eventContent,
+      start: event.start,
+      end: event.end,
+      lat: event.lat,
+      lng: event.lng,
+      location: event.location,
+      color: '#D4F0F0',
+      backgroundImage: '1.png',
+    }));
+  }
+
+  async changeNumberArrayIds(userGroups): Promise<number[]> {
+    return userGroups.map((userGroup) => userGroup.groupId);
   }
 }

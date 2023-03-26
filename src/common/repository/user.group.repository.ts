@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserGroup } from 'src/database/entities/user-group.entity';
-import { DataSource, Not, Repository } from 'typeorm';
+import { Between, DataSource, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class UserGroupRepository extends Repository<UserGroup> {
@@ -34,6 +34,26 @@ export class UserGroupRepository extends Repository<UserGroup> {
       where: { groupId, role: '가입대기' },
       select: ['userId', 'groupId'],
       relations: ['user'],
+    });
+  }
+
+  async getLankerGroups(): Promise<UserGroup[]> {
+    return await this.createQueryBuilder('userGroups')
+      .select('userGroups.groupId as groupId')
+      .addSelect('COUNT(userGroups.groupId) as count')
+      .having('count >= :count', { count: 5 })
+      .groupBy('userGroups.groupId')
+      .getRawMany();
+  }
+
+  async getMyGroupsWithTime(userId, startStr, endStr): Promise<UserGroup[]> {
+    return await this.find({
+      where: {
+        userId,
+        role: Not('가입대기'),
+        group: { groupEvents: { start: Between(startStr, endStr) } },
+      },
+      select: ['groupId'],
     });
   }
 }
