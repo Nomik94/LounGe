@@ -16,11 +16,12 @@ import { UserGroup } from './database/entities/user-group.entity';
 import { NewsFeed } from './database/entities/newsFeed.entity';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { CommentModule } from './comment/comment.module';
+import { ElasticConfig } from './common/config/elastic.config';
 
 @Module({
   imports: [
-    ElasticsearchModule.register({
-      node : "http://localhost:9200"
+    ElasticsearchModule.registerAsync({
+      useClass: ElasticConfig,
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfig }),
