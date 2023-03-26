@@ -25,7 +25,6 @@ function serchTagNewsfeed(text){
         } 
         clearnewsfeed()
         newsfeedlist(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         if (err.response.data.statusCode === 401) {

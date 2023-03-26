@@ -20,14 +20,12 @@ import { GetUser } from 'src/common/decorator/get.user.decorator';
 import { ISerchTagNewsfeed } from './interface/serch.tag.newsfeed.interface';
 import { ISerchTagMyNewsfeed } from './interface/serch.tag.mynewsfeed.interface';
 import { ISerchNewsfeedList } from './interface/serch.newsfeed.list.interface';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { IFirstNesfeed } from './interface/firstNewsfeed.interface';
 
 @Controller('api/newsfeed')
 export class NewsfeedController {
   constructor(
     private readonly newsfeedService: NewsfeedService,
-    private readonly elasticSearchService: ElasticsearchService
     ) {}
 
   // 뉴스피드 작성 API

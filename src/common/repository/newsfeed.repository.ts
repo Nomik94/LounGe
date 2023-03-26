@@ -251,4 +251,5 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
       where: { id: newsfeedId },
     });
   }
+
 }

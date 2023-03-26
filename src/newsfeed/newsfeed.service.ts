@@ -12,8 +12,6 @@ import { ISerchNewsfeedList } from './interface/serch.newsfeed.list.interface';
 import { ISerchTagMyNewsfeed } from './interface/serch.tag.mynewsfeed.interface';
 import { ISerchTagNewsfeed } from './interface/serch.tag.newsfeed.interface';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { GroupRepository } from 'src/common/repository/group.repository';
-import { UserRepository } from 'src/common/repository/user.repository';
 import { IFirstNesfeed } from './interface/firstNewsfeed.interface';
 
 @Injectable()
@@ -24,8 +22,6 @@ export class NewsfeedService {
     private readonly newsfeedTagRepository: NewsfeedTagRepository,
     private readonly newsfeedImageRepository: NewsfeedImageRepository,
     private readonly userGroupRepository: UserGroupRepository,
-    private readonly groupRepository: GroupRepository,
-    private readonly userRepository: UserRepository,
     private readonly elasticSearchService: ElasticsearchService
   ) {}
 
