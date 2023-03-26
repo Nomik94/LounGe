@@ -16,17 +16,7 @@ function getCookie(name) {
 // 뉴스피드 리스트 불러와서 뿌려주기
 async function newsfeedlist(data) {
   if (data.userIdentify === 2) {
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'center-center',
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true,
-    });
-    Toast.fire({
-      icon: 'success',
-      title: '새로 가입하셨군요! <br><br> 환영합니다!',
-    });
+    document.getElementById('loader').innerHTML = ''
   } else {
     $('#firstnewsfeed').empty();
     data.forEach((data) => {
@@ -314,13 +304,11 @@ async function newsfeedlist(data) {
       `;
         $('#newsfeedbox').append(temp_html);
       }
-      const asd = `
-    <script src="/js/global/global.hexagons.js"></script>
-    <script src="/js/utils/liquidify.js"></script>
-    `;
-      $('#ddd').append(asd);
     });
   }
+  const js = `<!-- global.hexagons -->
+  <script src="/js/global/global.hexagons.js"></script><script src="/js/utils/liquidify.js"></script>`;
+  $('#groupjs').append(js);
 }
 
 // 뉴스피드 이미지 클릭시 이미지 팝업 띄워주기

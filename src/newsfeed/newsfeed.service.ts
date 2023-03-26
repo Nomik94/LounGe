@@ -50,6 +50,12 @@ export class NewsfeedService {
       throw new ForbiddenException('그룹 가입 신청 중입니다.');
     }
     try {
+      const checkFirstNewsfeed = this.newsfeedRepository.findFirstNewsfeed()
+      if((await checkFirstNewsfeed).length === 0) {
+        await this.elasticSearchService.indices.create({
+          index: 'newsfeeds'
+        })
+      }
       const newsfeedId = await this.newsfeedRepository.createNewsfeed(
         content,
         userId,
@@ -79,7 +85,6 @@ export class NewsfeedService {
         );
         await Promise.all(promises);
       }
-
       let tagsConfirm = null;
       if(data.newsfeedTags){
          tagsConfirm = data.newsfeedTags.split(',')

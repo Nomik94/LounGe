@@ -477,7 +477,7 @@ export class GroupService {
       tag = '전체';
     }
     await this.elasticsearchService.index({
-      index: 'groups',
+      index: 'search-groups',
       body: {
         id: group.id,
         groupName: group.groupName,
@@ -490,7 +490,7 @@ export class GroupService {
   // ES 그룹 인덱스 문서 찾기
   async findIndexGroup(id): Promise<string> {
     const groupIndex = await this.elasticsearchService.search({
-      index: 'groups',
+      index: 'search-groups',
       query: {
         match: {
           id,
@@ -510,7 +510,7 @@ export class GroupService {
       data.tag = '전체';
     }
     await this.elasticsearchService.index({
-      index: 'groups',
+      index: 'search-groups',
       id: groupIndexId,
       body: {
         id: groupId,
@@ -524,7 +524,7 @@ export class GroupService {
   // ES 그룹 인덱스 문서 삭제
   async deleteIndexGroup(groupIndexId: string): Promise<void> {
     await this.elasticsearchService.delete({
-      index: 'groups',
+      index: 'search-groups',
       id: groupIndexId,
     });
   }
@@ -533,7 +533,7 @@ export class GroupService {
   async searchGroupWithTag(tag: string, page: number) {
     const pageSize = 9;
     const result = await this.elasticsearchService.search({
-      index: 'groups',
+      index: 'search-groups',
       from: pageSize * (page - 1),
       size: pageSize,
       query: {

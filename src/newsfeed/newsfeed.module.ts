@@ -22,6 +22,7 @@ import { User } from 'src/database/entities/user.entity';
 import { Comment } from 'src/database/entities/comment.entity';
 import { NewsfeedController } from './newsfeed.controller';
 import { NewsfeedService } from './newsfeed.service';
+import { ElasticConfig } from 'src/common/config/elastic.config';
 
 @Module({
   imports: [
@@ -37,9 +38,9 @@ import { NewsfeedService } from './newsfeed.service';
       UserGroup,
       Comment
     ]),
-    ElasticsearchModule.register({
-      node: 'http://localhost:9200'
-    })
+    ElasticsearchModule.registerAsync({
+      useClass: ElasticConfig,
+    }),
   ],
   controllers: [NewsfeedController],
   providers: [
