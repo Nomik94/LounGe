@@ -55,7 +55,6 @@ export class GroupController {
     @Query('tag') tag: string,
     @Query('page') page: number,
   ): Promise<IMapGroups[]> {
-    console.log(tag,page ,'1111')
     return await this.groupService.searchGroupByTag(tag, page);
   }
 

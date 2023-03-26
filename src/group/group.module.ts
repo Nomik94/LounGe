@@ -3,6 +3,7 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsFormDataModule } from 'nestjs-form-data';
+import { ElasticConfig } from 'src/common/config/elastic.config';
 import { GroupRepository } from 'src/common/repository/group.repository';
 import { TagGroupRepository } from 'src/common/repository/tag.group.repository';
 import { TagRepository } from 'src/common/repository/tag.repository';
@@ -17,8 +18,8 @@ import { GroupService } from './group.service';
 
 @Module({
   imports: [
-    ElasticsearchModule.register({
-      node : "http://localhost:9200"
+    ElasticsearchModule.registerAsync({
+      useClass: ElasticConfig,
     }),
     NestjsFormDataModule,
     MulterModule.registerAsync({ useFactory: multerOptionsFactory }),
