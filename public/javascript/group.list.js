@@ -7,10 +7,19 @@ $(document).ready(async function () {
 history.pushState(null, null, `/groups?page=${page}`);
 
 async function limitscroll() {
-  if (window.location.href.split('?')[1].split('=')[0] !== 'page') return;
-  page++;
-  history.pushState(null, null, `/groups?page=${page}`);
-  getGroupList(page);
+  if (window.location.href.split('?')[1].split('=')[0] !== 'page') {
+    let query = window.location.search; 
+    let param = new URLSearchParams(query); 
+    let tag = param.get('search');
+    let searchPage = Number(param.get('page')) + 1;
+    history.pushState(null, null, `/groups?search=${tag}&page=${searchPage}`);
+    searchGroups(tag,String(searchPage))
+  }else{
+    page++;
+    history.pushState(null, null, `/groups?page=${page}`);
+    getGroupList(page);
+  }
+
 }
 
 function debounce(callback, limit = 500) {
@@ -92,6 +101,7 @@ function joinGroup(groupId, groupName) {
             icon: 'success',
             text: `${groupName}에 가입 신청이 완료되었습니다.`,
           });
+          window.location.reload()
         })
         .catch(async function (error) {
           if (error.response.data.statusCode === 401) {
@@ -117,12 +127,18 @@ function joinGroup(groupId, groupName) {
   });
 }
 
-function searchGroups(tag) {
+function searchGroups(tag,page) {
+  if(!page) {
+    page = 1
+  }
+  if(page === 1){
+    document.getElementById('groupList').innerHTML = '';
+  }
   if (!tag) {
     tag = document.getElementById('groups-search').value;
   }
   document.getElementById('groups-search').value = '';
-  history.pushState(null, null, `/groups?search=${tag}`);
+  history.pushState(null, null, `/groups?search=${tag}&page=${page}`);
   if (!tag.length) {
     Swal.fire({
       icon: 'false',
@@ -131,14 +147,20 @@ function searchGroups(tag) {
     return;
   }
   axios({
-    url: `/api/groups/search/${tag}`,
+    url: `/api/groups/search/tag`,
     method: 'get',
     headers: {
       Authorization: `${getCookie('accessToken')}`,
     },
+    params : {
+      tag,
+      page
+    }
   })
     .then(function (res) {
-      document.getElementById('groupList').innerHTML = '';
+      if (res.data.length < 9) {
+        document.getElementById('loader').innerHTML = '';
+      }
       groupList(res.data);
     })
     .catch(async function (error) {

@@ -64,7 +64,6 @@
       },
       // 이벤트
       events: function (info, success, fail) {
-        console.log(info.startStr)
         axios({
           url: `/api/calendar/events/${info.startStr}/${info.endStr}`,
           method: 'get',

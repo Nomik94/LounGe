@@ -39,7 +39,6 @@ export class CalendarService {
       },
       select: ['groupId', 'userId'],
     });
-    console.log(myGroupList)
     const myGroupIds = myGroupList.map((ids) => ({
       group: { id: ids.groupId },
     }));
