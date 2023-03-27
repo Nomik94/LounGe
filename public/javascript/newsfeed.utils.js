@@ -16,7 +16,7 @@ function getCookie(name) {
 // 뉴스피드 리스트 불러와서 뿌려주기
 async function newsfeedlist(data) {
   if (data.userIdentify === 2) {
-    document.getElementById('loader').innerHTML = ''
+    document.getElementById('loader').innerHTML = '';
   } else {
     $('#firstnewsfeed').empty();
     data.forEach((data) => {
@@ -159,7 +159,9 @@ async function newsfeedlist(data) {
               <!-- META LINE -->
               <div class="meta-line">
                 <!-- META LINE LINK -->
-                <p class="meta-line-link" onclick="getNewsfeedId(${data.id})">댓글 ${data.comment.length}개</p>
+                <p class="meta-line-link" onclick="getNewsfeedId(${data.id},${
+          data.groupId
+        })">댓글 ${data.comment.length}개</p>
                 <!-- /META LINE LINK -->
               </div>
               <!-- /META LINE -->
@@ -289,7 +291,9 @@ async function newsfeedlist(data) {
                     <!-- META LINE -->
                     <div class="meta-line">
                       <!-- META LINE LINK -->
-                      <p class="meta-line-link" onclick="getNewsfeedId(${data.id})">댓글 ${data.comment.length}개</p>
+                      <p class="meta-line-link" onclick="getNewsfeedId(${
+                        data.id
+                      },${data.groupId})">댓글 ${data.comment.length}개</p>
                       <!-- /META LINE LINK -->
                     </div>
                     <!-- /META LINE -->
@@ -518,7 +522,8 @@ document.addEventListener(
   }, 500),
 );
 
-async function getNewsfeedId(id) {
+async function getNewsfeedId(id, groupId) {
   localStorage.setItem('newsfeedId', JSON.stringify(id));
+  localStorage.setItem('groupId', JSON.stringify(groupId));
   location.href = '/newsfeed/comment';
 }
