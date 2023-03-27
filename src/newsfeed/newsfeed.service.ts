@@ -53,7 +53,7 @@ export class NewsfeedService {
       const checkFirstNewsfeed = this.newsfeedRepository.findFirstNewsfeed()
       if((await checkFirstNewsfeed).length === 0) {
         await this.elasticSearchService.indices.create({
-          index: 'test-newsfeeds'
+          index: 'newsfeeds'
         })
       }
       const newsfeedId = await this.newsfeedRepository.createNewsfeed(
@@ -90,7 +90,7 @@ export class NewsfeedService {
          tagsConfirm = data.newsfeedTags.split(',')
       }
       await this.elasticSearchService.index({
-        index: 'test-newsfeeds',
+        index: 'newsfeeds',
         body: {
           id: newsfeedId.id,
           content : content,
@@ -122,7 +122,7 @@ export class NewsfeedService {
       await this.newsfeedTagRepository.deleteNewsfeedTag(id);
       await this.newsfeedImageRepository.deleteNewsfeedImage(id);
       await this.elasticSearchService.deleteByQuery({
-        index: 'test-newsfeeds',
+        index: 'newsfeeds',
           body : {
             query:{
               match :{
@@ -181,7 +181,7 @@ export class NewsfeedService {
       }
 
       const newsfeedIdByEs = await this.elasticSearchService.search({
-        index: 'test-newsfeeds',
+        index: 'newsfeeds',
         query: {
           match: {
             id :id
@@ -190,7 +190,7 @@ export class NewsfeedService {
       })
       if(!data.newsfeedTags) {
         await this.elasticSearchService.update({
-              index: 'test-newsfeeds',
+              index: 'newsfeeds',
               id: newsfeedIdByEs.hits.hits[0]._id, 
               body: {
                 doc: {
@@ -200,7 +200,7 @@ export class NewsfeedService {
             })
           } else {
             await this.elasticSearchService.update({
-              index: 'test-newsfeeds',
+              index: 'newsfeeds',
               id: newsfeedIdByEs.hits.hits[0]._id, 
               body: {
                 doc: {
@@ -605,7 +605,7 @@ export class NewsfeedService {
   // 엘라스틱 서치 테스트 (성공)
   async testSearchIndex(data) {
     const result = await this.elasticSearchService.search({
-      index: 'test-newsfeeds',
+      index: 'newsfeeds',
       body: {
         size: 500
       },
