@@ -159,7 +159,10 @@ function managementMemberList() {
           $('.notification-box-list').append(temp_html);
         }
       });
-
+      const js = `
+      <script src="/js/global/global.hexagons.js"></script>
+      <script src="/js/utils/liquidify.js"></script>`;
+      $('#managementjs').append(js);
     })
     .catch(async function (error) {
       if (error.response.data.statusCode === 401) {
