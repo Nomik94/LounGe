@@ -54,8 +54,9 @@ export class GroupController {
     @GetUser() user: IUser,
     @Query('tag') tag: string,
     @Query('page') page: number,
-  ): Promise<IMapGroups[]> {
-    return await this.groupService.searchGroupByTag(tag, page);
+  ) {
+    const userId = user.id;
+    return await this.groupService.searchGroupByTag(userId, tag, page);
   }
 
   // 소속된 그룹 리스트 API
@@ -85,8 +86,19 @@ export class GroupController {
   @UseGuards(JwtAuthGuard)
   async getGroupMemberList(
     @Param('groupId') groupId: number,
-  ): Promise<IMemberList> {
+  ): Promise<IMemberList[]> {
     return await this.groupService.getGroupMemberList(groupId);
+  }
+
+  // 그룹 관리 상세 페이지 API
+  @Get('/:groupId/management/detail')
+  @UseGuards(JwtAuthGuard)
+  async getGroupDetail(
+    @GetUser() user: IUser,
+    @Param('groupId') groupId: number,
+  ) {
+    const userId = user.id;
+    return await this.groupService.getGroupDetail(userId, groupId);
   }
 
   // 그룹 가입 신청자 리스트 API

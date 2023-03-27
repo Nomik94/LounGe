@@ -79,24 +79,6 @@ export class GroupRepository extends Repository<Group> {
       .getMany();
   }
 
-  // 그룹 태그 검색 리스트
-  async getGroupsWithIds(id): Promise<Group[]> {
-    return await this.createQueryBuilder('group')
-      .select([
-        'group.id',
-        'group.groupName',
-        'group.groupImage',
-        'group.backgroundImage',
-        'group.description',
-        'tagGroups.tagId',
-        'tag.tagName',
-      ])
-      .leftJoin('group.tagGroups', 'tagGroups')
-      .leftJoin('tagGroups.tag', 'tag')
-      .where('group.id IN (:...id)', { id })
-      .getMany();
-  }
-
   // 소속된 그룹 리스트
   async getMyGroupList(
     userId: number,
