@@ -17,13 +17,11 @@ function managementMemberList() {
     },
   })
     .then(function (res) {
-
-      res.data.members.forEach((data) => {
+      res.data.forEach((data) => {
         let temp_html = `        <!-- USER PREVIEW -->
         <div class="user-preview">
           <!-- USER PREVIEW COVER -->
           <figure class="user-preview-cover liquid">
-            <img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.foundGroup.backgroundImage}" alt="cover-04">
           </figure>
           <!-- /USER PREVIEW COVER -->
       
