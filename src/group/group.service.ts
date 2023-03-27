@@ -181,18 +181,12 @@ export class GroupService {
     data: CreateGroupDto,
     userId: number,
   ): Promise<void> {
-    const tagArray = data.tag.split(',');
-    if (tagArray.find((tag) => tag.length >= 11)) {
-      throw new BadRequestException(
-        '태그의 길이는 11글자를 넘어갈 수 없습니다.',
-      );
-    }
-    if (tagArray.length >= 4) {
-      throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
-    }
+    const tagArray = await this.splitTags(data.tag);
 
-    let groupImage = '11.png';
-    let backgroundImage = '1.png';
+    let groupImage = file.groupImage ? file.groupImage[0].key : '11.png';
+    let backgroundImage = file.backgroundImage
+      ? file.backgroundImage[0].key
+      : '1.png';
 
     if (file.groupImage) {
       groupImage = file.groupImage[0].key;
@@ -230,15 +224,7 @@ export class GroupService {
     userId: number,
     groupId: number,
   ): Promise<void> {
-    const tagArray = data.tag.split(',');
-    if (tagArray.find((tag) => tag.length >= 11)) {
-      throw new BadRequestException(
-        '태그의 길이는 11글자를 넘어갈 수 없습니다.',
-      );
-    }
-    if (tagArray.length >= 4) {
-      throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
-    }
+    const tagArray = await this.splitTags(data.tag);
 
     const foundGroup = await this.groupRepository.findOneBy({
       id: groupId,
@@ -248,6 +234,7 @@ export class GroupService {
     if (!foundGroup) {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
     }
+
     if (file.groupImage) {
       data.groupImage = file.groupImage[0].key;
     }
@@ -261,7 +248,7 @@ export class GroupService {
     await this.tagGroupRepository.delete({ groupId });
 
     await this.checkTag(tagArray, groupId);
-    const updateGroupInfo = await this.groupRepository.update(groupId, {
+    await this.groupRepository.update(groupId, {
       groupName: data.groupName,
       description: data.description,
       groupImage: data.groupImage,
@@ -560,5 +547,20 @@ export class GroupService {
       ],
     });
     return result.hits.hits;
+  }
+
+  // 태그 배열화
+  async splitTags(tag: string) {
+    const tagArray = tag.split(',');
+    if (tagArray.find((tag) => tag.length >= 11)) {
+      throw new BadRequestException(
+        '태그의 길이는 11글자를 넘어갈 수 없습니다.',
+      );
+    }
+    if (tagArray.length >= 4) {
+      throw new BadRequestException('그룹 태그는 3개만 넣을 수 있습니다.');
+    }
+
+    return tagArray;
   }
 }
