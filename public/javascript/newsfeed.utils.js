@@ -160,7 +160,7 @@ async function newsfeedlist(data) {
                 <!-- META LINE LINK -->
                 <p class="meta-line-link" onclick="getNewsfeedId(${data.id},${
           data.groupId
-        })">댓글 ${data.comment.length}개</p>
+        })">댓글 보기</p>
                 <!-- /META LINE LINK -->
               </div>
               <!-- /META LINE -->
@@ -292,7 +292,7 @@ async function newsfeedlist(data) {
                       <!-- META LINE LINK -->
                       <p class="meta-line-link" onclick="getNewsfeedId(${
                         data.id
-                      },${data.groupId})">댓글 ${data.comment.length}개</p>
+                      },${data.groupId})">댓글 보기</p>
                       <!-- /META LINE LINK -->
                     </div>
                     <!-- /META LINE -->
