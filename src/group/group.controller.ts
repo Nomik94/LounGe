@@ -50,13 +50,13 @@ export class GroupController {
   // 그룹 태그 검색 리스트 API
   @Get('/search/tag')
   @UseGuards(JwtAuthGuard)
-  async searchGroupByTag(
+  async searchGroupByKeyword(
     @GetUser() user: IUser,
     @Query('tag') tag: string,
     @Query('page') page: number,
   ) {
     const userId = user.id;
-    return await this.groupService.searchGroupByTag(userId, tag, page);
+    return await this.groupService.searchGroupByKeyword(userId, tag, page);
   }
 
   // 소속된 그룹 리스트 API

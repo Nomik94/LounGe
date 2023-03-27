@@ -76,7 +76,7 @@ export class GroupService {
   }
 
   // 그룹 태그 검색 리스트
-  async searchGroupByTag(userId: number, tag: string, page: number) {
+  async searchGroupByKeyword(userId: number, keyword: string, page: number) {
     const findJoinGroups = await this.userGroupRepository.checkUserStatus(
       userId,
     );
@@ -85,12 +85,12 @@ export class GroupService {
         id: group.groupId.toString(),
       },
     }));
-    const searchGroupWithTag = await this.searchGroupWithTag(
+    const searchGroupWithTag = await this.searchGroupWithKeyword(
       mapJoinGroupsQuery,
-      tag,
+      keyword,
       page,
     );
-    const groupList = (await searchGroupWithTag).map((group) => group._source);
+    const groupList = await searchGroupWithTag.map((group) => group._source);
     return groupList;
   }
 
@@ -533,7 +533,7 @@ export class GroupService {
   }
 
   // ES 그룹 검색
-  async searchGroupWithTag(findJoinGroups, tag: string, page: number) {
+  async searchGroupWithKeyword(findJoinGroups, keyword: string, page: number) {
     const pageSize = 9;
     const result = await this.elasticsearchService.search({
       index: 'search-groups',
@@ -543,7 +543,7 @@ export class GroupService {
         bool: {
           must: {
             query_string: {
-              query: `*${tag}*`,
+              query: `*${keyword}*`,
               fields: ['tagGroups', 'description', 'groupName'],
             },
           },
