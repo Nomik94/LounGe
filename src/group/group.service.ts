@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { GroupRepository } from 'src/common/repository/group.repository';
 import { TagGroupRepository } from 'src/common/repository/tag.group.repository';
@@ -77,25 +76,22 @@ export class GroupService {
   }
 
   // 그룹 태그 검색 리스트
-  async searchGroupByTag(tag: string, page: number): Promise<IMapGroups[]> {
-    const searchGroupWithTag = this.searchGroupWithTag(tag, page);
-    const groupIds = (await searchGroupWithTag).map(
-      (groupId) => groupId._source,
+  async searchGroupByTag(userId: number, tag: string, page: number) {
+    const findJoinGroups = await this.userGroupRepository.checkUserStatus(
+      userId,
     );
-    if (groupIds.length === 0) {
-      throw new NotFoundException('존재하지 않는 태그입니다.');
-    }
-
-    const resultGroupIds = Array.from(
-      new Set(groupIds.map((item) => item['id'])),
+    const mapJoinGroupsQuery = await findJoinGroups.map((group) => ({
+      match: {
+        id: group.groupId.toString(),
+      },
+    }));
+    const searchGroupWithTag = await this.searchGroupWithTag(
+      mapJoinGroupsQuery,
+      tag,
+      page,
     );
-
-    const getGroupsWithIds = await this.groupRepository.getGroupsWithIds(
-      resultGroupIds,
-    );
-    const mapGroupList = this.mapGroupsWithTags(getGroupsWithIds);
-
-    return mapGroupList;
+    const groupList = (await searchGroupWithTag).map((group) => group._source);
+    return groupList;
   }
 
   // 소속된 그룹 리스트
@@ -137,7 +133,7 @@ export class GroupService {
   }
 
   // 그룹 멤버 리스트
-  async getGroupMemberList(groupId: number): Promise<IMemberList> {
+  async getGroupMemberList(groupId: number): Promise<IMemberList[]> {
     const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId);
     const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName);
     const memberList = await this.userGroupRepository.getMemberList(groupId);
@@ -149,7 +145,16 @@ export class GroupService {
       userImage: data.user.image,
       userRole: data.role,
     }));
-    return { members: mapMemberList, foundGroup, tags };
+    return mapMemberList;
+  }
+
+  //그룹 관리 상세 페이지
+  async getGroupDetail(userId: number, groupId: number) {
+    await this.checkGroupLeader(userId, groupId);
+    const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId);
+    const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName);
+
+    return { tags, foundGroup };
   }
 
   // 그룹 가입 신청자 리스트
@@ -205,7 +210,7 @@ export class GroupService {
     });
     await this.groupRepository.save(group);
 
-    this.createIndexGroup(group, data.tag);
+    this.createIndexGroup(group, tagArray);
 
     if (tagArray.length > 0 && tagArray[0] !== '') {
       await this.checkTag(tagArray, group.id);
@@ -252,7 +257,7 @@ export class GroupService {
     }
 
     const groupIndexId = await this.findIndexGroup(foundGroup.id);
-    await this.updateIndexGroup(groupIndexId, data, foundGroup.id);
+    await this.updateIndexGroup(groupIndexId, data, foundGroup.id, tagArray);
     await this.tagGroupRepository.delete({ groupId });
 
     await this.checkTag(tagArray, groupId);
@@ -464,17 +469,10 @@ export class GroupService {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
   }
 
-  // ES 인덱스 생성
-  async createIndex(indexName: string): Promise<void> {
-    await this.elasticsearchService.indices.create({
-      index: indexName,
-    });
-  }
-
   // ES 그룹 인덱스 문서 추가
-  async createIndexGroup(group: IGroupIndexBody, tag: string): Promise<void> {
-    if (tag === '') {
-      tag = '전체';
+  async createIndexGroup(group, tagArray: string[]): Promise<void> {
+    if (tagArray[0] === '') {
+      tagArray = ['전체'];
     }
     await this.elasticsearchService.index({
       index: 'search-groups',
@@ -482,7 +480,9 @@ export class GroupService {
         id: group.id,
         groupName: group.groupName,
         description: group.description,
-        tag,
+        groupImage: group.groupImage,
+        backgroundImage: group.backgroundImage,
+        tagGroups: tagArray,
       },
     });
   }
@@ -503,8 +503,9 @@ export class GroupService {
   // ES 그룹 인덱스 문서 수정
   async updateIndexGroup(
     groupIndexId: string,
-    data: IGroupIndexBody,
+    data,
     groupId: number,
+    tagArray: string[],
   ): Promise<void> {
     if (data.tag === '') {
       data.tag = '전체';
@@ -516,7 +517,9 @@ export class GroupService {
         id: groupId,
         groupName: data.groupName,
         description: data.description,
-        tag: data.tag,
+        groupImage: data.groupImage,
+        backgroundImage: data.backgroundImage,
+        tagGroups: tagArray,
       },
     });
   }
@@ -530,19 +533,31 @@ export class GroupService {
   }
 
   // ES 그룹 검색
-  async searchGroupWithTag(tag: string, page: number) {
+  async searchGroupWithTag(findJoinGroups, tag: string, page: number) {
     const pageSize = 9;
     const result = await this.elasticsearchService.search({
       index: 'search-groups',
       from: pageSize * (page - 1),
       size: pageSize,
       query: {
-        query_string: {
-          query: `*${tag}*`,
-          fields: ['tag', 'description', 'groupName'],
+        bool: {
+          must: {
+            query_string: {
+              query: `*${tag}*`,
+              fields: ['tagGroups', 'description', 'groupName'],
+            },
+          },
+          must_not: findJoinGroups,
         },
       },
-      _source: ['id'],
+      _source: [
+        'id',
+        'groupName',
+        'description',
+        'groupImage',
+        'backgroundImage',
+        'tagGroups',
+      ],
     });
     return result.hits.hits;
   }

@@ -1,16 +1,16 @@
 $(document).ready(async function () {
   await restoreToken();
+  getGroupDetail();
   managementMemberList();
 });
 
-function managementMemberList() {
-  $('.notification-box-list').empty();
+function getGroupDetail() {
   let query = window.location.search;
   let param = new URLSearchParams(query);
   let groupId = param.get('groupId');
 
   axios({
-    url: `/api/groups/${groupId}/members/list`,
+    url: `/api/groups/${groupId}/management/detail`,
     method: 'get',
     headers: {
       Authorization: `${getCookie('accessToken')}`,
@@ -35,7 +35,50 @@ function managementMemberList() {
         'groupDescription',
       ).value = `${res.data.foundGroup.description}`;
       document.getElementById('groupTags').value = `${res.data.tags.join(',')}`;
-      res.data.members.forEach((data) => {
+      const js = `
+      <script src="/js/global/global.hexagons.js"></script>
+      <script src="/js/utils/liquidify.js"></script>
+      <script src="/js/global/global.popups.js"></script>
+      `;
+      $('#managementjs').append(js);
+    })
+    .catch(async function (error) {
+      if (error.response.data.statusCode === 401) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center-center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        await Toast.fire({
+          icon: 'error',
+          title: '로그인이 필요합니다.<br> 로그인 페이지로 이동합니다.',
+        });
+        window.location.replace('/');
+      }
+      Swal.fire({
+        icon: 'error',
+        text: `${error.response.data.message}`,
+      });
+    });
+}
+
+function managementMemberList() {
+  $('.notification-box-list').empty();
+  let query = window.location.search;
+  let param = new URLSearchParams(query);
+  let groupId = param.get('groupId');
+
+  axios({
+    url: `/api/groups/${groupId}/members/list`,
+    method: 'get',
+    headers: {
+      Authorization: `${getCookie('accessToken')}`,
+    },
+  })
+    .then(function (res) {
+      res.data.forEach((data) => {
         if (data.userRole === '회원') {
           let temp_html = `          <!-- 멤버 리스트 추방 -->
         <div class="notification-box" id="kickdeletebox${data.userId}">
@@ -116,12 +159,7 @@ function managementMemberList() {
           $('.notification-box-list').append(temp_html);
         }
       });
-      const js = `
-      <script src="/js/global/global.hexagons.js"></script>
-      <script src="/js/utils/liquidify.js"></script>
-      <script src="/js/global/global.popups.js"></script>
-      `;
-      $('#managementjs').append(js);
+
     })
     .catch(async function (error) {
       if (error.response.data.statusCode === 401) {

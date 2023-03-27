@@ -18,7 +18,6 @@ async function newsfeedlist(data) {
   if (data.userIdentify === 2) {
     document.getElementById('loader').innerHTML = ''
   } else {
-    $('#firstnewsfeed').empty();
     data.forEach((data) => {
       const createDate = new Date(data.createAt);
       const timeOptions = {

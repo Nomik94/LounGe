@@ -25,7 +25,6 @@ async function readnewsfeedmygroup(page) {
       await newsfeedlist(res.data);
     })
     .catch((err) => {
-      console.log(err);
       if (err.response.data.statusCode === 401) {
         const Toast = Swal.mixin({
           toast: true,

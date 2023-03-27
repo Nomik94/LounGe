@@ -1,27 +1,25 @@
 import _ from 'lodash';
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { UserEvent } from 'src/database/entities/userEvent.entity';
-import { Between, Not, Repository } from 'typeorm';
+import { Between, Not } from 'typeorm';
 import { GroupEvent } from 'src/database/entities/groupEvent.entity';
 import { UserEventDto } from './dto/user.event.dto';
 import { GroupEventDto } from './dto/group.event.dto';
-import { Group } from 'src/database/entities/group.entity';
 import { ForbiddenException } from '@nestjs/common/exceptions';
 import { IGroupEventList } from './interface/group.event.list.interface';
 import { Cache } from 'cache-manager';
 import { UserGroupRepository } from 'src/common/repository/user.group.repository';
 import { IAllEventList } from './interface/event.list.interface';
+import { GroupRepository } from 'src/common/repository/group.repository';
+import { GroupEventRepository } from 'src/common/repository/groupEvent.repository';
+import { UserEventRepository } from 'src/common/repository/userEvent.repository';
 
 @Injectable()
 export class CalendarService {
   constructor(
-    @InjectRepository(UserEvent)
-    private readonly userEventRepository: Repository<UserEvent>,
-    @InjectRepository(GroupEvent)
-    private readonly groupEventRepository: Repository<GroupEvent>,
-    @InjectRepository(Group)
-    private readonly groupRepository: Repository<Group>,
+    private readonly userEventRepository: UserEventRepository,
+    private readonly groupEventRepository: GroupEventRepository,
+    private readonly groupRepository: GroupRepository,
     private readonly userGroupRepository: UserGroupRepository,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
@@ -128,10 +126,10 @@ export class CalendarService {
     groupId: number,
   ): Promise<IGroupEventList> {
     await this.checkMember(userId, groupId);
-    const today = new Date()
-    const future = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000));
-    const todayStr = today.toISOString()
-    const futureStr = future.toISOString()
+    const today = new Date();
+    const future = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const todayStr = today.toISOString();
+    const futureStr = future.toISOString();
     const checkRole = await this.groupRepository.findOne({
       where: { id: groupId, user: { id: userId } },
     });
@@ -142,7 +140,7 @@ export class CalendarService {
     }
 
     const groupInfo = await this.groupEventRepository.findBy({
-      start : Between(todayStr, futureStr),
+      start: Between(todayStr, futureStr),
       group: { id: groupId },
     });
 
