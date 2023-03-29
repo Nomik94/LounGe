@@ -85,6 +85,9 @@ http://loungegroup.site
 
 [![LounGe - MVP 시연 영상](https://img.youtube.com/vi/1uOuII_OKeQ/0.jpg)](https://www.youtube.com/watch?v=1uOuII_OKeQ)
 
+## 서비스 아키텍처
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbEfYU3%2Fbtr6K4b0bLj%2FutsRZqJN3UvrGfhweGkzE1%2Fimg.png)
+
 ## ERD
 
 ![](https://images-ext-2.discordapp.net/external/xiar04mnprzZh5XagnUlLi9Ob47xdwiLRUSkVkQbieM/%3Fscode%3Dmtistory2%26fname%3Dhttps%253A%252F%252Fblog.kakaocdn.net%252Fdn%252Fbl9ZX9%252Fbtr6N6UBbjT%252Fmd7VFWZZJLGTM4NSlK96kk%252Fimg.png/https/img1.daumcdn.net/thumb/R1280x0/?width=1904&height=1244)
