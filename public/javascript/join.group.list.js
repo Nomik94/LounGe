@@ -140,18 +140,6 @@ async function groupList(list) {
   
         <!-- USER PREVIEW ACTIONS -->
         <div class="user-preview-actions">
-          <!-- BUTTON -->
-          <p class="button secondary full" onclick="joinGroup(${data.id},'${
-      data.groupName
-    }')">
-            <!-- BUTTON ICON -->
-            <svg class="button-icon icon-join-group">
-              <use xlink:href="#svg-join-group"></use>
-            </svg>
-            <!-- /BUTTON ICON -->
-            소모임 가입 신청 취소
-          </p>
-          <!-- /BUTTON -->
         </div>
         <!-- /USER PREVIEW ACTIONS -->
       </div>
