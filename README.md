@@ -81,6 +81,18 @@ http://loungegroup.site
 - 그룹 일정 공유 기능 제공
 - 추후 업데이트를 통해 다양한 편의성 기능 제공 예정
 
+## MVP 시연 영상
+
+[![LounGe - MVP 시연 영상](https://img.youtube.com/vi/1uOuII_OKeQ/0.jpg)](https://www.youtube.com/watch?v=1uOuII_OKeQ)
+
+## ERD
+
+![](https://images-ext-2.discordapp.net/external/xiar04mnprzZh5XagnUlLi9Ob47xdwiLRUSkVkQbieM/%3Fscode%3Dmtistory2%26fname%3Dhttps%253A%252F%252Fblog.kakaocdn.net%252Fdn%252Fbl9ZX9%252Fbtr6N6UBbjT%252Fmd7VFWZZJLGTM4NSlK96kk%252Fimg.png/https/img1.daumcdn.net/thumb/R1280x0/?width=1904&height=1244)
+
+## 성능 개선 그래프
+
+![](https://images-ext-1.discordapp.net/external/2o_dgaN1fFIJ5hhK8vLoIUDoeS0es3Z_rLelUK0jM3g/%3Fscode%3Dmtistory2%26fname%3Dhttps%253A%252F%252Fblog.kakaocdn.net%252Fdn%252FN1Hmb%252Fbtr6OqL0rN3%252FuKlbx5DkC0QJxK3JKoGLQk%252Fimg.jpg/https/img1.daumcdn.net/thumb/R1280x0/?width=2440&height=1372)
+
 ## 기술적 의사결정
 
 ### 📝 TypeScript
@@ -160,7 +172,3 @@ http://loungegroup.site
   - LIKE는 와일드 카드 문자(%, \_)를 사용하는 경우에는 전체 테이블 스캔을 수행해야 하므로 데이터가 많아질 시 성능이 하락함
 - 해결 방법
   - ElasticSearch를 이용하여 별도의 인덱싱된 문서에서 빠른 검색을 통해 성능 개선
-
-## 성능 개선 그래프
-
-![](https://images-ext-1.discordapp.net/external/2o_dgaN1fFIJ5hhK8vLoIUDoeS0es3Z_rLelUK0jM3g/%3Fscode%3Dmtistory2%26fname%3Dhttps%253A%252F%252Fblog.kakaocdn.net%252Fdn%252FN1Hmb%252Fbtr6OqL0rN3%252FuKlbx5DkC0QJxK3JKoGLQk%252Fimg.jpg/https/img1.daumcdn.net/thumb/R1280x0/?width=2440&height=1372)
