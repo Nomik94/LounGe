@@ -196,7 +196,7 @@ export class GroupService {
 
     this.createIndexGroup(group, tagArray);
 
-    if (tagArray.length > 0 && tagArray[0] !== '') {
+    if (tagArray) {
       await this.checkTag(tagArray, group.id);
     }
 
@@ -397,14 +397,14 @@ export class GroupService {
   }
 
   // 태그 체크
-  async checkTag(tags: string[], groupId: number): Promise<void> {
-    if (!tags.length) {
+  async checkTag(tagArray: string[], groupId: number): Promise<void> {
+    if (!tagArray) {
       return;
     }
 
-    const existTags = await this.tagRepository.foundTags(tags);
+    const existTags = await this.tagRepository.foundTags(tagArray);
     const existTagNames = existTags.map((tag) => tag.tagName);
-    const newTags = tags.filter((tag) => !existTagNames.includes(tag));
+    const newTags = tagArray.filter((tag) => !existTagNames.includes(tag));
     const newTagNames = newTags.map((tag) => ({ tagName: tag }));
 
     if (newTags.length !== 0) {
@@ -437,7 +437,7 @@ export class GroupService {
 
   // ES 그룹 인덱스 문서 추가
   async createIndexGroup(group, tagArray: string[]): Promise<void> {
-    if (tagArray[0] === '') {
+    if (!tagArray) {
       tagArray = ['전체'];
     }
     await this.elasticsearchService.index({
@@ -473,7 +473,7 @@ export class GroupService {
     groupId: number,
     tagArray: string[],
   ): Promise<void> {
-    if (data.tag === '') {
+    if (!tagArray) {
       data.tag = '전체';
     }
     await this.elasticsearchService.index({
@@ -531,6 +531,9 @@ export class GroupService {
   // 태그 배열화
   async splitTags(tag: string) {
     const tagArray = tag.split(',');
+    if(tagArray.length === 0 || tagArray[0] === ''){
+      return undefined
+    }
     if (tagArray.find((tag) => tag.length >= 11)) {
       throw new BadRequestException(
         '태그의 길이는 11글자를 넘어갈 수 없습니다.',
