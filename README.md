@@ -28,8 +28,6 @@ http://loungegroup.site
 
 [LounGe](https://emerald-gull-9bc.notion.site/LounGe-41aed12fc4b1498197726b8be242b3d9)
 
----
-
 ## 프로젝트 기간
 
 2023.02.28 ~ 2023.04.03
@@ -113,7 +111,7 @@ http://loungegroup.site
 
 #### 의견 조율
 
-- TypeScript는 자바스크립트의 모든 기능을 사용할 수 있다
+- TypeScript는 JavaScript의 모든 기능을 사용할 수 있다
 - TypeScript가 JavaScript보다 개발 속도가 느리긴 하지만 디버깅에 투자하는 시간을 줄일 수 있다
 - 강타입 언어를 사용함으로써 코드의 안정성을 높일 수 있다
 
