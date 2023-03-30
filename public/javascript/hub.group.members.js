@@ -18,23 +18,23 @@ function getGroupDetail() {
   })
     .then(function (res) {
       $('#groupTitle').empty();
-      $('#groupTitle').append(`${res.data.foundGroup.groupName}`);
+      $('#groupTitle').append(`${res.data.groupName}`);
       document.getElementById(
         'popupButton',
-      ).innerHTML = `<p class="button secondary full popup-manage-group-trigger-1" onclick="modifyGroup('${res.data.foundGroup.groupImage}','${res.data.foundGroup.backgroundImage}')">그룹 수정하기</p>`;
+      ).innerHTML = `<p class="button secondary full popup-manage-group-trigger-1" onclick="modifyGroup('${res.data.groupImage}','${res.data.backgroundImage}')">그룹 수정하기</p>`;
       document.getElementById(
         'avatarImg',
-      ).innerHTML = `<div class="hexagon-image-84-92" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.foundGroup.groupImage}"></div>`;
+      ).innerHTML = `<div class="hexagon-image-84-92" data-src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.groupImage}"></div>`;
       document.getElementById(
         'backImg',
-      ).innerHTML = `<img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.foundGroup.backgroundImage}" alt="backgroundImg">`;
+      ).innerHTML = `<img src="https://lounges3.s3.ap-northeast-2.amazonaws.com/${res.data.backgroundImage}" alt="backgroundImg">`;
       document.getElementById(
         'groupName',
-      ).value = `${res.data.foundGroup.groupName}`;
+      ).value = `${res.data.groupName}`;
       document.getElementById(
         'groupDescription',
-      ).value = `${res.data.foundGroup.description}`;
-      document.getElementById('groupTags').value = `${res.data.tags.join(',')}`;
+      ).value = `${res.data.description}`;
+      document.getElementById('groupTags').value = `${res.data.tag.join(',')}`;
       const js = `
       <script src="/js/global/global.hexagons.js"></script>
       <script src="/js/utils/liquidify.js"></script>
