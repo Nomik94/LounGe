@@ -36,21 +36,15 @@ export class GroupService {
       where: { userId },
     });
 
-    let getGroupsWithOutIds;
-
     const groupIds = foundUserWithGroups.map((data) => data.groupId);
-    if (groupIds.length === 0) {
-      getGroupsWithOutIds = await this.groupRepository.getAllGroupList(
-        page,
-        pageSize,
-      );
-    } else {
-      getGroupsWithOutIds = await this.groupRepository.getGroupsWithOutIds(
-        groupIds,
-        page,
-        pageSize,
-      );
-    }
+    let getGroupsWithOutIds =
+      groupIds.length === 0
+        ? await this.groupRepository.getAllGroupList(page, pageSize)
+        : await this.groupRepository.getGroupsWithOutIds(
+            groupIds,
+            page,
+            pageSize,
+          );
 
     const mapGroupList = await this.mapGroupsWithTags(getGroupsWithOutIds);
     return mapGroupList;
@@ -134,8 +128,6 @@ export class GroupService {
 
   // 그룹 멤버 리스트
   async getGroupMemberList(groupId: number): Promise<IMemberList[]> {
-    const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId);
-    const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName);
     const memberList = await this.userGroupRepository.getMemberList(groupId);
     const mapMemberList = memberList.map((data) => ({
       userId: data.userId,
@@ -154,7 +146,13 @@ export class GroupService {
     const foundGroup = await this.groupRepository.foundGroupByGroupId(groupId);
     const tags = foundGroup.tagGroups.map((tag) => tag.tag.tagName);
 
-    return { tags, foundGroup };
+    return {
+      groupName: foundGroup.groupName,
+      groupImage: foundGroup.groupImage,
+      backgroundImage: foundGroup.backgroundImage,
+      description: foundGroup.description,
+      tag: tags,
+    };
   }
 
   // 그룹 가입 신청자 리스트
@@ -188,25 +186,17 @@ export class GroupService {
       ? file.backgroundImage[0].key
       : '1.png';
 
-    if (file.groupImage) {
-      groupImage = file.groupImage[0].key;
-    }
-    if (file.backgroundImage) {
-      backgroundImage = file.backgroundImage[0].key;
-    }
-
-    const group = this.groupRepository.create({
+    const group = await this.groupRepository.save({
       groupName: data.groupName,
       description: data.description,
       groupImage,
       backgroundImage,
       user: { id: userId },
     });
-    await this.groupRepository.save(group);
 
     this.createIndexGroup(group, tagArray);
 
-    if (tagArray.length > 0 && tagArray[0] !== '') {
+    if (tagArray) {
       await this.checkTag(tagArray, group.id);
     }
 
@@ -226,25 +216,13 @@ export class GroupService {
   ): Promise<void> {
     const tagArray = await this.splitTags(data.tag);
 
-    const foundGroup = await this.groupRepository.findOneBy({
-      id: groupId,
-      user: { id: userId },
-    });
+    await this.checkGroupLeader(userId, groupId)
 
-    if (!foundGroup) {
-      throw new ForbiddenException('권한이 존재하지 않습니다.');
-    }
+    data.groupImage = file.groupImage? file.groupImage[0].key : data.groupImage
+    data.backgroundImage = file.backgroundImage? file.backgroundImage[0].key : data.backgroundImage
 
-    if (file.groupImage) {
-      data.groupImage = file.groupImage[0].key;
-    }
-
-    if (file.backgroundImage) {
-      data.backgroundImage = file.backgroundImage[0].key;
-    }
-
-    const groupIndexId = await this.findIndexGroup(foundGroup.id);
-    await this.updateIndexGroup(groupIndexId, data, foundGroup.id, tagArray);
+    const groupIndexId = await this.findIndexGroup(groupId);
+    await this.updateIndexGroup(groupIndexId, data, groupId, tagArray);
     await this.tagGroupRepository.delete({ groupId });
 
     await this.checkTag(tagArray, groupId);
@@ -371,12 +349,13 @@ export class GroupService {
       groupId,
     });
     if (!foundUserWithGroup) {
-      await this.userGroupRepository.insert({
-        userId,
-        groupId,
-        role: '가입대기',
-      });
+      throw new BadRequestException('중복된 가입 신청입니다')
     }
+    await this.userGroupRepository.insert({
+      userId,
+      groupId,
+      role: '가입대기',
+    });
   }
 
   // 그룹 탈퇴
@@ -418,14 +397,14 @@ export class GroupService {
   }
 
   // 태그 체크
-  async checkTag(tags: string[], groupId: number): Promise<void> {
-    if (!tags.length) {
+  async checkTag(tagArray: string[], groupId: number): Promise<void> {
+    if (!tagArray) {
       return;
     }
 
-    const existTags = await this.tagRepository.foundTags(tags);
+    const existTags = await this.tagRepository.foundTags(tagArray);
     const existTagNames = existTags.map((tag) => tag.tagName);
-    const newTags = tags.filter((tag) => !existTagNames.includes(tag));
+    const newTags = tagArray.filter((tag) => !existTagNames.includes(tag));
     const newTagNames = newTags.map((tag) => ({ tagName: tag }));
 
     if (newTags.length !== 0) {
@@ -458,7 +437,7 @@ export class GroupService {
 
   // ES 그룹 인덱스 문서 추가
   async createIndexGroup(group, tagArray: string[]): Promise<void> {
-    if (tagArray[0] === '') {
+    if (!tagArray) {
       tagArray = ['전체'];
     }
     await this.elasticsearchService.index({
@@ -494,8 +473,8 @@ export class GroupService {
     groupId: number,
     tagArray: string[],
   ): Promise<void> {
-    if (data.tag === '') {
-      data.tag = '전체';
+    if (!tagArray) {
+      tagArray = ['전체'];
     }
     await this.elasticsearchService.index({
       index: 'search-groups',
@@ -552,6 +531,9 @@ export class GroupService {
   // 태그 배열화
   async splitTags(tag: string) {
     const tagArray = tag.split(',');
+    if(tagArray.length === 0 || tagArray[0] === ''){
+      return undefined
+    }
     if (tagArray.find((tag) => tag.length >= 11)) {
       throw new BadRequestException(
         '태그의 길이는 11글자를 넘어갈 수 없습니다.',

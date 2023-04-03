@@ -9,6 +9,7 @@ import { CommentDTO } from './dto/comment.dto';
 import { Comment } from 'src/database/entities/comment.entity';
 import { User } from 'src/database/entities/user.entity';
 import { UserRepository } from 'src/common/repository/user.repository';
+import { UserGroupRepository } from 'src/common/repository/user.group.repository';
 
 @Injectable()
 export class CommentService {
@@ -16,6 +17,7 @@ export class CommentService {
     private readonly commentRepository: CommentRepository,
     private readonly newsfeedRepository: NewsfeedRepository,
     private readonly userRepository: UserRepository,
+    private readonly userGroupRepository: UserGroupRepository,
   ) {}
 
   // 댓글 생성
@@ -24,11 +26,9 @@ export class CommentService {
     newsfeedId: number,
     data: CommentDTO,
   ): Promise<void> {
-    const check = await this.newsfeedRepository.getGroupIdByNewsfeedId(
-      newsfeedId,
-    );
+    const check = await this.userGroupRepository.checkUserStatus(userId);
 
-    if (check.group.id !== data.groupId) {
+    if (check.length === 0) {
       throw new ForbiddenException('해당 그룹에 가입해주세요.');
     }
     await this.commentRepository.save({
@@ -71,11 +71,12 @@ export class CommentService {
     const checkNewsfeed = await this.newsfeedRepository.checkNewsfeed(
       newsfeedId,
     );
-    const content = data.content;
-    const checkUserId = checkNewsfeed.user['id'];
     if (!checkNewsfeed) {
       throw new NotFoundException('뉴스피드를 찾을 수 없습니다.');
-    } else if (userId !== checkUserId) {
+    }
+    const content = data.content;
+    const checkUserId = checkNewsfeed.user['id'];
+    if (userId !== checkUserId) {
       throw new ForbiddenException('권한이 존재하지 않습니다.');
     } else {
       await this.commentRepository.update(commentId, { content });

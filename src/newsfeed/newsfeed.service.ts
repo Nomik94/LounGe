@@ -38,24 +38,17 @@ export class NewsfeedService {
       userId,
       groupId,
     );
-    if (checkJoinGroup.length === 0) {
+    if (!checkJoinGroup) {
       throw new ForbiddenException(
         '가입된 그룹이 아니거나 그룹이 존재하지 않습니다.',
       );
     }
     if (
-      checkJoinGroup[0].role !== '그룹장' &&
-      checkJoinGroup[0].role !== '회원'
+      checkJoinGroup.role === '가입대기'
     ) {
       throw new ForbiddenException('그룹 가입 신청 중입니다.');
     }
     try {
-      const checkFirstNewsfeed = this.newsfeedRepository.findFirstNewsfeed()
-      if((await checkFirstNewsfeed).length === 0) {
-        await this.elasticSearchService.indices.create({
-          index: 'newsfeeds'
-        })
-      }
       const newsfeedId = await this.newsfeedRepository.createNewsfeed(
         content,
         userId,
@@ -218,52 +211,15 @@ export class NewsfeedService {
   }
 
   // 태그 검색 (소속 그룹 뉴스피드)
-  async serchTagNewsfeed(data, userId): Promise<ISerchTagNewsfeed[]> {
+  async serchTagNewsfeed(userId, NewsfeedIds): Promise<ISerchTagNewsfeed[]> {
     try {
-      const tag = data;
-      const serchTag = await this.tagRepository.serchTagWord(tag);
       const findGroup = await this.userGroupRepository.checkUserStatus(userId);
       const groupIds = findGroup.map((group) => group.groupId);
-      const whereNewsfeedId = serchTag.map((tag) => ({ tagId: tag.id }));
-      const newsfeedTag = await this.newsfeedTagRepository.serchTagArray(
-        whereNewsfeedId,
-      );
-      const newsfeedSerchId = Array.from(
-        new Set(newsfeedTag.map((tag) => tag.newsFeedId)),
-      );
       const findNewsfeed = await this.newsfeedRepository.findNewsfeedByGroupId(
-        newsfeedSerchId,
+        NewsfeedIds,
         groupIds,
       );
-      const result = findNewsfeed.map((feed) => {
-        const userName = feed.user.username;
-        const userImage = feed.user.image;
-        const userEmail = feed.user.email;
-        const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
-        const newsfeedImage = feed.newsImages.map((image) => image.image);
-        const checkUserId = feed.user.id;
-        let userIdentify = 0;
-        if(userId == checkUserId) {
-          userIdentify = 1
-        }
-        const comment = feed.comment.map((comment) => comment.content)
-        return {
-          id: feed.id,
-          content: feed.content,
-          createAt: feed.createdAt,
-          updateAt: feed.updatedAt,
-          userName: userName,
-          userEmail: userEmail,
-          userImage: userImage,
-          tagsName: tagsName,
-          newsfeedImage: newsfeedImage,
-          groupId: feed.group.id,
-          groupName: feed.group.groupName,
-          userIdentify: userIdentify,
-          comment: comment
-        };
-      });
-      return result;
+      return this.returnNewsfeedList(userId,findNewsfeed)
     } catch (err) {
       throw new InternalServerErrorException(
         '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
@@ -272,53 +228,14 @@ export class NewsfeedService {
   }
 
   // 태그 검색 (특정 그룹 뉴스피드)
-  async serchTagNewsfeedGroup(data, groupId, userId): Promise<ISerchTagNewsfeed[]> {
+  async serchTagNewsfeedGroup(groupId, userId, NewsfeedIds): Promise<ISerchTagNewsfeed[]> {
     try {
-      const tag = data;
-      const serchTag = await this.tagRepository.serchTagWord(tag);
-      const whereNewsfeedId = serchTag.map((tag) => ({ tagId: tag.id }));
-      const newsfeedTag = await this.newsfeedTagRepository.serchTagArray(
-        whereNewsfeedId,
-      );
-      const serchNewsfeedId = Array.from(
-        new Set(newsfeedTag.map((tag) => tag.newsFeedId)),
-      );
-      const numberingId = serchNewsfeedId.map((id) => ({ id }));
-      const numberNewsfeedIdArray = numberingId.map((id) => id.id);
       const findNewsfeed =
         await this.newsfeedRepository.findNewsfeedByOneGroupId(
-          numberNewsfeedIdArray,
+          NewsfeedIds,
           groupId,
         );
-      const result = findNewsfeed.map((feed) => {
-        const userName = feed.user.username;
-        const userImage = feed.user.image;
-        const userEmail = feed.user.email;
-        const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
-        const newsfeedImage = feed.newsImages.map((image) => image.image);
-        const checkUserId = feed.user.id;
-        let userIdentify = 0;
-        if(userId == checkUserId) {
-          userIdentify = 1
-        }
-        const comment = feed.comment.map((comment) => comment.content)
-        return {
-          id: feed.id,
-          content: feed.content,
-          createAt: feed.createdAt,
-          updateAt: feed.updatedAt,
-          userName: userName,
-          userEmail: userEmail,
-          userImage: userImage,
-          tagsName: tagsName,
-          newsfeedImage: newsfeedImage,
-          groupId: feed.group.id,
-          groupName: feed.group.groupName,
-          userIdentify: userIdentify,
-          comment: comment
-        };
-      });
-      return result;
+        return this.returnNewsfeedList(userId,findNewsfeed)
     } catch (err) {
       throw new InternalServerErrorException(
         '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
@@ -327,53 +244,16 @@ export class NewsfeedService {
   }
 
   // 태그 검색 (내 뉴스피드)
-  async serchTagMyNewsfeed(data, userId): Promise<ISerchTagMyNewsfeed[]> {
+  async serchTagMyNewsfeed(userId,NewsfeedIds): Promise<ISerchTagMyNewsfeed[]> {
     try {
       const findGroup = await this.userGroupRepository.checkUserStatus(userId);
       const groupIds = findGroup.map((group) => group.groupId);
-      const tag = data;
-      const serchTag = await this.tagRepository.serchTagWord(tag);
-      const whereNewsfeedId = serchTag.map((tag) => ({ tagId: tag.id }));
-      const newsfeedTag = await this.newsfeedTagRepository.serchTagArray(
-        whereNewsfeedId,
-      );
-      const serchNewsfeedId = Array.from(
-        new Set(newsfeedTag.map((tag) => tag.newsFeedId)),
-      );
       const findNewsfeed = await this.newsfeedRepository.findNewsfeedByTag(
-        serchNewsfeedId,
+        NewsfeedIds,
         userId,
         groupIds,
       );
-      const result = findNewsfeed.map((feed) => {
-        const userName = feed.user.username;
-        const userImage = feed.user.image;
-        const userEmail = feed.user.email;
-        const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
-        const newsfeedImage = feed.newsImages.map((image) => image.image);
-        const checkUserId = feed.user.id;
-        let userIdentify = 0;
-        if(userId == checkUserId) {
-          userIdentify = 1
-        }
-        const comment = feed.comment.map((comment) => comment.content)
-        return {
-          id: feed.id,
-          content: feed.content,
-          createAt: feed.createdAt,
-          updateAt: feed.updatedAt,
-          userName: userName,
-          userEmail: userEmail,
-          userImage: userImage,
-          tagsName: tagsName,
-          newsfeedImage: newsfeedImage,
-          groupId: feed.group.id,
-          groupName: feed.group.groupName,
-          userIdentify: userIdentify,
-          comment: comment
-        };
-      });
-      return result;
+      return this.returnNewsfeedList(userId,findNewsfeed)
     } catch (err) {
       throw new InternalServerErrorException(
         '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
@@ -394,35 +274,7 @@ export class NewsfeedService {
           page,
           this.pageSize,
         );
-      const result = findNewsfeed.map((feed) => {
-        const userName = feed.user.username;
-        const userImage = feed.user.image;
-        const userEmail = feed.user.email;
-        const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
-        const newsfeedImage = feed.newsImages.map((image) => image.image);
-        const checkUserId = feed.user.id;
-        let userIdentify = 0;
-        if(userId == checkUserId) {
-          userIdentify = 1
-        }
-        const comment = feed.comment.map((comment) => comment.content)
-        return {
-          id: feed.id,
-          content: feed.content,
-          createAt: feed.createdAt,
-          updateAt: feed.updatedAt,
-          userName: userName,
-          userEmail: userEmail,
-          userImage: userImage,
-          tagsName: tagsName,
-          newsfeedImage: newsfeedImage,
-          groupId: feed.group.id,
-          groupName: feed.group.groupName,
-          userIdentify: userIdentify,
-          comment: comment
-        };
-      });
-      return result;
+      return this.returnNewsfeedList(userId,findNewsfeed)
     } catch (err) {
       throw new InternalServerErrorException(
         '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
@@ -447,37 +299,7 @@ export class NewsfeedService {
         page,
         this.pageSize,
       );
-      const result = findNewsfeed.map((feed) => {
-        const userName = feed.user.username;
-        const userImage = feed.user.image;
-        const userEmail = feed.user.email;
-        const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
-        const newsfeedImage = feed.newsImages.map((image) => image.image);
-        const groupName = feed.group.groupName;
-        const groupId = feed.group.id;
-        const checkUserId = feed.user.id;
-        let userIdentify = 0;
-        if(userId == checkUserId) {
-          userIdentify = 1
-        }
-        const comment = feed.comment.map((comment) => comment.content)
-        return {
-          id: feed.id,
-          content: feed.content,
-          createAt: feed.createdAt,
-          updateAt: feed.updatedAt,
-          userName: userName,
-          userEmail: userEmail,
-          userImage: userImage,
-          tagsName: tagsName,
-          newsfeedImage: newsfeedImage,
-          groupName: groupName,
-          groupId: groupId,
-          userIdentify: userIdentify,
-          comment: comment
-        };
-      });
-      return result;
+        return this.returnNewsfeedList(userId,findNewsfeed)
     } catch (err) {
       throw new InternalServerErrorException(
         '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
@@ -501,37 +323,7 @@ export class NewsfeedService {
         page,
         this.pageSize,
       );
-      const result = findNewsfeed.map((feed) => {
-        const userName = feed.user.username;
-        const userImage = feed.user.image;
-        const userEmail = feed.user.email;
-        const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
-        const newsfeedImage = feed.newsImages.map((image) => image.image);
-        const groupId = feed.group.id;
-        const groupName = feed.group.groupName;
-        const checkUserId = feed.user.id;
-        let userIdentify = 0;
-        if(userId == checkUserId) {
-          userIdentify = 1
-        }
-        const comment = feed.comment.map((comment) => comment.content)
-        return {
-          id: feed.id,
-          content: feed.content,
-          createAt: feed.createdAt,
-          updateAt: feed.updatedAt,
-          userName: userName,
-          userEmail: userEmail,
-          userImage: userImage,
-          tagsName: tagsName,
-          newsfeedImage: newsfeedImage,
-          groupId: groupId,
-          groupName: groupName,
-          userIdentify: userIdentify,
-          comment: comment
-        };
-      });
-      return result;
+      return this.returnNewsfeedList(userId,findNewsfeed)
     } catch (err) {
       throw new InternalServerErrorException(
         '알 수 없는 에러가 발생하였습니다. 관리자에게 문의해 주세요.',
@@ -551,35 +343,7 @@ export class NewsfeedService {
         NewsfeedIds,
         groupIds,
       );
-      const result = findNewsfeed.map((feed) => {
-        const userName = feed.user.username;
-        const userImage = feed.user.image;
-        const userEmail = feed.user.email;
-        const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
-        const newsfeedImage = feed.newsImages.map((image) => image.image);
-        const checkUserId = feed.user.id;
-        let userIdentify = 0;
-        if(userId == checkUserId) {
-          userIdentify = 1
-        }
-        const comment = feed.comment.map((comment) => comment.content)
-        return {
-          id: feed.id,
-          content: feed.content,
-          createAt: feed.createdAt,
-          updateAt: feed.updatedAt,
-          userName: userName,
-          userEmail: userEmail,
-          userImage: userImage,
-          tagsName: tagsName,
-          newsfeedImage: newsfeedImage,
-          groupId: feed.group.id,
-          groupName: feed.group.groupName,
-          userIdentify: userIdentify,
-          comment: comment
-        };
-      });
-      return result;
+      return this.returnNewsfeedList(userId,findNewsfeed)
     } catch (err) {
       throw new InternalServerErrorException(
         '찾으시는 태그가 없습니다.',
@@ -588,12 +352,11 @@ export class NewsfeedService {
   }
 
   // 수정 시 컨텐츠 내용 가져오기
-  async getNewsfeedContent(id,userId){
+  async getNewsfeedContent(id){
     try{
       const content = await this.newsfeedRepository.findOne({
         where: {id: id}
       })
-
       return content
     } catch(err) {
       throw new InternalServerErrorException(
@@ -602,7 +365,7 @@ export class NewsfeedService {
     }
   }
 
-  // 엘라스틱 서치 테스트 (성공)
+  // 엘라스틱 서치 헤더바 사용 (뉴스피드,태그 검색)
   async testSearchIndex(data) {
     const result = await this.elasticSearchService.search({
       index: 'newsfeeds',
@@ -622,9 +385,30 @@ export class NewsfeedService {
     )
     if (!resultByEs[0]){
           throw new InternalServerErrorException(
-          '찾으시는 태그가 없습니다.',
+          '찾으시는 뉴스피드 또는 태그가 없습니다.',
         );
     }
+    return resultByEs
+  }
+
+  // 태그 클릭 시 엘라스틱 서치 이용
+  async elasticTagIndex(data) {
+    const result = await this.elasticSearchService.search({
+      index: 'newsfeeds',
+      body: {
+        size: 500
+      },
+      query : {
+        query_string: {
+          query: `*${data}*`,
+          fields: ['tagsName']
+        }
+      }
+    })
+    const resultArray = result.hits.hits.map(item => item._source)   
+    const resultByEs = Array.from(
+      new Set(resultArray.map((item) => item['id']))
+    )
     return resultByEs
   }
 
@@ -632,5 +416,40 @@ export class NewsfeedService {
     return {
       userIdentify: 2,
     }
+  }
+
+  // 리턴 리스트 모듈
+  returnNewsfeedList(userId,findNewsfeed) {
+    const result = findNewsfeed.map((feed) => {
+      const userName = feed.user.username;
+      const userImage = feed.user.image;
+      const userEmail = feed.user.email;
+      const tagsName = feed.newsFeedTags.map((tag) => tag.tag.tagName);
+      const newsfeedImage = feed.newsImages.map((image) => image.image);
+      const groupId = feed.group.id;
+      const groupName = feed.group.groupName;
+      const checkUserId = feed.user.id;
+      let userIdentify = 0;
+      if (userId == checkUserId) {
+        userIdentify = 1;
+      }
+      const comment = feed.comment.map((comment) => comment.content);
+      return {
+        id: feed.id,
+        content: feed.content,
+        createAt: feed.createdAt,
+        updateAt: feed.updatedAt,
+        userName: userName,
+        userEmail: userEmail,
+        userImage: userImage,
+        tagsName: tagsName,
+        newsfeedImage: newsfeedImage,
+        groupId: groupId,
+        groupName: groupName,
+        userIdentify: userIdentify,
+        comment: comment,
+      };
+    });
+    return result;
   }
 }

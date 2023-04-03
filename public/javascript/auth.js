@@ -103,6 +103,33 @@ function emailVerify() {
   }
 }
 
+function findPasswordEmailVerify() {
+  const email = $('#register-email').val();
+  if (!email) {
+    Swal.fire({
+      icon: 'error',
+      text: `이메일을 입력해주세요.`,
+    });
+  } else {
+    axios
+      .post('/api/emailVerify/findPassword', {
+        email: email,
+      })
+      .then((res) => {
+        Swal.fire({
+          icon: 'success',
+          text: `인증번호가 발송되었습니다.`,
+        });
+      })
+      .catch(async (error) => {
+        Swal.fire({
+          icon: 'error',
+          text: `${error.response.data.message}`,
+        });
+      });
+  }
+}
+
 function emailCheck() {
   const email = $('#register-email').val();
   const checkNumber = $('#certification_number').val();

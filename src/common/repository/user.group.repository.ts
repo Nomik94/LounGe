@@ -8,8 +8,8 @@ export class UserGroupRepository extends Repository<UserGroup> {
     super(UserGroup, dataSource.createEntityManager());
   }
 
-  async checkJoinGroup(userId: number, groupId: number): Promise<UserGroup[]> {
-    return await this.find({ where: { userId: userId, groupId: groupId } });
+  async checkJoinGroup(userId: number, groupId: number): Promise<UserGroup> {
+    return await this.findOne({ where: { userId: userId, groupId: groupId } });
   }
 
   async checkUserStatus(userId: number): Promise<UserGroup[]> {
