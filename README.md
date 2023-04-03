@@ -20,7 +20,9 @@
 | **김택환** |  팀원  | [taekhwankim21](https://github.com/taekhwankim21?tab=repositories) |
 | **유진우** |  팀원  |   [goodjwyoo77](https://github.com/goodjwyoo77?tab=repositories)   |
 
-## 배포 주소
+## 팀 노션 주소
+
+[LounGe](https://emerald-gull-9bc.notion.site/LounGe-41aed12fc4b1498197726b8be242b3d9)
 
 http://loungegroup.site
 
