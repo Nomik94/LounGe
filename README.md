@@ -24,12 +24,6 @@
 
 [LounGe](https://emerald-gull-9bc.notion.site/LounGe-41aed12fc4b1498197726b8be242b3d9)
 
-http://loungegroup.site
-
-## 팀 노션 주소
-
-[LounGe](https://emerald-gull-9bc.notion.site/LounGe-41aed12fc4b1498197726b8be242b3d9)
-
 ## 프로젝트 기간
 
 2023.02.28 ~ 2023.04.03
