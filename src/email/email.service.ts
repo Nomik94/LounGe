@@ -4,7 +4,6 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Mail from 'nodemailer/lib/mailer';
@@ -57,7 +56,18 @@ export class EmailService {
   async sendVerification(email: string): Promise<void> {
     const user = await this.userService.getByEmail(email);
     if (user) {
-      throw new BadRequestException({ message: '이미 가입된 이메일입니다.' });
+      throw new BadRequestException('이미 가입된 이메일입니다');
+    }
+    const verifyToken = this.randomNumber();
+    await this.cacheManager.set(email, verifyToken, { ttl: 300 });
+    await this.sendVerifyToken(email, verifyToken);
+  }
+
+  // 비밀번호 찾기 인증번호 생성
+  async findPasswordSendVerification(email: string): Promise<void> {
+    const user = await this.userService.getByEmail(email);
+    if (!user) {
+      throw new NotFoundException('유저를 찾을 수 없습니다');
     }
     const verifyToken = this.randomNumber();
     await this.cacheManager.set(email, verifyToken, { ttl: 300 });
@@ -71,7 +81,7 @@ export class EmailService {
     if (_.isNil(cacheVerifyToken)) {
       throw new NotFoundException('해당 메일로 전송된 인증번호가 없습니다.');
     } else if (cacheVerifyToken !== verifyToken) {
-      throw new UnauthorizedException('인증번호가 일치하지 않습니다.');
+      throw new BadRequestException('인증번호가 일치하지 않습니다.');
     } else {
       await this.cacheManager.del(email);
     }

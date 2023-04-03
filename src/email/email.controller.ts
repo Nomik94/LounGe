@@ -12,6 +12,12 @@ export class EmailController {
     return await this.emailService.sendVerification(body.email);
   }
 
+  // 비밀번호 찾기 인증메일 발송 API
+  @Post('findPassword')
+  async findPasswordSendVerifyEmail(@Body() body: EmailDTO): Promise<void> {
+    return await this.emailService.findPasswordSendVerification(body.email);
+  }
+
   // 인증번호 체크 API
   @Post('check')
   async verifyEmail(@Body() body: VerifyEmailDTO): Promise<{

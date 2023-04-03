@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserRepository } from 'src/common/repository/user.repository';
 import { multerOptionsFactory } from 'src/common/utils/multer.options';
 import { User } from 'src/database/entities/user.entity';
 import { EmailService } from 'src/email/email.service';
@@ -30,6 +31,7 @@ import { LocalStrategy } from './strategy/local.strategy';
     LocalStrategy,
     UserService,
     JwtRefreshStrategy,
+    UserRepository,
   ],
   exports: [AuthService, JwtModule],
 })
