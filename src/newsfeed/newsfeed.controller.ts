@@ -80,7 +80,8 @@ export class NewsfeedController {
     @GetUser() user: IUser,
   ): Promise<ISerchTagNewsfeed[]> {
     const userId = user.id;
-    return await this.newsfeedService.serchTagNewsfeed(data, userId);
+    const NewsfeedIds = await this.newsfeedService.elasticTagIndex(data)
+    return await this.newsfeedService.serchTagNewsfeed(userId,NewsfeedIds);
   }
 
   // 태그 검색 (특정 그룹) API
@@ -92,7 +93,8 @@ export class NewsfeedController {
     @GetUser() user: IUser,
   ): Promise<ISerchTagNewsfeed[]> {
     const userId = user.id;
-    return await this.newsfeedService.serchTagNewsfeedGroup(data, groupId, userId);
+    const NewsfeedIds = await this.newsfeedService.elasticTagIndex(data)
+    return await this.newsfeedService.serchTagNewsfeedGroup(groupId, userId,NewsfeedIds);
   }
 
   // 태그 검색 (내 뉴스피드) API
@@ -103,7 +105,8 @@ export class NewsfeedController {
     @GetUser() user: IUser,
   ): Promise<ISerchTagMyNewsfeed[]> {
     const userId = user.id;
-    return await this.newsfeedService.serchTagMyNewsfeed(data, userId);
+    const NewsfeedIds = await this.newsfeedService.elasticTagIndex(data)
+    return await this.newsfeedService.serchTagMyNewsfeed(userId,NewsfeedIds);
   }
 
   // 뉴스피드 읽기 (특정 그룹) API
@@ -159,7 +162,6 @@ export class NewsfeedController {
     @GetUser() user: IUser,
     @Param('id') id: number,
   ) {
-    const userId = user.id;
-    return await this.newsfeedService.getNewsfeedContent(id,userId)
+    return await this.newsfeedService.getNewsfeedContent(id)
   }
 }

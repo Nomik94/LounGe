@@ -20,10 +20,6 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     await this.softDelete(id);
   }
 
-  async findFirstNewsfeed(){
-    return await this.find()
-  }
-
   async createNewsfeed(
     content: string,
     userId: number,
@@ -41,7 +37,7 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
   }
 
   async findNewsfeedByOneGroupId(
-    numberNewsfeedIdArray: number[],
+    NewsfeedIds: number[],
     groupId: number,
   ): Promise<any> {
     return await this.createQueryBuilder('newsfeed')
@@ -67,14 +63,14 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     .leftJoin('newsfeed.comment','comment')
     .leftJoin('newsfeed.newsFeedTags','newsFeedTags')
     .leftJoin('newsFeedTags.tag','tag')
-    .where('newsfeed.id IN (:...id)', {id:numberNewsfeedIdArray})
+    .where('newsfeed.id IN (:...id)', {id:NewsfeedIds})
     .andWhere('group.id = :groupId', {groupId:groupId})
     .orderBy({'newsfeed.createdAt': "DESC"})
     .getMany()
   }
 
   async findNewsfeedByTag(
-    serchNewsfeedId: number[],
+    NewsfeedIds: number[],
     userId: number,
     groupIds: number[],
   ): Promise<any> {
@@ -102,14 +98,14 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     .leftJoin('newsfeed.newsFeedTags','newsFeedTags')
     .leftJoin('newsFeedTags.tag','tag')
     .where('user.id = :id', {id:userId})
-    .andWhere('newsfeed.id IN (:...ids)', {ids:serchNewsfeedId})
+    .andWhere('newsfeed.id IN (:...ids)', {ids:NewsfeedIds})
     .andWhere('newsfeed.group IN (:...groupId)', {groupId:groupIds})
     .orderBy({'newsfeed.createdAt': "DESC"})
     .getMany()
   }
 
   async findNewsfeedByGroupId(
-    newsfeedSerchId: number[],
+    NewsfeedIds: number[],
     groupIds: number[],
   ): Promise<any> {
     return await this.createQueryBuilder('newsfeed')
@@ -135,7 +131,7 @@ export class NewsfeedRepository extends Repository<NewsFeed> {
     .leftJoin('newsfeed.comment','comment')
     .leftJoin('newsfeed.newsFeedTags','newsFeedTags')
     .leftJoin('newsFeedTags.tag','tag')
-    .where('newsfeed.id IN (:...ids)', {ids:newsfeedSerchId})
+    .where('newsfeed.id IN (:...ids)', {ids:NewsfeedIds})
     .andWhere('newsfeed.group IN (:...id)', {id:groupIds})
     .orderBy({'newsfeed.createdAt': "DESC"})
     .getMany()
