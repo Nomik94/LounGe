@@ -96,11 +96,13 @@ export class GroupRepository extends Repository<Group> {
         'user.image',
       ])
       .leftJoin('group.user', 'user')
-      .leftJoin('group.userGroups','userGroups')
+      .leftJoin('group.userGroups', 'userGroups')
       .where('userGroups.userId = :userId', { userId })
-      .andWhere(new NotBrackets((qb) => {
-        qb.where('userGroups.role = :role', { role : '가입대기' });
-      }))
+      .andWhere(
+        new NotBrackets((qb) => {
+          qb.where('userGroups.role = :role', { role: '가입대기' });
+        }),
+      )
       .take(pageSize)
       .skip(pageSize * (page - 1))
       .getMany();
@@ -108,6 +110,14 @@ export class GroupRepository extends Repository<Group> {
 
   async foundGroupByGroupId(groupId: number): Promise<Group> {
     return await this.findOne({
+      select: {
+        id: true,
+        groupName: true,
+        groupImage: true,
+        backgroundImage: true,
+        description: true,
+        tagGroups: { tagId: true, tag: { tagName: true } },
+      },
       where: { id: groupId },
       relations: ['tagGroups.tag'],
     });
@@ -115,6 +125,7 @@ export class GroupRepository extends Repository<Group> {
 
   async foundGroupWithLeader(groupId: number): Promise<Group> {
     return await this.findOne({
+      select: { id: true, user: { id: true } },
       where: { id: groupId },
       relations: ['user'],
     });
