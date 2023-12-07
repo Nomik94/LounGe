@@ -18,7 +18,7 @@
 | **오길환** | 부팀장 |        [5kiran](https://github.com/5kiran?tab=repositories)        |
 | **한주호** |  팀원  |      [Joto-Han](https://github.com/Joto-Han?tab=repositories)      |
 | **김택환** |  팀원  | [taekhwankim21](https://github.com/taekhwankim21?tab=repositories) |
-| **유진우** |  팀원  |   [goodjwyoo77](https://github.com/goodjwyoo77?tab=repositories)   |
+| **유진우** |  팀원  |   [jeff3445](https://github.com/jeff3445?tab=repositories)   |
 
 ## 팀 노션 주소
 
